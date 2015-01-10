@@ -44,6 +44,12 @@ class Definitions(dict):
           'desc': d['activityTypeDescription'].strip(),
       }
 
+    for code, d in data.get('buckets', {}).iteritems():
+      self[long(code)] = {
+          'name': (d.get('bucketName') or d.get('bucketIdentifier') or '').strip(),
+          'desc': d.get('bucketDescription', '').strip(),
+      }
+
     for code, d in data.get('classes', {}).iteritems():
       self[long(code)] = {
           'name': d['className'].strip(),
@@ -58,6 +64,7 @@ class Definitions(dict):
       self[long(code)] = {
           'name': d['itemName'].strip(),
           'desc': d.get('itemDescription', '').strip(),
+          'type': d['bucketTypeHash'],
           'icon': d['icon'].strip(),
       }
 
@@ -137,9 +144,19 @@ class Character(dict):
     self['level'] = data['characterLevel']
     self['level_progress'] = (1.0 * data['levelProgression']['progressToNextLevel'] /
                               data['levelProgression']['nextLevelAt'])
+    if defs.get(data['characterBase']['currentActivityHash']):
+      current_activity = defs[data['characterBase']['currentActivityHash']]
+      self['current_activity'] = {
+          'name': current_activity['name'],
+          'type': defs[current_activity['type']]['name'],
+      }
     self['class'] = defs[data['characterBase']['classHash']]['name']
     self['gender'] = defs[data['characterBase']['genderHash']]['name']
     self['race'] = defs[data['characterBase']['raceHash']]['name']
+    self['inventory'] = {
+        defs[defs[item['itemHash']]['type']]['name'].lower().replace(' ', '_'):
+            defs[item['itemHash']]
+        for item in data['characterBase']['peerView']['equipment']}
     self['stats'] = {defs[v['statHash']]['name']: v['value']
                      for v in data['characterBase']['stats'].itervalues()}
     self['activities'] = tuple(Activity(self, ent, defs=defs)
@@ -152,8 +169,17 @@ class Character(dict):
     if self._raw_activities is None:
       self._raw_activities = self.defs.Fetch(
           '/Stats/ActivityHistory/%(account_type)i/%(account_id)i/%(character_id)i/'
-          '?lc=en&fmt=true&lcin=true&mode=0&count=5&page=0', **self)
+          '?lc=en&fmt=true&lcin=true&mode=0&count=15&page=0', **self)
     return self._raw_activities
+
+  _raw_inventory = None
+
+  @property
+  def raw_inventory(self):
+    if self._raw_inventory is None:
+      self._raw_inventory = defs.Fetch(
+          '/%(account_type)i/Account/%(account_id)i/Character/%(character_id)i/Inventory/', **self)
+    return self._raw_inventory
 
 
 class Activity(dict):

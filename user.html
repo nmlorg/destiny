@@ -8,16 +8,47 @@ table.usergrid {
 table.usergrid td {
   vertical-align: top;
 }
+
+table.usergrid img {
+  float: left;
+  height: 4em;
+  width: 4em;
+}
 </style>
 
-<h2>User {{user.name}} {% if user.clan %}of {{user.clan}}{% endif %} ({{user.account_type}}/{{user.account_id}})</h2>
+<h2>User {{user.name}} {% if user.clan %}of {{user.clan}}{% endif %} (<a href="https://www.bungie.net/en/Profile/{{user.account_type}}/{{user.account_id}}">{{user.account_type}}/{{user.account_id}}</a>)</h2>
+
+{% macro inventory(item) %}
+  <td title="{{item.desc|e}}">
+    <img src="https://www.bungie.net{{item.icon}}">
+    {{item.name}}
+  </td>
+{% endmacro %}
 
 <table class="usergrid">
 {% for characterid, character in user.characters.iteritems() %}
   <tr>
-    <td colspan="2"><h3><a href="https://www.bungie.net/en/Legend/{{user.account_type}}/{{user.account_id}}/{{characterid}}">{{character.race}} {{character.gender}} {{character.class}} ({{characterid}})</a></h3></td>
+    <td colspan="5"><h3>{{character.race}} {{character.gender}} {{character.class}} (<a href="https://www.bungie.net/en/Legend/{{user.account_type}}/{{user.account_id}}/{{characterid}}">{{characterid}}</a>)</h3></td>
   </tr><tr>
-    <td><table>
+    {{inventory(character.inventory.subclass)}}
+    {{inventory(character.inventory.helmet)}}
+    {{inventory(character.inventory.class_armor)}}
+    {{inventory(character.inventory.ships)}}
+    <td rowspan="4"><table>
+      {% if character.current_activity %}
+        <tr>
+          <td>
+            {% if character.current_activity.name.startswith(character.current_activity.type) %}
+              {{character.current_activity.name}}
+            {% else %}
+              {{character.current_activity.type}}: {{character.current_activity.name}}
+            {% endif %}
+          </td>
+          <td></td>
+          <td></td>
+          <td>active</td>
+        </tr>
+      {% endif %}
       {% for activity in character.activities %}
         <tr>
           <td>
@@ -34,6 +65,18 @@ table.usergrid td {
       {% endfor %}
     </table></td>
   </tr><tr>
+    {{inventory(character.inventory.primary_weapons)}}
+    {{inventory(character.inventory.gauntlets)}}
+    {{inventory(character.inventory.ghost)}}
+    {{inventory(character.inventory.shaders)}}
+  </tr><tr>
+    {{inventory(character.inventory.special_weapons)}}
+    {{inventory(character.inventory.chest_armor)}}
+    {{inventory(character.inventory.vehicle)}}
+    {{inventory(character.inventory.emblems)}}
+  </tr><tr>
+    {{inventory(character.inventory.heavy_weapons)}}
+    {{inventory(character.inventory.leg_armor)}}
     <td><table>
       <tr><td>Level</td><td>{{character.level}} ({{(100 * character.level_progress).__int__()}}% to {{character.level + 1}})</td></tr>
       <tr><td>Defense</td><td>{{character.stats.Defense}}</td></tr>
