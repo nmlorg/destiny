@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<style>
+table.usergrid {
+  border: 0;
+}
+
+table.usergrid td {
+  vertical-align: top;
+}
+</style>
+
+<h2>User {{user.name}} {% if user.clan %}of {{user.clan}}{% endif %} ({{user.account_type}}/{{user.account_id}})</h2>
+
+<table class="usergrid">
+{% for characterid, character in user.characters.iteritems() %}
+  <tr>
+    <td colspan="5"><h3><a href="https://www.bungie.net/en/Legend/{{user.account_type}}/{{user.account_id}}/{{characterid}}">{{character.race}} {{character.gender}} {{character.class}} ({{characterid}})</a></h3></td>
+  </tr><tr>
+    <td><table>
+      <tr><td>Level</td><td>{{character.level}} ({{(100 * character.level_progress).__int__()}}% to {{character.level + 1}})</td></tr>
+      <tr><td>Defense</td><td>{{character.stats.Defense}}</td></tr>
+      <tr><td>Intellect</td><td>{{character.stats.Intellect}}</td></tr>
+      <tr><td>Discipline</td><td>{{character.stats.Discipline}}</td></tr>
+      <tr><td>Strength</td><td>{{character.stats.Strength}}</td></tr>
+    </table></td>
+    <td><table>
+      <tr><td>Light</td><td>{{character.stats.Light}}</td></tr>
+      <tr><td>Optics</td><td>{{character.stats.Optics}}</td></tr>
+      <tr><td>Armor</td><td>{{character.stats.Armor}}</td></tr>
+      <tr><td>Recovery</td><td>{{character.stats.Recovery}}</td></tr>
+      <tr><td>Agility</td><td>{{character.stats.Agility}}</td></tr>
+    </table></td>
+  </tr>
+{% endfor %}
+</table>
