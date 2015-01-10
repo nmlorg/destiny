@@ -16,7 +16,15 @@ table.usergrid img {
 }
 </style>
 
-<h2>User {{user.name}} {% if user.clan %}of {{user.clan}}{% endif %} (<a href="https://www.bungie.net/en/Profile/{{user.account_type}}/{{user.account_id}}">{{user.account_type}}/{{user.account_id}}</a>)</h2>
+<h2>
+  {% if user.account_type == 1 %}
+    <img src="https://www.bungie.net/img/theme/destiny/icons/icon_xbl.png" style="height: 1em">
+  {% elif user.account_type == 2 %}
+    <img src="https://www.bungie.net/img/theme/destiny/icons/icon_psn.png" style="height: 1em">
+  {% endif %}
+  <a href="https://www.bungie.net/en/Profile/{{user.account_type}}/{{user.account_id}}">{{user.name}}</a>
+  {% if user.clan %}of {{user.clan}}{% endif %}
+</h2>
 
 Glimmer: {{user.currency.glimmer}}<br>
 
@@ -90,7 +98,11 @@ Glimmer: {{user.currency.glimmer}}<br>
     {{inventory(character.inventory.vehicle)}}
     {{inventory(character.inventory.emblems)}}
   </tr><tr>
-    {{inventory(character.inventory.heavy_weapons)}}
+    {% if character.inventory.heavy_weapons %}
+      {{inventory(character.inventory.heavy_weapons)}}
+    {% else %}
+      <td>(No heavy weapons.)</td>
+    {% endif %}
     {{inventory(character.inventory.leg_armor)}}
     <td><table>
       <tr><td>Level</td><td>{{character.level}} ({{(100 * character.level_progress).__int__()}}% to {{character.level + 1}})</td></tr>
