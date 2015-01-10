@@ -18,6 +18,8 @@ table.usergrid img {
 
 <h2>User {{user.name}} {% if user.clan %}of {{user.clan}}{% endif %} (<a href="https://www.bungie.net/en/Profile/{{user.account_type}}/{{user.account_id}}">{{user.account_type}}/{{user.account_id}}</a>)</h2>
 
+Glimmer: {{user.currency.glimmer}}<br>
+
 {% macro inventory(item) %}
   <td title="{{item.desc|e}}">
     <img src="https://www.bungie.net{{item.icon}}">
@@ -36,7 +38,12 @@ table.usergrid img {
 <table class="usergrid">
 {% for characterid, character in user.characters.iteritems() %}
   <tr>
-    <td colspan="5"><h3>{{character.race}} {{character.gender}} {{character.class}} (<a href="https://www.bungie.net/en/Legend/{{user.account_type}}/{{user.account_id}}/{{characterid}}">{{characterid}}</a>)</h3></td>
+    <td colspan="5"><h3 style="background: url(https://www.bungie.net{{character.emblem_banner}}) no-repeat 4em; height: 4em">
+      <img src="https://www.bungie.net{{character.emblem_icon}}">
+      <a href="https://www.bungie.net/en/Legend/{{user.account_type}}/{{user.account_id}}/{{characterid}}" style="color: white">
+        Level {{character.level}} {{character.race}} {{character.gender}} {{character.class}}
+      </a><br>
+    </h3></td>
   </tr><tr>
     {{inventory(character.inventory.subclass)}}
     {{inventory(character.inventory.helmet)}}

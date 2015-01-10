@@ -160,6 +160,8 @@ class Character(dict):
     self['class'] = defs[data['characterBase']['classHash']]['name']
     self['gender'] = defs[data['characterBase']['genderHash']]['name']
     self['race'] = defs[data['characterBase']['raceHash']]['name']
+    self['emblem_banner'] = data['backgroundPath']
+    self['emblem_icon'] = data['emblemPath']
     self['inventory'] = {
         defs[defs[item['itemHash']]['type']]['name'].lower().replace(' ', '_'):
             Item(self, item['itemHash'], defs=defs)
