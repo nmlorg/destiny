@@ -53,9 +53,8 @@ Glimmer: {{user.currency.glimmer}}<br>
   <tr>
     <td colspan="5"><h3 style="background: url(https://www.bungie.net{{character.emblem_banner}}) no-repeat 4em; height: 4em">
       <img src="https://www.bungie.net{{character.emblem_icon}}">
-      <a href="https://www.bungie.net/en/Legend/{{user.account_type}}/{{user.account_id}}/{{characterid}}" style="color: white">
-        Level {{character.level}} {{character.race}} {{character.gender}} {{character.class}}
-      </a><br>
+      <a href="https://www.bungie.net/en/Legend/{{user.account_type}}/{{user.account_id}}/{{characterid}}" style="color: white">Level {{character.level}} {{character.race}} {{character.gender}} {{character.class}}</a><br>
+      <span style="color: yellow">Last online: <script>document.write(new Date({{character.last_online}} * 1000).toLocaleString());</script></span><br>
     </h3></td>
   </tr><tr>
     {{inventory('subclass')}}

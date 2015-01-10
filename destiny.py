@@ -2,6 +2,8 @@
 #
 # Copyright 2014 Daniel Reed <n@ml.org>
 
+import datetime
+
 import fetch
 
 
@@ -157,6 +159,8 @@ class Character(dict):
           'name': current_activity['name'],
           'type': defs[current_activity['type']]['name'],
       }
+    self['last_online'] = datetime.datetime.strptime(
+        data['characterBase']['dateLastPlayed'], '%Y-%m-%dT%H:%M:%SZ').strftime('%s')
     self['class'] = defs[data['characterBase']['classHash']]['name']
     self['gender'] = defs[data['characterBase']['genderHash']]['name']
     self['race'] = defs[data['characterBase']['raceHash']]['name']
