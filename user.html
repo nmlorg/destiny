@@ -22,6 +22,14 @@ table.usergrid img {
   <td title="{{item.desc|e}}">
     <img src="https://www.bungie.net{{item.icon}}">
     {{item.name}}
+    {% if item.perks %}
+      <div style="font-size: .7em">
+        <div>Perks:</div>
+        {% for perk in item.perks %}
+          <div title="{{perk.desc|e}}">&mdash; {{perk.name}}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
   </td>
 {% endmacro %}
 

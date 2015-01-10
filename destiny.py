@@ -66,6 +66,13 @@ class Definitions(dict):
           'desc': d.get('itemDescription', '').strip(),
           'type': d['bucketTypeHash'],
           'icon': d['icon'].strip(),
+          'perks': tuple(d['perkHashes']),
+      }
+
+    for code, d in data.get('perks', {}).iteritems():
+      self[long(code)] = {
+          'name': d['displayName'].strip(),
+          'desc': d['displayDescription'].strip(),
       }
 
     for code, d in data.get('races', {}).iteritems():
@@ -155,7 +162,7 @@ class Character(dict):
     self['race'] = defs[data['characterBase']['raceHash']]['name']
     self['inventory'] = {
         defs[defs[item['itemHash']]['type']]['name'].lower().replace(' ', '_'):
-            defs[item['itemHash']]
+            Item(self, item['itemHash'], defs=defs)
         for item in data['characterBase']['peerView']['equipment']}
     self['stats'] = {defs[v['statHash']]['name']: v['value']
                      for v in data['characterBase']['stats'].itervalues()}
@@ -193,6 +200,16 @@ class Activity(dict):
     self['duration'] = long(data['values']['activityDurationSeconds']['basic']['value'])
     self['completed'] = bool(data['values']['completed']['basic']['value'])
     self['score'] = long(data['values']['score']['basic']['value'])
+
+
+class Item(dict):
+  def __init__(self, character, itemhash, defs=None):
+    if defs is None:
+      defs = Definitions()
+    self.defs = defs
+
+    super(Item, self).__init__(defs[itemhash])
+    self['perks'] = tuple(defs[perkhash] for perkhash in self['perks'])
 
 
 if __name__ == '__main__':
