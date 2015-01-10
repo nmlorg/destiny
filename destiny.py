@@ -25,8 +25,27 @@ def Fetch(suffix, *args, **kwargs):
     return data['Response']
 
 
+class Definitions(dict):
+  def __init__(self, data=None):
+    if data:
+      self.update(data)
+
+  def update(self, data):
+    pass
+
+  def Fetch(self, suffix, *args, **kwargs):
+    ret = Fetch(suffix, *args, **kwargs)
+    if ret:
+      self.update(ret['definitions'])
+      return ret['data']
+
+
 class User(dict):
-  def __init__(self, username, accounttype=None, accountid=None):
+  def __init__(self, username, accounttype=None, accountid=None, defs=None):
+    if defs is None:
+      defs = Definitions()
+    self.defs = defs
+
     if accounttype is None or accountid is None:
       if not accounttype:
         accounttype = 'All'
@@ -42,6 +61,18 @@ class User(dict):
     self['name'] = username
     self['account_type'] = accounttype
     self['account_id'] = accountid
+
+    self['grimoire_score'] = self.raw_account['grimoireScore']
+    self['clan'] = (self.raw_account.get('clanName') and
+                    '%s [%s]' % (self.raw_account['clanName'], self.raw_account['clanTag']) or '')
+
+  _raw_account = None
+
+  @property
+  def raw_account(self):
+    if self._raw_account is None:
+      self._raw_account = self.defs.Fetch('/%(account_type)i/Account/%(account_id)i/', **self)
+    return self._raw_account
 
 
 if __name__ == '__main__':
