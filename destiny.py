@@ -53,6 +53,11 @@ class Definitions(dict):
           'name': d['raceName'].strip(),
       }
 
+    for code, d in data.get('stats', {}).iteritems():
+      self[long(code)] = {
+          'name': d['statName'].strip(),
+      }
+
   def __missing__(self, k):
     return {'name': '#%i' % k}
 
@@ -122,6 +127,8 @@ class Character(dict):
     self['class'] = defs[data['characterBase']['classHash']]['name']
     self['gender'] = defs[data['characterBase']['genderHash']]['name']
     self['race'] = defs[data['characterBase']['raceHash']]['name']
+    self['stats'] = {defs[v['statHash']]['name']: v['value']
+                     for v in data['characterBase']['stats'].itervalues()}
 
 
 if __name__ == '__main__':
