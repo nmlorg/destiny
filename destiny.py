@@ -38,6 +38,9 @@ class Definitions(dict):
           'icon': d['icon'].strip(),
       }
 
+  def __missing__(self, k):
+    return {'name': '#%i' % k}
+
   def Fetch(self, suffix, *args, **kwargs):
     ret = Fetch(suffix, *args, **kwargs)
     if ret:
@@ -73,9 +76,12 @@ class User(dict):
 
     self['currency'] = {}
     for item in self.raw_account['inventory']['currencies']:
-      currency = defs.get(item['itemHash'])
-      if currency:
-        self['currency'][currency['name'].lower().replace(' ', '_')] = item['value']
+      currency = defs[item['itemHash']]
+      self['currency'][currency['name'].lower().replace(' ', '_')] = item['value']
+
+    self['characters'] = {
+        long(data['characterBase']['characterId']): Character(self, data, defs=defs)
+        for data in self.raw_account['characters']}
 
   _raw_account = None
 
@@ -84,6 +90,20 @@ class User(dict):
     if self._raw_account is None:
       self._raw_account = self.defs.Fetch('/%(account_type)i/Account/%(account_id)i/', **self)
     return self._raw_account
+
+
+class Character(dict):
+  def __init__(self, user, data, defs=None):
+    if defs is None:
+      defs = Definitions()
+    self.defs = defs
+
+    self['account_type'] = user['account_type']
+    self['account_id'] = user['account_id']
+    self['character_id'] = long(data['characterBase']['characterId'])
+    self['level'] = data['characterLevel']
+    self['level_progress'] = (1.0 * data['levelProgression']['progressToNextLevel'] /
+                              data['levelProgression']['nextLevelAt'])
 
 
 if __name__ == '__main__':
