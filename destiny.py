@@ -87,6 +87,13 @@ class Definitions(dict):
           'name': d['statName'].strip(),
       }
 
+    for x in data.itervalues():
+      for code, d in x.iteritems():
+        code = long(code)
+        if code not in self:
+          self[code] = {}
+        self[code]['raw'] = d
+
   def __missing__(self, k):
     return {'name': '#%i' % k}
 

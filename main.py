@@ -15,7 +15,7 @@ class UserPage(webapp2.RequestHandler):
   def get(self, username):
     user = destiny.User(username)
 
-    def F(d):
+    def F(d, seen=()):
       global I
 
       I += 1
@@ -27,9 +27,17 @@ class UserPage(webapp2.RequestHandler):
         for k, v in sorted(d.iteritems()):
           self.response.write('<li>%s:' % (k,))
           if isinstance(v, (dict, list, tuple)) and v:
-            F(v)
+            F(v, seen=seen)
           else:
             self.response.write(' ' + json.dumps(v))
+            if k.endswith('Hash'):
+              self.response.write(': ')
+              if v in seen:
+                self.response.write('[...]')
+              elif v not in user.defs:
+                self.response.write('[unknown]')
+              else:
+                F(user.defs[v], seen=seen + (v,))
           self.response.write('</li>')
         self.response.write('</ul>')
       else:
@@ -37,7 +45,7 @@ class UserPage(webapp2.RequestHandler):
         for v in d:
           self.response.write('<li>')
           if isinstance(v, (dict, list, tuple)) and v:
-            F(v)
+            F(v, seen=seen)
           else:
             self.response.write(json.dumps(v))
           self.response.write('</li>')
@@ -45,7 +53,7 @@ class UserPage(webapp2.RequestHandler):
 
     self.response.content_type = 'text/html'
     self.response.write(JINJA2.get_template('user.html').render({'user': user}))
-    F({'simplified': user, 'raw': user.raw_account})
+    F({'simplified': user, 'raw': user.raw_account, 'definitions': user.defs})
 
 
 class Warmup(webapp2.RequestHandler):
