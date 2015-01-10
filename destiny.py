@@ -31,6 +31,19 @@ class Definitions(dict):
       self.update(data)
 
   def update(self, data):
+    for code, d in data.get('activities', {}).iteritems():
+      self[long(code)] = {
+          'name': d['activityName'].strip(),
+          'desc': d['activityDescription'].strip(),
+          'type': d['activityTypeHash'],
+      }
+
+    for code, d in data.get('activityTypes', {}).iteritems():
+      self[long(code)] = {
+          'name': d['activityTypeName'].strip(),
+          'desc': d['activityTypeDescription'].strip(),
+      }
+
     for code, d in data.get('classes', {}).iteritems():
       self[long(code)] = {
           'name': d['className'].strip(),
@@ -129,6 +142,31 @@ class Character(dict):
     self['race'] = defs[data['characterBase']['raceHash']]['name']
     self['stats'] = {defs[v['statHash']]['name']: v['value']
                      for v in data['characterBase']['stats'].itervalues()}
+    self['activities'] = tuple(Activity(self, ent, defs=defs)
+                               for ent in self.raw_activities['activities'])
+
+  _raw_activities = None
+
+  @property
+  def raw_activities(self):
+    if self._raw_activities is None:
+      self._raw_activities = self.defs.Fetch(
+          '/Stats/ActivityHistory/%(account_type)i/%(account_id)i/%(character_id)i/'
+          '?lc=en&fmt=true&lcin=true&mode=0&count=5&page=0', **self)
+    return self._raw_activities
+
+
+class Activity(dict):
+  def __init__(self, character, data, defs=None):
+    if defs is None:
+      defs = Definitions()
+    self.defs = defs
+
+    self['name'] = defs[data['activityDetails']['referenceId']]['name']
+    self['type'] = defs[defs[data['activityDetails']['referenceId']]['type']]['name']
+    self['duration'] = long(data['values']['activityDurationSeconds']['basic']['value'])
+    self['completed'] = bool(data['values']['completed']['basic']['value'])
+    self['score'] = long(data['values']['score']['basic']['value'])
 
 
 if __name__ == '__main__':

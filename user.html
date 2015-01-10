@@ -15,7 +15,24 @@ table.usergrid td {
 <table class="usergrid">
 {% for characterid, character in user.characters.iteritems() %}
   <tr>
-    <td colspan="5"><h3><a href="https://www.bungie.net/en/Legend/{{user.account_type}}/{{user.account_id}}/{{characterid}}">{{character.race}} {{character.gender}} {{character.class}} ({{characterid}})</a></h3></td>
+    <td colspan="2"><h3><a href="https://www.bungie.net/en/Legend/{{user.account_type}}/{{user.account_id}}/{{characterid}}">{{character.race}} {{character.gender}} {{character.class}} ({{characterid}})</a></h3></td>
+  </tr><tr>
+    <td><table>
+      {% for activity in character.activities %}
+        <tr>
+          <td>
+            {% if activity.name.startswith(activity.type) %}
+              {{activity.name}}
+            {% else %}
+              {{activity.type}}: {{activity.name}}
+            {% endif %}
+          </td>
+          <td>{% if activity.score %}{{activity.score}} points{% endif %}</td>
+          <td>{{activity.duration}} seconds</td>
+          <td>{{activity.completed and 'completed' or 'abandoned'}}</td>
+        </tr>
+      {% endfor %}
+    </table></td>
   </tr><tr>
     <td><table>
       <tr><td>Level</td><td>{{character.level}} ({{(100 * character.level_progress).__int__()}}% to {{character.level + 1}})</td></tr>
