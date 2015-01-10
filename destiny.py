@@ -31,7 +31,12 @@ class Definitions(dict):
       self.update(data)
 
   def update(self, data):
-    pass
+    for code, d in data.get('items', {}).iteritems():
+      self[long(code)] = {
+          'name': d['itemName'].strip(),
+          'desc': d.get('itemDescription', '').strip(),
+          'icon': d['icon'].strip(),
+      }
 
   def Fetch(self, suffix, *args, **kwargs):
     ret = Fetch(suffix, *args, **kwargs)
@@ -65,6 +70,12 @@ class User(dict):
     self['grimoire_score'] = self.raw_account['grimoireScore']
     self['clan'] = (self.raw_account.get('clanName') and
                     '%s [%s]' % (self.raw_account['clanName'], self.raw_account['clanTag']) or '')
+
+    self['currency'] = {}
+    for item in self.raw_account['inventory']['currencies']:
+      currency = defs.get(item['itemHash'])
+      if currency:
+        self['currency'][currency['name'].lower().replace(' ', '_')] = item['value']
 
   _raw_account = None
 
