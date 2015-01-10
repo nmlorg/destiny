@@ -31,11 +31,26 @@ class Definitions(dict):
       self.update(data)
 
   def update(self, data):
+    for code, d in data.get('classes', {}).iteritems():
+      self[long(code)] = {
+          'name': d['className'].strip(),
+      }
+
+    for code, d in data.get('genders', {}).iteritems():
+      self[long(code)] = {
+          'name': d['genderName'].strip(),
+      }
+
     for code, d in data.get('items', {}).iteritems():
       self[long(code)] = {
           'name': d['itemName'].strip(),
           'desc': d.get('itemDescription', '').strip(),
           'icon': d['icon'].strip(),
+      }
+
+    for code, d in data.get('races', {}).iteritems():
+      self[long(code)] = {
+          'name': d['raceName'].strip(),
       }
 
   def __missing__(self, k):
@@ -104,6 +119,9 @@ class Character(dict):
     self['level'] = data['characterLevel']
     self['level_progress'] = (1.0 * data['levelProgression']['progressToNextLevel'] /
                               data['levelProgression']['nextLevelAt'])
+    self['class'] = defs[data['characterBase']['classHash']]['name']
+    self['gender'] = defs[data['characterBase']['genderHash']]['name']
+    self['race'] = defs[data['characterBase']['raceHash']]['name']
 
 
 if __name__ == '__main__':
