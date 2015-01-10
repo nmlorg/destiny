@@ -28,23 +28,28 @@ table.usergrid img {
 
 Glimmer: {{user.currency.glimmer}}<br>
 
-{% macro inventory(item) %}
-  <td title="{{item.desc|e}}">
-    <img src="https://www.bungie.net{{item.icon}}">
-    {{item.name}}
-    {% if item.perks %}
-      <div style="font-size: .7em">
-        <div>Perks:</div>
-        {% for perk in item.perks %}
-          <div title="{{perk.desc|e}}">&mdash; {{perk.name}}</div>
-        {% endfor %}
-      </div>
-    {% endif %}
-  </td>
-{% endmacro %}
-
 <table class="usergrid">
 {% for characterid, character in user.characters.iteritems() %}
+  {% macro inventory(name) %}
+    {% if character.inventory[name] %}
+      {% set item = character.inventory[name] %}
+      <td title="{{item.desc|e}}">
+        <img src="https://www.bungie.net{{item.icon}}">
+        {{item.name}}
+        {% if item.perks %}
+          <div style="font-size: .7em">
+            <div>Perks:</div>
+            {% for perk in item.perks %}
+              <div title="{{perk.desc|e}}">&mdash; {{perk.name}}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </td>
+    {% else %}
+      <td>(No {{name}} item.)</td>
+    {% endif %}
+  {% endmacro %}
+
   <tr>
     <td colspan="5"><h3 style="background: url(https://www.bungie.net{{character.emblem_banner}}) no-repeat 4em; height: 4em">
       <img src="https://www.bungie.net{{character.emblem_icon}}">
@@ -53,10 +58,10 @@ Glimmer: {{user.currency.glimmer}}<br>
       </a><br>
     </h3></td>
   </tr><tr>
-    {{inventory(character.inventory.subclass)}}
-    {{inventory(character.inventory.helmet)}}
-    {{inventory(character.inventory.class_armor)}}
-    {{inventory(character.inventory.ships)}}
+    {{inventory('subclass')}}
+    {{inventory('helmet')}}
+    {{inventory('class_armor')}}
+    {{inventory('ships')}}
     <td rowspan="4"><table>
       {% if character.current_activity %}
         <tr>
@@ -88,22 +93,18 @@ Glimmer: {{user.currency.glimmer}}<br>
       {% endfor %}
     </table></td>
   </tr><tr>
-    {{inventory(character.inventory.primary_weapons)}}
-    {{inventory(character.inventory.gauntlets)}}
-    {{inventory(character.inventory.ghost)}}
-    {{inventory(character.inventory.shaders)}}
+    {{inventory('primary_weapons')}}
+    {{inventory('gauntlets')}}
+    {{inventory('ghost')}}
+    {{inventory('shaders')}}
   </tr><tr>
-    {{inventory(character.inventory.special_weapons)}}
-    {{inventory(character.inventory.chest_armor)}}
-    {{inventory(character.inventory.vehicle)}}
-    {{inventory(character.inventory.emblems)}}
+    {{inventory('special_weapons')}}
+    {{inventory('chest_armor')}}
+    {{inventory('vehicle')}}
+    {{inventory('emblems')}}
   </tr><tr>
-    {% if character.inventory.heavy_weapons %}
-      {{inventory(character.inventory.heavy_weapons)}}
-    {% else %}
-      <td>(No heavy weapons.)</td>
-    {% endif %}
-    {{inventory(character.inventory.leg_armor)}}
+    {{inventory('heavy_weapons')}}
+    {{inventory('leg_armor')}}
     <td><table>
       <tr><td>Level</td><td>{{character.level}} ({{(100 * character.level_progress).__int__()}}% to {{character.level + 1}})</td></tr>
       <tr><td>Defense</td><td>{{character.stats.Defense}}</td></tr>
