@@ -7,8 +7,14 @@ threadsafe: true
 default_expiration: 0
 
 handlers:
-- url: /.*
-  script: main.app
+- url: /friends.*
+  script: friends.app
+
+- url: /user/.*
+  script: user.app
+
+- url: /_ah/warmup
+  script: user.app
 
 inbound_services:
 - warmup

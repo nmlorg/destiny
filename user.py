@@ -2,8 +2,8 @@
 
 import jinja2
 import json
-import os
 import webapp2
+
 import destiny
 
 

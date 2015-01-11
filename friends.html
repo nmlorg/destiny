@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<style>
+table.usergrid {
+  border: 0;
+}
+
+table.usergrid td {
+  height: 96px;
+  vertical-align: top;
+}
+
+table.usergrid img {
+  float: left;
+}
+</style>
+
+<table class="usergrid">
+{% for character in friends %}
+  <tr>
+    <td>
+      <div style="background: url(https://www.bungie.net{{character.emblem_banner}}) no-repeat; height: 96px; width: 474px; color: yellow">
+        <img src="https://www.bungie.net{{character.emblem_icon}}">
+        {% if character.account_type == 1 %}
+          <img src="https://www.bungie.net/img/theme/destiny/icons/icon_xbl.png" style="height: 1em">
+        {% elif character.account_type == 2 %}
+          <img src="https://www.bungie.net/img/theme/destiny/icons/icon_psn.png" style="height: 1em">
+        {% endif %}
+        <a href="https://www.bungie.net/en/Legend/{{character.account_type}}/{{character.account_id}}/{{character.character_id}}" style="color: white">{{character.name}}</a>
+        {% if character.clan %}of {{character.clan}}{% endif %}<br>
+        Level {{character.level}} {{character.race}} {{character.gender}} {{character.class}}<br>
+        Last online: <script>document.write(new Date({{character.last_online}} * 1000).toLocaleString());</script><br>
+      </div>
+    </td><td>
+      {% if character.current_activity %}
+        {% if character.current_activity.name.startswith(character.current_activity.type) %}
+          {{character.current_activity.name}}
+        {% else %}
+          {{character.current_activity.type}}: {{character.current_activity.name}}
+        {% endif %}
+      {% else %}
+        (Idle.)
+      {% endif %}
+    </td>
+  </tr>
+{% endfor %}
+</table>

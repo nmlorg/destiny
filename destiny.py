@@ -154,20 +154,23 @@ class Character(dict):
       defs = Definitions()
     self.defs = defs
 
+    self['name'] = user['name']
+    self['clan'] = user['clan']
     self['account_type'] = user['account_type']
     self['account_id'] = user['account_id']
     self['character_id'] = long(data['characterBase']['characterId'])
     self['level'] = data['characterLevel']
     self['level_progress'] = (1.0 * data['levelProgression']['progressToNextLevel'] /
                               data['levelProgression']['nextLevelAt'])
+    self['current_activity'] = None
     if defs.get(data['characterBase']['currentActivityHash']):
       current_activity = defs[data['characterBase']['currentActivityHash']]
       self['current_activity'] = {
           'name': current_activity['name'],
           'type': defs[current_activity['type']]['name'],
       }
-    self['last_online'] = datetime.datetime.strptime(
-        data['characterBase']['dateLastPlayed'], '%Y-%m-%dT%H:%M:%SZ').strftime('%s')
+    self['last_online'] = long(datetime.datetime.strptime(
+        data['characterBase']['dateLastPlayed'], '%Y-%m-%dT%H:%M:%SZ').strftime('%s'))
     self['class'] = defs[data['characterBase']['classHash']]['name']
     self['gender'] = defs[data['characterBase']['genderHash']]['name']
     self['race'] = defs[data['characterBase']['raceHash']]['name']
