@@ -5,6 +5,7 @@
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Orbitron:700">
 <link rel="stylesheet" href="/site.css">
+<script src="destiny.js"></script>
 
 <title>Destiny</title>
 
@@ -12,4 +13,12 @@
 
 <h1 style="white-space: nowrap">Desti<img alt="n" src="/favicon.ico" style="width: .75em">y</h1>
 
-Hi.
+<script>
+var user = new nmlorg.destiny.User('nmlorg');
+
+user.get(function() {
+  var banner = user.getActive().makeBanner('<img src="{{user.account_type_icon}}" style="height: 1em"> <a href="/user/{{name}}" style="color: white">{{name}}</a><br>Level {{level}} {{race}} {{gender}} {{class}}<br>');
+
+  document.body.appendChild(banner);
+});
+</script>

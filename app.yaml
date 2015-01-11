@@ -7,13 +7,16 @@ threadsafe: true
 default_expiration: 0
 
 handlers:
-- url: /(.*[.](css|ico))
+- url: /(.*[.](css|ico|js))
   static_files: \1
-  upload: .*[.](css|ico)
+  upload: .*[.](css|ico|js)
 
 - url: /
   static_files: index.html
   upload: index.html
+
+- url: /data/.*
+  script: data.app
 
 - url: /friends.*
   script: friends.app
