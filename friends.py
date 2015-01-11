@@ -2,6 +2,7 @@
 
 import collections
 import jinja2
+import time
 import webapp2
 
 import destiny
@@ -12,6 +13,7 @@ JINJA2 = jinja2.Environment(loader=jinja2.FileSystemLoader('.'))
 
 class FriendsPage(webapp2.RequestHandler):
   def get(self):
+    now = time.time()
     defs = destiny.Definitions()
 
     activities = collections.defaultdict(list)
@@ -21,8 +23,10 @@ class FriendsPage(webapp2.RequestHandler):
       user = destiny.User(username, defs=defs)
       character = sorted(user['characters'].itervalues(),
                          key=lambda character: character['last_online'])[-1]
-      if not character['current_activity']:
-        activity = 'In Orbit'
+      if now - character['last_online'] > 600:
+        activity = '~Offline'
+      elif not character['current_activity']:
+        activity = '~In Orbit'
       elif character['current_activity']['name'].startswith(character['current_activity']['type']):
         activity = character['current_activity']['name']
       else:
@@ -32,7 +36,10 @@ class FriendsPage(webapp2.RequestHandler):
       activities[activity].sort(key=lambda character: -character['last_online'])
 
     self.response.content_type = 'text/html'
-    self.response.write(JINJA2.get_template('friends.html').render({'activities': activities}))
+    self.response.write(JINJA2.get_template('friends.html').render({
+            'activities': activities,
+            'now': now,
+        }))
 
 
 app = webapp2.WSGIApplication([

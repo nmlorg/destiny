@@ -13,14 +13,26 @@ table.usergrid td {
 table.usergrid img {
   float: left;
 }
+
+table.usergrid div {
+  color: yellow;
+  float: left;
+  height: 96px;
+  width: 474px;
+}
 </style>
 
 <table class="usergrid">
 {% for activity, characters in activities|dictsort %}
   <tr>
     <td>{{activity}}</td>
+    <td>
     {% for character in characters %}
-      <td style="background: url(https://www.bungie.net{{character.emblem_banner}}) no-repeat; height: 96px; width: 474px; color: yellow">
+      {% if now - character.last_online > 600 %}
+      <div style="background: #222">
+      {% else %}
+      <div style="background: url(https://www.bungie.net{{character.emblem_banner}}) no-repeat">
+      {% endif %}
         <img src="https://www.bungie.net{{character.emblem_icon}}">
         {% if character.account_type == 1 %}
           <img src="https://www.bungie.net/img/theme/destiny/icons/icon_xbl.png" style="height: 1em">
@@ -30,9 +42,12 @@ table.usergrid img {
         <a href="https://www.bungie.net/en/Legend/{{character.account_type}}/{{character.account_id}}/{{character.character_id}}" style="color: white">{{character.name}}</a>
         {% if character.clan %}of {{character.clan}}{% endif %}<br>
         Level {{character.level}} {{character.race}} {{character.gender}} {{character.class}}<br>
-        Last online: <script>document.write(new Date({{character.last_online}} * 1000).toLocaleString());</script><br>
-      </td>
+        {% if now - character.last_online > 600 %}
+          <span style="color: red">Last online: <script>document.write(new Date({{character.last_online}} * 1000).toLocaleString());</script></span><br>
+        {% endif %}
+      </div>
     {% endfor %}
+    </td>
   </tr>
 {% endfor %}
 </table>
