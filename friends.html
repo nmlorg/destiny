@@ -39,7 +39,7 @@ table.usergrid div {
         {% elif character.account_type == 2 %}
           <img src="https://www.bungie.net/img/theme/destiny/icons/icon_psn.png" style="height: 1em">
         {% endif %}
-        <a href="https://www.bungie.net/en/Legend/{{character.account_type}}/{{character.account_id}}/{{character.character_id}}" style="color: white">{{character.name}}</a>
+        <a href="/user/{{character.name}}" style="color: white">{{character.name}}</a>
         {% if character.clan %}of {{character.clan}}{% endif %}<br>
         Level {{character.level}} {{character.race}} {{character.gender}} {{character.class}}<br>
         {% if now - character.last_online > 600 %}

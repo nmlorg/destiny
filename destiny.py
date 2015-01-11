@@ -160,8 +160,11 @@ class Character(dict):
     self['account_id'] = user['account_id']
     self['character_id'] = long(data['characterBase']['characterId'])
     self['level'] = data['characterLevel']
-    self['level_progress'] = (1.0 * data['levelProgression']['progressToNextLevel'] /
-                              data['levelProgression']['nextLevelAt'])
+    if data.get('levelProgression'):
+      self['level_progress'] = (1.0 * data['levelProgression']['progressToNextLevel'] /
+                                data['levelProgression']['nextLevelAt'])
+    else:
+      self['level_progress'] = 0
     self['current_activity'] = None
     if defs.get(data['characterBase']['currentActivityHash']):
       current_activity = defs[data['characterBase']['currentActivityHash']]
