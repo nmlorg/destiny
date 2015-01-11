@@ -7,6 +7,14 @@ threadsafe: true
 default_expiration: 0
 
 handlers:
+- url: /(.*[.](css|ico))
+  static_files: \1
+  upload: .*[.](css|ico)
+
+- url: /
+  static_files: index.html
+  upload: index.html
+
 - url: /friends.*
   script: friends.app
 
