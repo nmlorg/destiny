@@ -1,5 +1,6 @@
 # Copyright 2014 Daniel Reed <n@ml.org>
 
+import collections
 import jinja2
 import webapp2
 
@@ -13,18 +14,25 @@ class FriendsPage(webapp2.RequestHandler):
   def get(self):
     defs = destiny.Definitions()
 
+    activities = collections.defaultdict(list)
     # TODO(n): Accept a username as a parameter and get that user's friends, instead of requiring
     # the list to be passed in via a query parameter.
-    friends = []
     for username in self.request.get('friends').split(','):
       user = destiny.User(username, defs=defs)
-      friends.append(sorted(user['characters'].itervalues(),
-                            key=lambda character: character['last_online'])[-1])
-    friends.sort(
-        key=lambda character: character['current_activity'] and character['current_activity']['name'])
+      character = sorted(user['characters'].itervalues(),
+                         key=lambda character: character['last_online'])[-1]
+      if not character['current_activity']:
+        activity = 'In Orbit'
+      elif character['current_activity']['name'].startswith(character['current_activity']['type']):
+        activity = character['current_activity']['name']
+      else:
+        activity = '%s: %s' % (character['current_activity']['type'], character['current_activity']['name'])
+
+      activities[activity].append(character)
+      activities[activity].sort(key=lambda character: -character['last_online'])
 
     self.response.content_type = 'text/html'
-    self.response.write(JINJA2.get_template('friends.html').render({'friends': friends}))
+    self.response.write(JINJA2.get_template('friends.html').render({'activities': activities}))
 
 
 app = webapp2.WSGIApplication([

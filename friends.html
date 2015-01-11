@@ -16,10 +16,11 @@ table.usergrid img {
 </style>
 
 <table class="usergrid">
-{% for character in friends %}
+{% for activity, characters in activities|dictsort %}
   <tr>
-    <td>
-      <div style="background: url(https://www.bungie.net{{character.emblem_banner}}) no-repeat; height: 96px; width: 474px; color: yellow">
+    <td>{{activity}}</td>
+    {% for character in characters %}
+      <td style="background: url(https://www.bungie.net{{character.emblem_banner}}) no-repeat; height: 96px; width: 474px; color: yellow">
         <img src="https://www.bungie.net{{character.emblem_icon}}">
         {% if character.account_type == 1 %}
           <img src="https://www.bungie.net/img/theme/destiny/icons/icon_xbl.png" style="height: 1em">
@@ -30,18 +31,8 @@ table.usergrid img {
         {% if character.clan %}of {{character.clan}}{% endif %}<br>
         Level {{character.level}} {{character.race}} {{character.gender}} {{character.class}}<br>
         Last online: <script>document.write(new Date({{character.last_online}} * 1000).toLocaleString());</script><br>
-      </div>
-    </td><td>
-      {% if character.current_activity %}
-        {% if character.current_activity.name.startswith(character.current_activity.type) %}
-          {{character.current_activity.name}}
-        {% else %}
-          {{character.current_activity.type}}: {{character.current_activity.name}}
-        {% endif %}
-      {% else %}
-        (Idle.)
-      {% endif %}
-    </td>
+      </td>
+    {% endfor %}
   </tr>
 {% endfor %}
 </table>
