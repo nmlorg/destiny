@@ -33,18 +33,26 @@ function moveCharacter(character) {
   else
     activity = character['current_activity']['type'] + ': ' + character['current_activity']['name'];
 
-  if (userDivs[user.name]) {
-    var userDiv = userDivs[user.name];
+  if (userDivs[character.name.toLowerCase()]) {
+    var userDiv = userDivs[character.name.toLowerCase()];
     var oldPlaceDiv = userDiv.parentNode;
 
     oldPlaceDiv.removeChild(userDiv);
 
-    if ((oldPlaceDiv.dataset.activity != activity) && !oldPlaceDiv.children.length) {
-      delete placeDivs[oldplaceDiv.dataset.activity];
+    if ((oldPlaceDiv.dataset.activity != activity) &&
+        (oldPlaceDiv.getElementsByTagName('div').length == 0)) {
+      delete placeDivs[oldPlaceDiv.dataset.activity];
       oldPlaceDiv.parentNode.removeChild(oldPlaceDiv);
     }
   }
 
+  var userDiv = character.makeBanner('<img src="{{user.account_type_icon}}" style="height: 1em"> <a href="/user/{{name}}" style="color: white">{{name}}</a><br>{{level}} {{race}} {{gender}} {{class}}<br>');
+
+  userDivs[character.name.toLowerCase()] = userDiv;
+  addTo(userDiv, activity);
+}
+
+function addTo(userDiv, activity) {
   var placeDiv = placeDivs[activity];
 
   if (!placeDiv) {
@@ -62,13 +70,19 @@ function moveCharacter(character) {
       }
   }
 
-  placeDiv.appendChild(character.makeBanner('<img src="{{user.account_type_icon}}" style="height: 1em"> <a href="/user/{{name}}" style="color: white">{{name}}</a><br>{{level}} {{race}} {{gender}} {{class}}<br>'));
+  placeDiv.appendChild(userDiv);
 }
 
 var users = ['megakles1221', 'nmlorg', 'rybo3282', 'talut', 'westendshinobi', 'parzio1981'];
 
 for (var i = 0; i < users.length; i++) {
   var user = new nmlorg.destiny.User(users[i]);
+  var userDiv = document.createElement('div');
+
+  userDiv.className = 'banner';
+  userDiv.textContent = user.name;
+  userDivs[user.name.toLowerCase()] = userDiv;
+  addTo(userDiv, '~Loading');
 
   user.get(function(user) {
     moveCharacter(user.getActive());
