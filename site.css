@@ -4,7 +4,7 @@ html {
 
 body {
   text-align: justify;
-  max-width: 700px;
+  max-width: 711px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -17,10 +17,12 @@ h1 {
 div.banner {
   color: yellow;
   float: left;
-  height: 96px;
-  width: 474px;
+  height: 48px;
+  width: 237px;
 }
 
 div.banner img.emblem {
   float: left;
+  height: 48px;
+  width: 48px;
 }

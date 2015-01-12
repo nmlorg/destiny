@@ -7,18 +7,71 @@
 <link rel="stylesheet" href="/site.css">
 <script src="destiny.js"></script>
 
-<title>Destiny</title>
+<title>Destiny Dashboard</title>
 
 <body>
 
-<h1 style="white-space: nowrap">Desti<img alt="n" src="/favicon.ico" style="width: .75em">y</h1>
+<h1 style="white-space: nowrap">Desti<img alt="n" src="/favicon.ico" style="width: .75em">y Dashboard</h1>
+
+<div id="users"></div>
 
 <script>
-var user = new nmlorg.destiny.User('nmlorg');
+var placeDivContainer = document.getElementById('users');
+var placeDivs = {};
+var userDivs = {};
 
-user.get(function() {
-  var banner = user.getActive().makeBanner('<img src="{{user.account_type_icon}}" style="height: 1em"> <a href="/user/{{name}}" style="color: white">{{name}}</a><br>Level {{level}} {{race}} {{gender}} {{class}}<br>');
+function moveCharacter(character) {
+  var now = Date.now() / 1000;
+  var activity;
 
-  document.body.appendChild(banner);
-});
+  if (now - character['last_online'] > 600)
+    activity = '~Offline';
+  else if (!character['current_activity'])
+    activity = '~In Orbit';
+  else if (character['current_activity']['name'].match('^' + character['current_activity']['type']))
+    activity = character['current_activity']['name'];
+  else
+    activity = character['current_activity']['type'] + ': ' + character['current_activity']['name'];
+
+  if (userDivs[user.name]) {
+    var userDiv = userDivs[user.name];
+    var oldPlaceDiv = userDiv.parentNode;
+
+    oldPlaceDiv.removeChild(userDiv);
+
+    if ((oldPlaceDiv.dataset.activity != activity) && !oldPlaceDiv.children.length) {
+      delete placeDivs[oldplaceDiv.dataset.activity];
+      oldPlaceDiv.parentNode.removeChild(oldPlaceDiv);
+    }
+  }
+
+  var placeDiv = placeDivs[activity];
+
+  if (!placeDiv) {
+    placeDiv = placeDivs[activity] = document.createElement('div');
+    placeDiv.innerHTML = '<br clear="all"><h3>' + activity + '</h3>';
+    placeDiv.dataset.activity = activity;
+    placeDivs[activity] = placeDiv;
+    placeDivContainer.appendChild(placeDiv);
+
+    for (var i = 0; i < placeDivContainer.children.length; i++)
+      if (activity < placeDivContainer.children[i].dataset.activity) {
+        placeDivContainer.removeChild(placeDiv);
+        placeDivContainer.insertBefore(placeDiv, placeDivContainer.children[i]);
+        break;
+      }
+  }
+
+  placeDiv.appendChild(character.makeBanner('<img src="{{user.account_type_icon}}" style="height: 1em"> <a href="/user/{{name}}" style="color: white">{{name}}</a><br>{{level}} {{race}} {{gender}} {{class}}<br>'));
+}
+
+var users = ['megakles1221', 'nmlorg', 'rybo3282', 'talut', 'westendshinobi', 'parzio1981'];
+
+for (var i = 0; i < users.length; i++) {
+  var user = new nmlorg.destiny.User(users[i]);
+
+  user.get(function(user) {
+    moveCharacter(user.getActive());
+  }.bind(null, user));
+}
 </script>
