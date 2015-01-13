@@ -33,6 +33,8 @@ function moveCharacter(character) {
   else
     activity = character['current_activity']['type'] + ': ' + character['current_activity']['name'];
 
+  console.log('User', character.name, 'is in', activity);
+
   if (userDivs[character.name.toLowerCase()]) {
     var userDiv = userDivs[character.name.toLowerCase()];
     var oldPlaceDiv = userDiv.parentNode;
@@ -59,7 +61,6 @@ function addTo(userDiv, activity) {
     placeDiv = placeDivs[activity] = document.createElement('div');
     placeDiv.innerHTML = '<br clear="all"><h3>' + activity + '</h3>';
     placeDiv.dataset.activity = activity;
-    placeDivs[activity] = placeDiv;
     placeDivContainer.appendChild(placeDiv);
 
     for (var i = 0; i < placeDivContainer.children.length; i++)
@@ -73,7 +74,14 @@ function addTo(userDiv, activity) {
   placeDiv.appendChild(userDiv);
 }
 
-var users = ['megakles1221', 'nmlorg', 'rybo3282', 'talut', 'westendshinobi', 'parzio1981'];
+function onGetUser(user) {
+  moveCharacter(user.getActive());
+  setTimeout(function() {
+    user.get(onGetUser.bind(null, user));
+  }, 15 * 1000 + Math.random() * 30 * 1000);
+}
+
+var users = ['megakles1221', 'nmlorg', 'rybo3282', 'talut', 'mrsuperbloop', 'geekbeef'];
 
 for (var i = 0; i < users.length; i++) {
   var user = new nmlorg.destiny.User(users[i]);
@@ -84,8 +92,6 @@ for (var i = 0; i < users.length; i++) {
   userDivs[user.name.toLowerCase()] = userDiv;
   addTo(userDiv, '~Loading');
 
-  user.get(function(user) {
-    moveCharacter(user.getActive());
-  }.bind(null, user));
+  user.get(onGetUser.bind(null, user));
 }
 </script>
