@@ -17,6 +17,7 @@
 <script>
 var placeDivs = {};
 var userDivs = {};
+var userTimeouts = {};
 
 function moveCharacter(character) {
   var now = Date.now() / 1000;
@@ -48,9 +49,33 @@ function moveCharacter(character) {
 
   var userDiv = character.makeBanner('<img src="{{user.account_type_icon}}" style="height: 1em"> <a href="/user/{{name}}" style="color: white">{{name}}</a><br>{{level}} {{race}} {{gender}} {{class}}<br>');
 
+  userDiv.style.position = 'relative';
   userDiv.dataset.name = character.name.toLowerCase();
   userDivs[userDiv.dataset.name] = userDiv;
   addTo(userDiv, activity);
+
+  var closeDiv = document.createElement('div');
+
+  closeDiv.style.position = 'absolute';
+  closeDiv.style.right = '5px';
+  closeDiv.style.top = '0px';
+  closeDiv.style.color = 'white';
+  closeDiv.style.cursor = 'pointer';
+  userDiv.appendChild(closeDiv);
+  closeDiv.textContent = 'x';
+
+  closeDiv.onclick = function(e) {
+    var placeDiv = userDiv.parentNode;
+
+    clearTimeout(userTimeouts[userDiv.dataset.name]);
+    delete userTimeouts[userDiv.dataset.name];
+    placeDiv.removeChild(userDiv);
+
+    if (placeDiv.getElementsByTagName('div').length == 0) {
+      delete placeDivs[placeDiv.parentNode.dataset.activity];
+      placeDiv.parentNode.parentNode.removeChild(placeDiv.parentNode);
+    }
+  };
 }
 
 function insertSorted(parent, elt, fieldName) {
@@ -96,7 +121,7 @@ function addTo(userDiv, activity) {
 
 function onGetUser(user) {
   moveCharacter(user.getActive());
-  setTimeout(function() {
+  userTimeouts[user.name.toLowerCase()] = setTimeout(function() {
     user.get(onGetUser.bind(null, user));
   }, 15 * 1000 + Math.random() * 30 * 1000);
 }
