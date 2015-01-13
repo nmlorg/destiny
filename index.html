@@ -47,10 +47,11 @@ function moveCharacter(character) {
     }
   }
 
-  var userDiv = character.makeBanner('<img src="{{user.account_type_icon}}" style="height: 1em"> <a href="/user/{{name}}" style="color: white">{{name}}</a><br>{{level}} {{race}} {{gender}} {{class}}<br>');
+  var userDiv = character.makeBanner('<img src="{{user.account_type_icon}}" style="height: 1em"> <a href="/user/{{name}}" style="color: white">{{name}}</a><br>{{title}}<br>');
 
   userDiv.style.position = 'relative';
   userDiv.dataset.name = character.name.toLowerCase();
+  userDiv.dataset.last_online = 1 / character.last_online;
   userDivs[userDiv.dataset.name] = userDiv;
   addTo(userDiv, activity);
 
@@ -116,7 +117,10 @@ function addTo(userDiv, activity) {
     parentDiv.appendChild(br);
   }
 
-  insertSorted(placeDiv, userDiv, 'name');
+  if (activity == '~Offline')
+    insertSorted(placeDiv, userDiv, 'last_online');
+  else
+    insertSorted(placeDiv, userDiv, 'name');
 }
 
 function onGetUser(user) {

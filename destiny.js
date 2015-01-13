@@ -76,10 +76,13 @@ nmlorg.destiny.Character.prototype.makeBanner = function(html) {
   var div = document.createElement('div');
 
   div.className = 'banner';
-  if (Date.now() / 1000 - this.last_online > 600)
+  if (Date.now() / 1000 - this.last_online > 600) {
     div.style.backgroundImage = '';
-  else
+    this.title = 'Last: ' + new Date(this.last_online * 1000).toLocaleString();
+  } else {
     div.style.backgroundImage = 'url(https://www.bungie.net' + this.emblem_banner + ')';
+    this.title = this.level + ' ' + this.race + ' ' + this.gender + ' ' + this.class;
+  }
 
   var img = document.createElement('img');
 
