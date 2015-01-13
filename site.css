@@ -15,7 +15,9 @@ h1 {
 }
 
 div.banner {
-  background: #212121;
+  background-color: #212121;
+  background-repeat: no-repeat;
+  background-size: cover;
   color: yellow;
   float: left;
   height: 48px;
