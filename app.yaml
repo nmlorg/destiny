@@ -19,7 +19,8 @@ handlers:
   script: data.app
 
 - url: /friends.*
-  script: friends.app
+  static_files: index.html
+  upload: index.html
 
 - url: /user/.*
   script: user.app
