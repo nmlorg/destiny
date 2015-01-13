@@ -13,10 +13,7 @@
 
 <h1 style="white-space: nowrap">Desti<img alt="n" src="/favicon.ico" style="width: .75em">y Dashboard</h1>
 
-<div id="users"></div>
-
 <script>
-var placeDivContainer = document.getElementById('users');
 var placeDivs = {};
 var userDivs = {};
 
@@ -41,10 +38,10 @@ function moveCharacter(character) {
 
     oldPlaceDiv.removeChild(userDiv);
 
-    if ((oldPlaceDiv.dataset.activity != activity) &&
+    if ((oldPlaceDiv.parentNode.dataset.activity != activity) &&
         (oldPlaceDiv.getElementsByTagName('div').length == 0)) {
-      delete placeDivs[oldPlaceDiv.dataset.activity];
-      oldPlaceDiv.parentNode.removeChild(oldPlaceDiv);
+      delete placeDivs[oldPlaceDiv.parentNode.dataset.activity];
+      oldPlaceDiv.parentNode.parentNode.removeChild(oldPlaceDiv.parentNode);
     }
   }
 
@@ -66,14 +63,31 @@ function insertSorted(parent, elt, fieldName) {
     }
 }
 
+var placeDivContainer = document.createElement('div');
+
+document.body.appendChild(placeDivContainer);
+
 function addTo(userDiv, activity) {
   var placeDiv = placeDivs[activity];
 
   if (!placeDiv) {
+    var parentDiv = document.createElement('div');
+    var titleDiv = document.createElement('div');
+    var br = document.createElement('br');
+
+    parentDiv.className = 'panel panel-info';
+    parentDiv.dataset.activity = activity;
+    insertSorted(placeDivContainer, parentDiv, 'activity');
+
+    titleDiv.className = 'panel-heading';
+    titleDiv.textContent = activity.replace(/^~/, '');
+    parentDiv.appendChild(titleDiv);
+
     placeDiv = placeDivs[activity] = document.createElement('div');
-    placeDiv.innerHTML = '<br clear="all"><h3>' + activity + '</h3>';
-    placeDiv.dataset.activity = activity;
-    insertSorted(placeDivContainer, placeDiv, 'activity');
+    parentDiv.appendChild(placeDiv);
+
+    br.style.clear = 'both';
+    parentDiv.appendChild(br);
   }
 
   insertSorted(placeDiv, userDiv, 'name');
@@ -86,10 +100,13 @@ function onGetUser(user) {
   }, 15 * 1000 + Math.random() * 30 * 1000);
 }
 
-var users = ['megakles1221', 'nmlorg', 'rybo3282', 'talut', 'mrsuperbloop', 'geekbeef'];
+var addUserInput = document.createElement('input');
 
-for (var i = 0; i < users.length; i++) {
-  var user = new nmlorg.destiny.User(users[i]);
+document.body.appendChild(addUserInput);
+addUserInput.className = 'form-control';
+addUserInput.placeholder = 'Type a PSN id or XBL tag to begin watching them.';
+addUserInput.onchange = function(e) {
+  var user = new nmlorg.destiny.User(addUserInput.value);
   var userDiv = document.createElement('div');
 
   userDiv.className = 'banner';
@@ -99,5 +116,6 @@ for (var i = 0; i < users.length; i++) {
   addTo(userDiv, '~Loading');
 
   user.get(onGetUser.bind(null, user));
-}
+  addUserInput.value = '';
+};
 </script>
