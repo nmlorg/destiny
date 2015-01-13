@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Orbitron:700">
 <link rel="stylesheet" href="/site.css">
 <script src="destiny.js"></script>
+<script src="store.js"></script>
 
 <title>Destiny Dashboard</title>
 
@@ -100,13 +101,8 @@ function onGetUser(user) {
   }, 15 * 1000 + Math.random() * 30 * 1000);
 }
 
-var addUserInput = document.createElement('input');
-
-document.body.appendChild(addUserInput);
-addUserInput.className = 'form-control';
-addUserInput.placeholder = 'Type a PSN id or XBL tag to begin watching them.';
-addUserInput.onchange = function(e) {
-  var user = new nmlorg.destiny.User(addUserInput.value);
+function addUser(userName) {
+  var user = new nmlorg.destiny.User(userName);
   var userDiv = document.createElement('div');
 
   userDiv.className = 'banner';
@@ -116,6 +112,23 @@ addUserInput.onchange = function(e) {
   addTo(userDiv, '~Loading');
 
   user.get(onGetUser.bind(null, user));
+};
+
+var store = new nmlorg.store.Store('nmlorg.destiny');
+
+store.add('users', []);
+
+for (var i = 0; i < store.users.length; i++)
+  addUser(store.users[i]);
+
+var addUserInput = document.createElement('input');
+
+document.body.appendChild(addUserInput);
+addUserInput.className = 'form-control';
+addUserInput.placeholder = 'Type a PSN id or XBL tag to begin watching them.';
+addUserInput.onchange = function(e) {
+  addUser(addUserInput.value);
+  store.users = store.users.concat(addUserInput.value.toLowerCase()).sort();
   addUserInput.value = '';
 };
 </script>
