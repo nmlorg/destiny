@@ -50,8 +50,20 @@ function moveCharacter(character) {
 
   var userDiv = character.makeBanner('<img src="{{user.account_type_icon}}" style="height: 1em"> <a href="/user/{{name}}" style="color: white">{{name}}</a><br>{{level}} {{race}} {{gender}} {{class}}<br>');
 
-  userDivs[character.name.toLowerCase()] = userDiv;
+  userDiv.dataset.name = character.name.toLowerCase();
+  userDivs[userDiv.dataset.name] = userDiv;
   addTo(userDiv, activity);
+}
+
+function insertSorted(parent, elt, fieldName) {
+  parent.appendChild(elt);
+
+  for (var i = 0; i < parent.children.length; i++)
+    if (elt.dataset[fieldName] < parent.children[i].dataset[fieldName]) {
+      parent.removeChild(elt);
+      parent.insertBefore(elt, parent.children[i]);
+      break;
+    }
 }
 
 function addTo(userDiv, activity) {
@@ -61,17 +73,10 @@ function addTo(userDiv, activity) {
     placeDiv = placeDivs[activity] = document.createElement('div');
     placeDiv.innerHTML = '<br clear="all"><h3>' + activity + '</h3>';
     placeDiv.dataset.activity = activity;
-    placeDivContainer.appendChild(placeDiv);
-
-    for (var i = 0; i < placeDivContainer.children.length; i++)
-      if (activity < placeDivContainer.children[i].dataset.activity) {
-        placeDivContainer.removeChild(placeDiv);
-        placeDivContainer.insertBefore(placeDiv, placeDivContainer.children[i]);
-        break;
-      }
+    insertSorted(placeDivContainer, placeDiv, 'activity');
   }
 
-  placeDiv.appendChild(userDiv);
+  insertSorted(placeDiv, userDiv, 'name');
 }
 
 function onGetUser(user) {
@@ -89,7 +94,8 @@ for (var i = 0; i < users.length; i++) {
 
   userDiv.className = 'banner';
   userDiv.textContent = user.name;
-  userDivs[user.name.toLowerCase()] = userDiv;
+  userDiv.dataset.name = user.name.toLowerCase();
+  userDivs[userDiv.dataset.name] = userDiv;
   addTo(userDiv, '~Loading');
 
   user.get(onGetUser.bind(null, user));
