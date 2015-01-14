@@ -3,6 +3,7 @@
 # Copyright 2014 Daniel Reed <n@ml.org>
 
 import datetime
+import logging
 
 import fetch
 
@@ -113,8 +114,9 @@ class User(dict):
     if accounttype is None or accountid is None:
       if not accounttype:
         accounttype = 'All'
+      logging.info('Looking up %s/%s.', accounttype, username)
       data = Fetch('/SearchDestinyPlayer/%s/%s/', accounttype, username)
-      assert data and len(data) == 1, data
+      assert data
       username = data[0]['displayName']
       accounttype = long(data[0]['membershipType'])
       accountid = long(data[0]['membershipId'])
