@@ -29,3 +29,16 @@ div.banner img.emblem {
   height: 48px;
   width: 48px;
 }
+
+div.banner span.glyphicon-remove {
+  color: white;
+  cursor: pointer;
+  display: none;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+}
+
+div.banner:hover span.glyphicon-remove {
+  display: inherit;
+}

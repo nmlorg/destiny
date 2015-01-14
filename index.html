@@ -55,15 +55,10 @@ function moveCharacter(character) {
   userDivs[userDiv.dataset.name] = userDiv;
   addTo(userDiv, activity);
 
-  var closeDiv = document.createElement('div');
+  var closeDiv = document.createElement('span');
 
-  closeDiv.style.position = 'absolute';
-  closeDiv.style.right = '5px';
-  closeDiv.style.top = '0px';
-  closeDiv.style.color = 'white';
-  closeDiv.style.cursor = 'pointer';
+  closeDiv.className = 'glyphicon glyphicon-remove';
   userDiv.appendChild(closeDiv);
-  closeDiv.textContent = 'x';
 
   closeDiv.onclick = function(e) {
     var placeDiv = userDiv.parentNode;
