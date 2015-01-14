@@ -76,6 +76,11 @@ function moveCharacter(character) {
       delete placeDivs[placeDiv.parentNode.dataset.activity];
       placeDiv.parentNode.parentNode.removeChild(placeDiv.parentNode);
     }
+
+    var i = store.users.indexOf(userDiv.dataset.name);
+
+    store.users.splice(i, 1);
+    store.users = store.users;
   };
 }
 
