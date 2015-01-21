@@ -21,6 +21,8 @@ div.banner {
   color: yellow;
   float: left;
   height: 48px;
+  overflow: hidden;
+  white-space: nowrap;
   width: 237px;
 }
 
