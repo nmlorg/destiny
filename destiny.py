@@ -129,8 +129,9 @@ class User(dict):
     self['account_id'] = accountid
 
     self['grimoire_score'] = self.raw_account['grimoireScore']
-    self['clan'] = (self.raw_account.get('clanName') and
-                    '%s [%s]' % (self.raw_account['clanName'], self.raw_account['clanTag']) or '')
+    self['clan'] = (
+        self.raw_account.get('clanName') and
+        '%s [%s]' % (self.raw_account['clanName'], self.raw_account.get('clanTag', '')) or '')
 
     self['currency'] = {}
     for item in self.raw_account['inventory']['currencies']:
