@@ -78,6 +78,12 @@ class Definitions(dict):
           'desc': d['displayDescription'].strip(),
       }
 
+    for code, d in data.get('progressions', {}).iteritems():
+      self[long(code)] = {
+          'name': d['name'].strip().replace('.', '_'),
+          'icon': d.get('icon', '').strip(),
+      }
+
     for code, d in data.get('races', {}).iteritems():
       self[long(code)] = {
           'name': d['raceName'].strip(),
@@ -184,12 +190,14 @@ class Character(dict):
     self['emblem_icon'] = data['emblemPath']
     self['inventory'] = {
         defs[defs[item['itemHash']]['type']]['name'].lower().replace(' ', '_'):
-            Item(self, item['itemHash'], defs=defs)
+            Item(item['itemHash'], defs=defs)
         for item in data['characterBase']['peerView']['equipment']}
     self['stats'] = {defs[v['statHash']]['name']: v['value']
                      for v in data['characterBase']['stats'].itervalues()}
-    self['activities'] = tuple(Activity(self, ent, defs=defs)
+    self['activities'] = tuple(Activity(ent, defs=defs)
                                for ent in self.raw_activities['activities'])
+    self['progress'] = {defs[ent['progressionHash']]['name']: Progression(ent, defs=defs)
+                        for ent in self.raw_progress['progressions']}
 
   _raw_activities = None
 
@@ -206,13 +214,23 @@ class Character(dict):
   @property
   def raw_inventory(self):
     if self._raw_inventory is None:
-      self._raw_inventory = defs.Fetch(
+      self._raw_inventory = self.defs.Fetch(
           '/%(account_type)i/Account/%(account_id)i/Character/%(character_id)i/Inventory/', **self)
     return self._raw_inventory
 
+  _raw_progress = None
+
+  @property
+  def raw_progress(self):
+    if self._raw_progress is None:
+      self._raw_progress = self.defs.Fetch(
+          '/%(account_type)i/Account/%(account_id)i/Character/%(character_id)i/Progression/',
+          **self)
+    return self._raw_progress
+
 
 class Activity(dict):
-  def __init__(self, character, data, defs=None):
+  def __init__(self, data, defs=None):
     if defs is None:
       defs = Definitions()
     self.defs = defs
@@ -225,13 +243,26 @@ class Activity(dict):
 
 
 class Item(dict):
-  def __init__(self, character, itemhash, defs=None):
+  def __init__(self, itemhash, defs=None):
     if defs is None:
       defs = Definitions()
     self.defs = defs
 
     super(Item, self).__init__(defs[itemhash])
     self['perks'] = tuple(defs[perkhash] for perkhash in self['perks'])
+
+
+class Progression(dict):
+  def __init__(self, data, defs=None):
+    if defs is None:
+      defs = Definitions()
+    self.defs = defs
+
+    self['level'] = data['level']
+    self['current'] = data['progressToNextLevel']
+    self['next'] = data['nextLevelAt']
+    self['daily'] = data['dailyProgress']
+    self['weekly'] = data['weeklyProgress']
 
 
 if __name__ == '__main__':

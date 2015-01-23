@@ -29,7 +29,7 @@ table.usergrid img {
 Glimmer: {{user.currency.glimmer}}<br>
 
 <table class="usergrid">
-{% for characterid, character in user.characters.iteritems() %}
+{% for characterid, character in user.characters|dictsort %}
   {% macro inventory(name) %}
     {% if character.inventory[name] %}
       {% set item = character.inventory[name] %}
@@ -88,6 +88,17 @@ Glimmer: {{user.currency.glimmer}}<br>
           <td>{% if activity.score %}{{activity.score}} points{% endif %}</td>
           <td>{{activity.duration}} seconds</td>
           <td>{{activity.completed and 'completed' or 'abandoned'}}</td>
+        </tr>
+      {% endfor %}
+    </table></td>
+    <td rowspan="4"><table>
+      {% for name, progress in character.progress|dictsort %}
+        <tr>
+          <td>{{name}}</td>
+          <td>{{progress.level}}</td>
+          <td>{{progress.current}}/{{progress.next}} to {{progress.level + 1}}</td>
+          <td>{{progress.daily}} today</td>
+          <td>{{progress.weekly}} this week</td>
         </tr>
       {% endfor %}
     </table></td>
