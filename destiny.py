@@ -44,7 +44,7 @@ class Definitions(dict):
     for code, d in data.get('activityTypes', {}).iteritems():
       self[long(code)] = {
           'name': d['activityTypeName'].strip(),
-          'desc': d['activityTypeDescription'].strip(),
+          'desc': d.get('activityTypeDescription', '').strip(),
       }
 
     for code, d in data.get('buckets', {}).iteritems():
