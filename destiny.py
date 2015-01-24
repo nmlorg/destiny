@@ -5,27 +5,7 @@
 import datetime
 import logging
 
-import fetch
-
-
-_BASE = 'https://www.bungie.net/Platform/Destiny'
-
-
-def Fetch(suffix, *args, **kwargs):
-  if args:
-    suffix %= args
-  elif kwargs:
-    suffix %= kwargs
-
-  url = _BASE + suffix
-  if '?' in url:
-    url += '&'
-  else:
-    url += '?'
-  url += 'definitions=true'
-  data = fetch.Fetch(url)
-  if data.get('ErrorStatus') == 'Success':
-    return data['Response']
+import bungie
 
 
 class Definitions(dict):
@@ -105,7 +85,7 @@ class Definitions(dict):
     return {'name': '#%i' % k}
 
   def Fetch(self, suffix, *args, **kwargs):
-    ret = Fetch(suffix, *args, **kwargs)
+    ret = bungie.Fetch(suffix, *args, **kwargs)
     if ret:
       self.update(ret['definitions'])
       return ret['data']
@@ -121,7 +101,7 @@ class User(dict):
       if not accounttype:
         accounttype = 'All'
       logging.info('Looking up %s/%s.', accounttype, username)
-      data = Fetch('/SearchDestinyPlayer/%s/%s/', accounttype, username)
+      data = bungie.Fetch('/SearchDestinyPlayer/%s/%s/', accounttype, username)
       assert data
       username = data[0]['displayName']
       accounttype = long(data[0]['membershipType'])
