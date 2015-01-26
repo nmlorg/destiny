@@ -24,15 +24,20 @@ def Fetch(url, data=None, tries=50):
       logging.error('Fetching %s (retry %i/%i).', url, i, tries - 1)
 
     try:
-      content = urllib2.urlopen(url, data=data, timeout=backoff).read()
+      conn = urllib2.urlopen(url, data=data, timeout=backoff)
+      content = conn.read()
     except:
       logging.error('Exception while fetching %s.', url)
-      pass
-    else:
+      continue
+
+    content_type = conn.headers.get('content-type', 'text/plain').split(';')[0]
+    if content_type == 'application/json':
       try:
         return json.loads(content)
       except:
         logging.error('Exception while decoding %s: %r', url, content)
-        pass
+        continue
+
+    return content
 
   logging.error('Failed to fetch %s (in %.3f s).', url, time.time() - start)

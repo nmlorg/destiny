@@ -2,7 +2,7 @@
 #
 # Copyright 2014 Daniel Reed <n@ml.org>
 
-import fetch
+from base.util import fetch
 
 
 _BASE = 'https://www.bungie.net/Platform/Destiny'
