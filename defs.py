@@ -6,7 +6,6 @@ import cStringIO as StringIO
 import json
 import sqlite3
 import tempfile
-import urllib2
 import zipfile
 from base.bungie import platform
 
@@ -14,7 +13,7 @@ from base.bungie import platform
 class Manifest(dict):
   def __init__(self):
     self.bungie = platform.Bungie()
-    manifest = self.bungie.Fetch('/Manifest')
+    manifest = self.bungie.Fetch('destiny/manifest/')
     self['version'] = manifest['version']
 
     sqldata = self.FetchData(manifest['mobileWorldContentPaths']['en'])
@@ -35,7 +34,7 @@ class Manifest(dict):
           for k, v in sqldata.execute('select key, json from Destiny%sDefinition' % (table,))}
 
   def FetchContent(self, url):
-    return urllib2.urlopen('https://www.bungie.net' + url).read()
+    return self.bungie.Fetch(url)
 
   def FetchFile(self, url):
     return StringIO.StringIO(self.FetchContent(url))

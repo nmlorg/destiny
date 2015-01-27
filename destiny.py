@@ -101,7 +101,7 @@ class User(dict):
       if not accounttype:
         accounttype = 'All'
       logging.info('Looking up %s/%s.', accounttype, username)
-      data = self.defs.bungie.Fetch('/SearchDestinyPlayer/%s/%s/', accounttype, username)
+      data = self.defs.bungie.Fetch('destiny/SearchDestinyPlayer/%s/%s/', accounttype, username)
       assert data
       username = data[0]['displayName']
       accounttype = long(data[0]['membershipType'])
@@ -133,7 +133,7 @@ class User(dict):
   @property
   def raw_account(self):
     if self._raw_account is None:
-      self._raw_account = self.defs.Fetch('/%(account_type)i/Account/%(account_id)i/', **self)
+      self._raw_account = self.defs.Fetch('destiny/%(account_type)i/Account/%(account_id)i/', **self)
     return self._raw_account
 
 
@@ -185,7 +185,7 @@ class Character(dict):
   def raw_activities(self):
     if self._raw_activities is None:
       self._raw_activities = self.defs.Fetch(
-          '/Stats/ActivityHistory/%(account_type)i/%(account_id)i/%(character_id)i/'
+          'destiny/Stats/ActivityHistory/%(account_type)i/%(account_id)i/%(character_id)i/'
           '?lc=en&fmt=true&lcin=true&mode=0&count=15&page=0', **self)
     return self._raw_activities
 
@@ -195,7 +195,8 @@ class Character(dict):
   def raw_inventory(self):
     if self._raw_inventory is None:
       self._raw_inventory = self.defs.Fetch(
-          '/%(account_type)i/Account/%(account_id)i/Character/%(character_id)i/Inventory/', **self)
+          'destiny/%(account_type)i/Account/%(account_id)i/Character/%(character_id)i/Inventory/',
+          **self)
     return self._raw_inventory
 
   _raw_progress = None
@@ -204,7 +205,7 @@ class Character(dict):
   def raw_progress(self):
     if self._raw_progress is None:
       self._raw_progress = self.defs.Fetch(
-          '/%(account_type)i/Account/%(account_id)i/Character/%(character_id)i/Progression/',
+          'destiny/%(account_type)i/Account/%(account_id)i/Character/%(character_id)i/Progression/',
           **self)
     return self._raw_progress
 
