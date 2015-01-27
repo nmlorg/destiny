@@ -8,13 +8,12 @@ import sqlite3
 import tempfile
 import urllib2
 import zipfile
-
-import bungie
+from base.bungie import platform
 
 
 class Manifest(dict):
   def __init__(self):
-    manifest = bungie.Fetch('/Manifest')
+    manifest = platform.Fetch('/Manifest')
     self['version'] = manifest['version']
 
     sqldata = self.FetchData(manifest['mobileWorldContentPaths']['en'])

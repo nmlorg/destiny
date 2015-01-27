@@ -4,8 +4,7 @@
 
 import datetime
 import logging
-
-import bungie
+from base.bungie import platform
 
 
 class Definitions(dict):
@@ -85,7 +84,7 @@ class Definitions(dict):
     return {'name': '#%i' % k}
 
   def Fetch(self, suffix, *args, **kwargs):
-    ret = bungie.Fetch(suffix, *args, **kwargs)
+    ret = platform.Fetch(suffix, *args, **kwargs)
     if ret:
       self.update(ret['definitions'])
       return ret['data']
@@ -101,7 +100,7 @@ class User(dict):
       if not accounttype:
         accounttype = 'All'
       logging.info('Looking up %s/%s.', accounttype, username)
-      data = bungie.Fetch('/SearchDestinyPlayer/%s/%s/', accounttype, username)
+      data = platform.Fetch('/SearchDestinyPlayer/%s/%s/', accounttype, username)
       assert data
       username = data[0]['displayName']
       accounttype = long(data[0]['membershipType'])
