@@ -6,6 +6,10 @@ import urlparse
 from base.util import fetch
 
 
+def _FetchWrap(path):
+  return lambda self: self.Fetch(path)
+
+
 class Bungie(object):
   base = 'https://www.bungie.net/platform/'
 
@@ -29,3 +33,13 @@ class Bungie(object):
         return data['Response']
     else:
       return data
+
+  for i in ('GetAvailableLocales', 'GlobalAlert', 'HelloWorld', 'Settings'):
+    locals()[i] = _FetchWrap(i + '/')
+
+
+if __name__ == '__main__':
+  bungie = Bungie()
+
+  assert bungie.HelloWorld() == 'Hello World'
+  assert bungie.GetAvailableLocales()['English'] == 'en'
