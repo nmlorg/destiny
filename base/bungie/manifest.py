@@ -14,6 +14,15 @@ import zipfile
 from base.bungie import platform
 
 
+def ListsToTuple(obj):
+  if isinstance(obj, list):
+    return tuple(ListsToTuple(x) for x in obj)
+  elif isinstance(obj, dict):
+    return {k: ListsToTuple(v) for k, v in obj.iteritems()}
+  else:
+    return obj
+
+
 class Manifest(dict):
   def __init__(self, bungie=None):
     self.bungie = bungie or platform.Bungie()
@@ -51,11 +60,11 @@ class Manifest(dict):
       for rowid, rowjson in sqldata.execute('select id, json from Destiny%sDefinition' % (table,)):
         if rowid < 0:
           rowid += 2 ** 32
-        ret[table][rowid] = json.loads(rowjson)
+        ret[table][rowid] = ListsToTuple(json.loads(rowjson))
 
     for table in ('HistoricalStats',):
       ret[table] = {
-          k: json.loads(v)
+          k: ListsToTuple(json.loads(v))
           for k, v in sqldata.execute('select key, json from Destiny%sDefinition' % (table,))}
 
     return ret
