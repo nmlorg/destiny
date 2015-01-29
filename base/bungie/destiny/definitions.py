@@ -2,7 +2,7 @@
 #
 # Copyright 2014 Daniel Reed <n@ml.org>
 
-from base.bungie import manifest
+from base.bungie.destiny import manifest
 
 
 class Definitions(dict):

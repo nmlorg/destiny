@@ -4,8 +4,8 @@
 
 import datetime
 import logging
-from base.bungie import definitions
 from base.bungie import platform
+from base.bungie.destiny import definitions
 
 
 class User(dict):
