@@ -13,7 +13,7 @@ from base.bungie import platform
 class Manifest(dict):
   def __init__(self):
     self.bungie = platform.Bungie()
-    manifest = self.bungie.Fetch('destiny/manifest/')
+    manifest = self.bungie.DestinyManifest()
     self['version'] = manifest['version']
 
     sqldata = self.FetchData(manifest['mobileWorldContentPaths']['en'])

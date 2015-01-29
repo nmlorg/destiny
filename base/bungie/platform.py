@@ -2,12 +2,13 @@
 #
 # Copyright 2014 Daniel Reed <n@ml.org>
 
+import re
 import urlparse
 from base.util import fetch
 
 
 def _FetchWrap(path):
-  return lambda self: self.Fetch(path)
+  return lambda self, **kwargs: self.Fetch(path, **kwargs)
 
 
 class Bungie(object):
@@ -34,8 +35,16 @@ class Bungie(object):
     else:
       return data
 
-  for i in ('GetAvailableLocales', 'GlobalAlert', 'HelloWorld', 'Settings'):
-    locals()[i] = _FetchWrap(i + '/')
+  for url in (
+      'Destiny/%(accounttype)i/Account/%(accountid)i/',
+      'Destiny/Manifest/',
+      'GetAvailableLocales/',
+      'GlobalAlert/',
+      'HelloWorld/',
+      'Settings/',
+  ):
+    methodname = re.sub('/%[(][^)]*[)][a-z]/', '/', url).replace('/', '')
+    locals()[methodname] = _FetchWrap(url)
 
 
 if __name__ == '__main__':
@@ -43,3 +52,5 @@ if __name__ == '__main__':
 
   assert bungie.HelloWorld() == 'Hello World'
   assert bungie.GetAvailableLocales()['English'] == 'en'
+  assert bungie.DestinyAccount(
+      accounttype=2, accountid=4611686018436064455)['data']['characters'][0]['baseCharacterLevel'] == 20
