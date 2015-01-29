@@ -8,7 +8,10 @@ import gzip
 import json
 import logging
 import os
-import sqlite3
+try:
+  import sqlite3
+except ImportError:
+  sqlite3 = None
 import tempfile
 import zipfile
 from base.bungie import platform
@@ -35,7 +38,7 @@ class Manifest(dict):
       self['definitions'] = {'__url__': None}
 
     definition_url = self['mobileWorldContentPaths']['en']
-    if self['definitions']['__url__'] != definition_url:
+    if sqlite3 and self['definitions']['__url__'] != definition_url:
       logging.warning('Definition file %r is based on %r; fetching %r.', definition_path,
                       self['definitions']['__url__'], definition_url)
       self['definitions'] = self.FetchDefinitions(definition_url)

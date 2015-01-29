@@ -53,7 +53,7 @@ class UserPage(webapp2.RequestHandler):
 
     self.response.content_type = 'text/html'
     self.response.write(JINJA2.get_template('user.html').render({'user': user}))
-    F({'simplified': user, 'raw': user.raw_account, 'definitions': user.defs})
+    F({'simplified': user, 'raw': user.raw_account})
 
 
 class Warmup(webapp2.RequestHandler):

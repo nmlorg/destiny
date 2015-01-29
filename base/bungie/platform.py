@@ -21,13 +21,6 @@ class Bungie(object):
       suffix %= kwargs
 
     url = urlparse.urljoin(self.base, suffix)
-
-    if '?' in url:
-      url += '&'
-    else:
-      url += '?'
-    url += 'definitions=true'
-
     data = fetch.Fetch(url)
     if isinstance(data, dict):
       if data.get('ErrorStatus') == 'Success':
