@@ -6,62 +6,40 @@ import datetime
 import logging
 from base.bungie import platform
 from base.bungie.destiny import definitions
+from base.bungie.destiny import user
 
 
 class User(dict):
   def __init__(self, username, accounttype=None, accountid=None, bungie=None, defs=None):
-    self.bungie = bungie or platform.Bungie()
-    self.defs = defs or definitions.Definitions(bungie=bungie)
+    if bungie is None:
+      bungie = platform.Bungie()
+    if defs is None:
+      defs = definitions.Definitions(bungie=bungie)
+    account = user.User(username, accounttype, accountid, bungie=bungie)
 
-    if accounttype is None or accountid is None:
-      if not accounttype:
-        accounttype = 'All'
-      logging.info('Looking up %s/%s.', accounttype, username)
-      data = self.bungie.Fetch('destiny/SearchDestinyPlayer/%s/%s/', accounttype, username)
-      assert data
-      username = data[0]['displayName']
-      accounttype = long(data[0]['membershipType'])
-      accountid = long(data[0]['membershipId'])
-
-    assert isinstance(accounttype, (int, long)), accounttype
-    assert isinstance(accountid, (int, long)), accountid
-
-    self['name'] = username
-    self['account_type'] = accounttype
-    self['account_id'] = accountid
-
-    self['grimoire_score'] = self.raw_account['grimoireScore']
-    self['clan'] = (
-        self.raw_account.get('clanName') and
-        '%s [%s]' % (self.raw_account['clanName'], self.raw_account.get('clanTag', '')) or '')
+    self['name'] = account.name
+    self['account_type'] = account.account_type
+    self['account_id'] = account.account_id
+    self['grimoire_score'] = account['grimoireScore']
+    self['clan'] = (account.get('clanName') and
+                    '%s [%s]' % (account['clanName'], account.get('clanTag', '')) or '')
 
     self['currency'] = {}
-    for item in self.raw_account['inventory']['currencies']:
-      currency = self.defs[item['itemHash']]
+    for item in account['inventory']['currencies']:
+      currency = defs[item['itemHash']]
       self['currency'][currency['name'].lower().replace(' ', '_')] = item['value']
 
-    self['characters'] = {
-        long(data['characterBase']['characterId']): Character(self, data, self.bungie, self.defs)
-        for data in self.raw_account['characters']}
-
-  _raw_account = None
-
-  @property
-  def raw_account(self):
-    if self._raw_account is None:
-      self._raw_account = self.bungie.Fetch('destiny/%(account_type)i/Account/%(account_id)i/', **self)['data']
-    return self._raw_account
+    self['characters'] = {character_id: Character(self, character, defs)
+                          for character_id, character in account.characters.iteritems()}
 
 
 class Character(dict):
-  def __init__(self, user, data, bungie, defs):
-    self.bungie = bungie
-
+  def __init__(self, user, data, defs):
     self['name'] = user['name']
     self['clan'] = user['clan']
     self['account_type'] = user['account_type']
     self['account_id'] = user['account_id']
-    self['character_id'] = long(data['characterBase']['characterId'])
+    self['character_id'] = data.character_id
     self['level'] = data['characterLevel']
     if data.get('levelProgression'):
       self['level_progress'] = (1.0 * data['levelProgression']['progressToNextLevel'] /
@@ -88,40 +66,9 @@ class Character(dict):
         for item in data['characterBase']['peerView']['equipment']}
     self['stats'] = {defs[v['statHash']]['name']: v['value']
                      for v in data['characterBase']['stats'].itervalues()}
-    self['activities'] = tuple(Activity(ent, defs)
-                               for ent in self.raw_activities['activities'])
+    self['activities'] = tuple(Activity(ent, defs) for ent in data.activities)
     self['progress'] = {defs[ent['progressionHash']]['name']: Progression(ent)
-                        for ent in self.raw_progress['progressions']}
-
-  _raw_activities = None
-
-  @property
-  def raw_activities(self):
-    if self._raw_activities is None:
-      self._raw_activities = self.bungie.Fetch(
-          'destiny/Stats/ActivityHistory/%(account_type)i/%(account_id)i/%(character_id)i/'
-          '?lc=en&fmt=true&lcin=true&mode=0&count=15&page=0', **self)['data']
-    return self._raw_activities
-
-  _raw_inventory = None
-
-  @property
-  def raw_inventory(self):
-    if self._raw_inventory is None:
-      self._raw_inventory = self.bungie.Fetch(
-          'destiny/%(account_type)i/Account/%(account_id)i/Character/%(character_id)i/Inventory/',
-          **self)['data']
-    return self._raw_inventory
-
-  _raw_progress = None
-
-  @property
-  def raw_progress(self):
-    if self._raw_progress is None:
-      self._raw_progress = self.bungie.Fetch(
-          'destiny/%(account_type)i/Account/%(account_id)i/Character/%(character_id)i/Progression/',
-          **self)['data']
-    return self._raw_progress
+                        for ent in data.progress}
 
 
 class Activity(dict):
