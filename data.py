@@ -2,29 +2,13 @@
 
 import json
 import webapp2
-from google.appengine.ext import ndb
-import destiny
 
-
-class DestinyUser(ndb.Model):
-  account = ndb.StringProperty()
-  name = ndb.StringProperty()
-  accounttype = ndb.IntegerProperty()
-  accountid = ndb.IntegerProperty()
+import db
 
 
 class GetUser(webapp2.RequestHandler):
   def get(self, username):
-    destiny_user = DestinyUser.query(DestinyUser.account == username.lower()).get()
-
-    if destiny_user:
-      user = destiny.User(destiny_user.name, accounttype=destiny_user.accounttype,
-                          accountid=destiny_user.accountid)
-    else:
-      user = destiny.User(username)
-      DestinyUser(account=username.lower(), name=user['name'], accounttype=user['account_type'], 
-                  accountid=user['account_id']).put()
-
+    user = db.DestinyUser.GetUser(username)
     self.response.content_type = 'application/json'
     json.dump(user, self.response)
 

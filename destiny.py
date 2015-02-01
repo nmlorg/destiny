@@ -15,7 +15,7 @@ class User(dict):
       bungie = platform.Bungie()
     if defs is None:
       defs = definitions.Definitions(bungie=bungie)
-    account = user.User(username, accounttype, accountid, bungie=bungie)
+    self.raw_account = account = user.User(username, accounttype, accountid, bungie=bungie)
 
     self['name'] = account.name
     self['account_type'] = account.account_type
