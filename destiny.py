@@ -21,8 +21,9 @@ class User(dict):
     self['account_type'] = account.account_type
     self['account_id'] = account.account_id
     self['grimoire_score'] = account['grimoireScore']
-    self['clan'] = (account.get('clanName') and
-                    '%s [%s]' % (account['clanName'], account.get('clanTag', '')) or '')
+    self['clan'] = account.get('clanName', '').strip()
+    if account.get('clanTag'):
+      self['clan'] = ('%s [%s]' % (self['clan'], account['clanTag'])).strip()
 
     self['currency'] = {}
     for item in account['inventory']['currencies']:
