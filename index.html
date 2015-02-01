@@ -148,7 +148,7 @@ function addUser(userName) {
 
 var store = new nmlorg.store.Store('nmlorg.destiny');
 
-store.add('users', []);
+store.add('users', ['nmlorg']);
 
 for (var i = 0; i < store.users.length; i++)
   addUser(store.users[i]);
