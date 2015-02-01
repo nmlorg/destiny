@@ -3,8 +3,7 @@
 import jinja2
 import json
 import webapp2
-from base.bungie import platform
-from base.bungie.destiny import definitions
+
 import db
 
 
@@ -14,9 +13,7 @@ I = 0
 
 class UserPage(webapp2.RequestHandler):
   def get(self, username):
-    bungie = platform.Bungie()
-    defs = definitions.Definitions(bungie=bungie)
-    user = db.DestinyUser.GetUser(username, bungie=bungie, defs=defs)
+    user = db.DestinyUser.GetUser(username)
 
     def F(d, seen=()):
       global I
@@ -37,10 +34,10 @@ class UserPage(webapp2.RequestHandler):
               self.response.write(': ')
               if v in seen:
                 self.response.write('[...]')
-              elif v not in defs:
+              elif v not in db.DEFS:
                 self.response.write('[unknown]')
               else:
-                F(defs[v], seen=seen + (v,))
+                F(db.DEFS[v], seen=seen + (v,))
           self.response.write('</li>')
         self.response.write('</ul>')
       else:
