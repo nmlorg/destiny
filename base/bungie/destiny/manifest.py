@@ -8,6 +8,7 @@ import gzip
 import json
 import logging
 import os
+import pickletools
 try:
   import sqlite3
 except ImportError:
@@ -45,11 +46,13 @@ class Manifest(dict):
       self['definitions']['__url__'] = definition_url
       logging.warning('Saving %r to %r.', definition_url, definition_path + '.tmp')
       try:
-        pickle.dump(self['definitions'], gzip.open(definition_path + '.tmp', 'wb'), -1)
-        logging.warning('Done.')
+        with gzip.open(definition_path + '.tmp', 'wb') as f:
+          f.write(pickletools.optimize(pickle.dumps(self['definitions'], -1)))
         os.rename(definition_path + '.tmp', definition_path)
       except:
         logging.exception('Unable to update %r:', definition_path)
+      else:
+        logging.warning('Done.')
 
   def FetchDefinitions(self, url):
     sqldata = self.FetchData(url)
