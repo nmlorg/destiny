@@ -9,7 +9,7 @@ import urllib
 import urllib2
 
 
-def Fetch(url, data=None, tries=50):
+def Fetch(url, data=None, headers={}, tries=50):
   start = time.time()
 
   if isinstance(data, dict):
@@ -24,10 +24,11 @@ def Fetch(url, data=None, tries=50):
       logging.error('Fetching %s (retry %i/%i).', url, i, tries - 1)
 
     try:
-      conn = urllib2.urlopen(url, data=data, timeout=backoff)
+      req = urllib2.Request(url, data=data, headers=headers)
+      conn = urllib2.urlopen(req, timeout=backoff)
       content = conn.read()
     except:
-      logging.error('Exception while fetching %s.', url)
+      logging.exception('Exception while fetching %s:', url)
       continue
 
     content_type = conn.headers.get('content-type', 'text/plain').split(';')[0]
@@ -35,7 +36,7 @@ def Fetch(url, data=None, tries=50):
       try:
         return json.loads(content)
       except:
-        logging.error('Exception while decoding %s: %r', url, content)
+        logging.exception('Exception while decoding %s: %r', url, content)
         continue
 
     return content

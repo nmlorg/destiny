@@ -2,9 +2,19 @@
 #
 # Copyright 2014 Daniel Reed <n@ml.org>
 
+import logging
+import os
 import re
 import urlparse
 from base.util import fetch
+
+
+try:
+  API_KEY = open('bungie.key').read().strip()
+except:
+  logging.exception('Unable to read API Key from "bungie.key" (see '
+                    'https://www.bungie.net/en/Clan/39966):')
+  API_KEY = ''
 
 
 def _FetchWrap(path):
@@ -21,7 +31,7 @@ class Bungie(object):
       suffix %= kwargs
 
     url = urlparse.urljoin(self.base, suffix)
-    data = fetch.Fetch(url)
+    data = fetch.Fetch(url, headers={'X-API-Key': API_KEY})
     if isinstance(data, dict):
       if data.get('ErrorStatus') == 'Success':
         return data['Response']
