@@ -8,18 +8,17 @@ import destiny
 
 
 class DestinyPGCR(ndb.Model):
-  activityid = ndb.IntegerProperty()
   report = ndb.JsonProperty()
 
 
 class CachingBungie(platform.Bungie):
   def DestinyStatsPostGameCarnageReport(self, activityid):
-    pgcr = DestinyPGCR.query(DestinyPGCR.activityid == activityid).get()
+    pgcr = DestinyPGCR.get_by_id(activityid)
     if pgcr:
       return pgcr.report
     report = super(CachingBungie, self).DestinyStatsPostGameCarnageReport(activityid=activityid)
     logging.info('Caching activity %r.', activityid)
-    DestinyPGCR(activityid=activityid, report=report).put()
+    DestinyPGCR(key=ndb.Key(DestinyPGCR, activityid), report=report).put()
     return report
 
 
@@ -35,14 +34,14 @@ class DestinyUser(ndb.Model):
 
   @classmethod
   def GetUser(cls, username):
-    destiny_user = cls.query(cls.account == username.lower()).get()
+    destiny_user = cls.get_by_id(username.lower())
 
     if destiny_user:
       user = destiny.User(destiny_user.name, accounttype=destiny_user.accounttype,
                           accountid=destiny_user.accountid, bungie=BUNGIE, defs=DEFS)
     else:
       user = destiny.User(username, bungie=BUNGIE, defs=DEFS)
-      cls(account=username.lower(), name=user['name'], accounttype=user['account_type'], 
+      cls(key=ndb.Key(cls, username.lower()), name=user['name'], accounttype=user['account_type'],
           accountid=user['account_id']).put()
 
     return user
