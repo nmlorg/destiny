@@ -34,6 +34,10 @@ class User(dict):
                           for character_id, character in account.characters.iteritems()}
 
 
+def ISO8601(s):
+  return long(datetime.datetime.strptime(s, '%Y-%m-%dT%H:%M:%SZ').strftime('%s'))
+
+
 class Character(dict):
   def __init__(self, user, data, defs):
     self['name'] = user['name']
@@ -54,8 +58,7 @@ class Character(dict):
           'name': current_activity['name'],
           'type': defs[current_activity['type']]['name'],
       }
-    self['last_online'] = long(datetime.datetime.strptime(
-        data['characterBase']['dateLastPlayed'], '%Y-%m-%dT%H:%M:%SZ').strftime('%s'))
+    self['last_online'] = ISO8601(data['characterBase']['dateLastPlayed'])
     self['class'] = defs[data['characterBase']['classHash']]['name']
     self['gender'] = defs[data['characterBase']['genderHash']]['name']
     self['race'] = defs[data['characterBase']['raceHash']]['name']
@@ -76,6 +79,8 @@ class Activity(dict):
   def __init__(self, data, defs):
     self['name'] = defs[data['activityDetails']['referenceId']]['name']
     self['type'] = defs[defs[data['activityDetails']['referenceId']]['type']]['name']
+    self['activity_id'] = long(data['activityDetails']['instanceId'])
+    self['start'] = ISO8601(data['period'])
     self['duration'] = long(data['values']['activityDurationSeconds']['basic']['value'])
     self['completed'] = bool(data['values']['completed']['basic']['value'])
     self['score'] = long(data['values']['score']['basic']['value'])

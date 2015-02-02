@@ -70,6 +70,12 @@ Glimmer: {{user.currency.glimmer}}<br>
     {{inventory('class_armor')}}
     {{inventory('ships')}}
     <td rowspan="4"><table>
+      <tr>
+        <th>Activity</th>
+        <th>Score</th>
+        <th>Seconds</th>
+        <th>Instance</th>
+      </tr>
       {% if character.current_activity %}
         <tr>
           <td>
@@ -81,7 +87,7 @@ Glimmer: {{user.currency.glimmer}}<br>
           </td>
           <td></td>
           <td></td>
-          <td>active</td>
+          <td></td>
         </tr>
       {% endif %}
       {% for activity in character.activities %}
@@ -93,20 +99,27 @@ Glimmer: {{user.currency.glimmer}}<br>
               {{activity.type}}: {{activity.name}}
             {% endif %}
           </td>
-          <td>{% if activity.score %}{{activity.score}} points{% endif %}</td>
-          <td>{{activity.duration}} seconds</td>
-          <td>{{activity.completed and 'completed' or 'abandoned'}}</td>
+          <td>{% if activity.score %}{{activity.score}}{% endif %}</td>
+          <td>{{activity.duration}}</td>
+          <td><a href="https://www.bungie.net/Platform/Destiny/Stats/PostGameCarnageReport/{{activity.activity_id}}/"><code>{{activity.activity_id}}</code></a></td>
         </tr>
       {% endfor %}
     </table></td>
     <td rowspan="4"><table>
+      <tr>
+        <th>Progression</th>
+        <th>Level</th>
+        <th>Progress</th>
+        <th>Today</th>
+        <th>This week</th>
+      </tr>
       {% for name, progress in character.progress|dictsort %}
         <tr>
           <td>{{name}}</td>
           <td>{{progress.level}}</td>
-          <td>{{progress.current}}/{{progress.next}} to {{progress.level + 1}}</td>
-          <td>{{progress.daily}} today</td>
-          <td>{{progress.weekly}} this week</td>
+          <td>{{progress.current}}/{{progress.next}}</td>
+          <td>{% if progress.daily > 0 %}+{{progress.daily}}{% elif progress.weekly < 0 %}{{progress.daily}}{% endif %}</td>
+          <td>{% if progress.weekly > 0 %}+{{progress.weekly}}{% elif progress.weekly < 0 %}{{progress.weekly}}{% endif %}</td>
         </tr>
       {% endfor %}
     </table></td>

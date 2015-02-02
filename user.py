@@ -53,7 +53,14 @@ class UserPage(webapp2.RequestHandler):
 
     self.response.content_type = 'text/html'
     self.response.write(JINJA2.get_template('user.html').render({'user': user}))
-    F({'simplified': user, 'raw': user.raw_account})
+
+    user['_raw'] = user.raw_account
+    for character_id, character in user.raw_account.characters.iteritems():
+      user['characters'][character_id]['_raw'] = character
+      user['characters'][character_id]['activities_raw'] = character.activities
+      user['characters'][character_id]['inventory']['_raw'] = character.inventory
+      user['characters'][character_id]['progress']['_raw'] = character.progress
+    F(user)
 
 
 class Warmup(webapp2.RequestHandler):

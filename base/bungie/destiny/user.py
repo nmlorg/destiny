@@ -59,7 +59,7 @@ class Character(dict):
   def activities(self):
     if self._activities is None:
       self._activities = self.bungie.Fetch(
-          'destiny/Stats/ActivityHistory/%i/%i/%i/?lc=en&fmt=true&lcin=true&mode=0&count=15&page=0',
+          'destiny/Stats/ActivityHistory/%i/%i/%i/?mode=0&count=15',
           self.user.account_type, self.user.account_id, self.character_id)['data']['activities']
     return self._activities
 
