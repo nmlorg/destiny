@@ -69,52 +69,33 @@ Glimmer: {{user.currency.glimmer}}<br>
     {{inventory('helmet')}}
     {{inventory('class_armor')}}
     {{inventory('ships')}}
-    <td rowspan="4"><table>
+    <td rowspan="4"><table class="activities">
       <tr>
         <th>Activity</th>
-        <th>Score</th>
-        <th>Seconds</th>
-        <th>Instance</th>
+        <th colspan="2">When</th>
       </tr>
-      {% if character.current_activity %}
-        <tr>
-          <td>
-            {% if character.current_activity.name.startswith(character.current_activity.type) %}
-              {{character.current_activity.name}}
-            {% else %}
-              {{character.current_activity.type}}: {{character.current_activity.name}}
-            {% endif %}
-          </td>
-          <td></td>
-          <td></td>
-          <td></td>
-        </tr>
-      {% endif %}
       {% for activity in character.activities %}
         <tr>
-          <td>
+          <td><a href="https://www.bungie.net/Platform/Destiny/Stats/PostGameCarnageReport/{{activity.activity_id}}/">
             {% if activity.name.startswith(activity.type) %}
               {{activity.name}}
             {% else %}
               {{activity.type}}: {{activity.name}}
             {% endif %}
-          </td>
-          <td>{% if activity.score %}{{activity.score}}{% endif %}</td>
-          <td>{{activity.duration}}</td>
-          <td><a href="https://www.bungie.net/Platform/Destiny/Stats/PostGameCarnageReport/{{activity.activity_id}}/"><code>{{activity.activity_id}}</code></a></td>
+          </a></td>
+          <td colspan="2"><script>document.write(new Date({{activity.start}} * 1000).toLocaleString());</script> +{{activity.duration}}</td>
         </tr>
-        {% if activity.players|length > 6 %}
-          <tr>
-            <td colspan="4" style="font-size: .75em">&mdash; {{activity.players[:5]|join(' &bull; ')}} &hellip; {{activity.players[-1]}}</td>
-          </tr>
-        {% elif activity.players|length > 1 %}
-          <tr>
-            <td colspan="4" style="font-size: .75em">&mdash; {{activity.players|join(' &bull; ')}}</td>
-          </tr>
-        {% endif %}
+        <tr>
+          {% if activity.players|length > 6 %}
+            <td colspan="2" style="font-size: .75em">&mdash; {{activity.players[:5]|join(' &bull; ')}} &hellip; {{activity.players[-1]}}</td>
+          {% else %}
+            <td colspan="2" style="font-size: .75em">&mdash; {{activity.players|join(' &bull; ')}}</td>
+          {% endif %}
+          <td style="text-align: right">{% if activity.score %}{{activity.score}} points{% endif %}</td>
+        </tr>
       {% endfor %}
     </table></td>
-    <td rowspan="4"><table>
+    <td rowspan="4"><table class="progressions">
       <tr>
         <th>Progression</th>
         <th>Level</th>

@@ -43,3 +43,7 @@ div.banner span.glyphicon-remove {
 div.banner:hover span.glyphicon-remove {
   display: inherit;
 }
+
+table.activities tr:nth-child(odd) {
+  border-bottom: 1px solid black;
+}
