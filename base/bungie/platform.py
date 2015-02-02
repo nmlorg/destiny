@@ -40,13 +40,18 @@ class Bungie(object):
 
   for url in (
       'Destiny/%(accounttype)i/Account/%(accountid)i/',
+      'Destiny/%(accounttype)i/Account/%(accountid)i/Character/%(characterid)i/Inventory/',
+      'Destiny/%(accounttype)i/Account/%(accountid)i/Character/%(characterid)i/Progression/',
       'Destiny/Manifest/',
+      'Destiny/SearchDestinyPlayer/%(accounttype)s/%(name)s/',
+      'Destiny/Stats/ActivityHistory/%(accounttype)i/%(accountid)i/%(characterid)i/?mode=0&count=%(count)i',
+      'Destiny/Stats/PostGameCarnageReport/%(activityid)i/',
       'GetAvailableLocales/',
       'GlobalAlert/',
       'HelloWorld/',
       'Settings/',
   ):
-    methodname = re.sub('/%[(][^)]*[)][a-z]/', '/', url).replace('/', '')
+    methodname = re.sub('%[(][^)]*[)][a-z]/', '', url.split('?', 1)[0]).replace('/', '')
     locals()[methodname] = _FetchWrap(url)
 
 

@@ -13,7 +13,7 @@ def Search(username, accounttype=None, bungie=None):
     bungie = platform.Bungie()
 
   ret = tuple((ent['displayName'], long(ent['membershipType']), long(ent['membershipId']))
-              for ent in bungie.Fetch('destiny/SearchDestinyPlayer/%s/%s/', accounttype, username))
+              for ent in bungie.DestinySearchDestinyPlayer(accounttype=accounttype, name=username))
   logging.info('User %s/%s has %i accounts: %r', accounttype, username, len(ret), ret)
   return ret
 
@@ -33,7 +33,7 @@ class User(dict):
     self.account_id = accountid
 
     super(User, self).__init__(
-        self.bungie.Fetch('destiny/%i/Account/%i/', self.account_type, self.account_id)['data'])
+        self.bungie.DestinyAccount(accounttype=self.account_type, accountid=self.account_id)['data'])
 
   _characters = None
 
@@ -59,10 +59,9 @@ class Character(dict):
   def activities(self):
     if self._activities is None:
       self._activities = tuple(
-          Activity(data, self.bungie) for data in self.bungie.Fetch(
-              'destiny/Stats/ActivityHistory/%i/%i/%i/?mode=0&count=15',
-              self.user.account_type, self.user.account_id,
-              self.character_id)['data']['activities'])
+          Activity(data, self.bungie) for data in self.bungie.DestinyStatsActivityHistory(
+              accounttype=self.user.account_type, accountid=self.user.account_id,
+              characterid=self.character_id, count=15)['data']['activities'])
     return self._activities
 
   _inventory = None
@@ -70,9 +69,9 @@ class Character(dict):
   @property
   def inventory(self):
     if self._inventory is None:
-      self._inventory = self.bungie.Fetch(
-          'destiny/%i/Account/%i/Character/%i/Inventory/',
-          self.user.account_type, self.user.account_id, self.character_id)['data']['buckets']['Equippable']
+      self._inventory = self.bungie.DestinyAccountCharacterInventory(
+          accounttype=self.user.account_type, accountid=self.user.account_id,
+          characterid=self.character_id)['data']['buckets']['Equippable']
     return self._inventory
 
   _progress = None
@@ -80,9 +79,9 @@ class Character(dict):
   @property
   def progress(self):
     if self._progress is None:
-      self._progress = self.bungie.Fetch(
-          'destiny/%i/Account/%i/Character/%i/Progression/',
-          self.user.account_type, self.user.account_id, self.character_id)['data']['progressions']
+      self._progress = self.bungie.DestinyAccountCharacterProgression(
+          accounttype=self.user.account_type, accountid=self.user.account_id,
+          characterid=self.character_id)['data']['progressions']
     return self._progress
 
 
@@ -97,8 +96,8 @@ class Activity(dict):
   @property
   def players(self):
     if self._players is None:
-      self._players = tuple(self.bungie.Fetch(
-          'destiny/Stats/PostGameCarnageReport/%i/', self.activity_id)['data']['entries'])
+      self._players = tuple(self.bungie.DestinyStatsPostGameCarnageReport(
+          activityid=self.activity_id)['data']['entries'])
     return self._players
 
 
