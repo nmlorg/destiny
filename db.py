@@ -27,7 +27,6 @@ DEFS = definitions.Definitions(bungie=BUNGIE)
 
 
 class DestinyUser(ndb.Model):
-  account = ndb.StringProperty()
   name = ndb.StringProperty()
   accounttype = ndb.IntegerProperty()
   accountid = ndb.IntegerProperty()
