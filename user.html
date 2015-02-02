@@ -127,7 +127,7 @@ Glimmer: {{user.currency.glimmer}}<br>
           <td>{{name}}</td>
           <td>{{progress.level}}</td>
           <td>{{progress.current}}/{{progress.next}}</td>
-          <td>{% if progress.daily > 0 %}+{{progress.daily}}{% elif progress.weekly < 0 %}{{progress.daily}}{% endif %}</td>
+          <td>{% if progress.daily > 0 %}+{{progress.daily}}{% elif progress.daily < 0 %}{{progress.daily}}{% endif %}</td>
           <td>{% if progress.weekly > 0 %}+{{progress.weekly}}{% elif progress.weekly < 0 %}{{progress.weekly}}{% endif %}</td>
         </tr>
       {% endfor %}
