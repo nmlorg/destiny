@@ -1,12 +1,29 @@
 # Copyright 2014 Daniel Reed <n@ml.org>
 
+import logging
 from google.appengine.ext import ndb
 from base.bungie import platform
 from base.bungie.destiny import definitions
 import destiny
 
 
-BUNGIE = platform.Bungie()
+class DestinyPGCR(ndb.Model):
+  activityid = ndb.IntegerProperty()
+  report = ndb.JsonProperty()
+
+
+class CachingBungie(platform.Bungie):
+  def DestinyStatsPostGameCarnageReport(self, activityid):
+    pgcr = DestinyPGCR.query(DestinyPGCR.activityid == activityid).get()
+    if pgcr:
+      return pgcr.report
+    report = super(CachingBungie, self).DestinyStatsPostGameCarnageReport(activityid=activityid)
+    logging.info('Caching activity %r.', activityid)
+    DestinyPGCR(activityid=activityid, report=report).put()
+    return report
+
+
+BUNGIE = CachingBungie()
 DEFS = definitions.Definitions(bungie=BUNGIE)
 
 
