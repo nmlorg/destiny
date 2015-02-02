@@ -79,11 +79,14 @@ class Activity(dict):
   def __init__(self, data, defs):
     self['name'] = defs[data['activityDetails']['referenceId']]['name']
     self['type'] = defs[defs[data['activityDetails']['referenceId']]['type']]['name']
-    self['activity_id'] = long(data['activityDetails']['instanceId'])
+    self['activity_id'] = data.activity_id
     self['start'] = ISO8601(data['period'])
     self['duration'] = long(data['values']['activityDurationSeconds']['basic']['value'])
     self['completed'] = bool(data['values']['completed']['basic']['value'])
     self['score'] = long(data['values']['score']['basic']['value'])
+    self['players'] = tuple(sorted(set(player['player']['destinyUserInfo']['displayName']
+                                       for player in data.players),
+                                   key=lambda ent: ent.lower()))
 
 
 class Item(dict):

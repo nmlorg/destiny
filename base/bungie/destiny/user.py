@@ -58,9 +58,11 @@ class Character(dict):
   @property
   def activities(self):
     if self._activities is None:
-      self._activities = self.bungie.Fetch(
-          'destiny/Stats/ActivityHistory/%i/%i/%i/?mode=0&count=15',
-          self.user.account_type, self.user.account_id, self.character_id)['data']['activities']
+      self._activities = tuple(
+          Activity(data, self.bungie) for data in self.bungie.Fetch(
+              'destiny/Stats/ActivityHistory/%i/%i/%i/?mode=0&count=15',
+              self.user.account_type, self.user.account_id,
+              self.character_id)['data']['activities'])
     return self._activities
 
   _inventory = None
@@ -82,6 +84,22 @@ class Character(dict):
           'destiny/%i/Account/%i/Character/%i/Progression/',
           self.user.account_type, self.user.account_id, self.character_id)['data']['progressions']
     return self._progress
+
+
+class Activity(dict):
+  def __init__(self, data, bungie):
+    self.bungie = bungie
+    self.activity_id = long(data['activityDetails']['instanceId'])
+    super(Activity, self).__init__(data)
+
+  _players = None
+
+  @property
+  def players(self):
+    if self._players is None:
+      self._players = tuple(self.bungie.Fetch(
+          'destiny/Stats/PostGameCarnageReport/%i/', self.activity_id)['data']['entries'])
+    return self._players
 
 
 if __name__ == '__main__':
