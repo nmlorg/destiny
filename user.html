@@ -24,6 +24,34 @@ table.usergrid img {
 }
 </style>
 
+<script>
+function shortDate(ts) {
+  var now = new Date();
+  var then = new Date(ts * 1000);
+
+  if ((now - then) > 60 * 60 * 24 * 1000)
+    return then.toLocaleDateString();
+  return then.toLocaleTimeString();
+}
+
+function shortDuration(ts) {
+  var s = [];
+
+  if (ts >= 60 * 60) {
+    s.push(Math.floor(ts / 60 / 60) + 'h');
+    ts %= 60 * 60;
+  }
+  if (ts >= 60) {
+    s.push(Math.floor(ts / 60) + 'm');
+    ts %= 60;
+  }
+  if (ts > 0) {
+    s.push(ts + 's');
+  }
+  return s.join(' ');
+}
+</script>
+
 <h2>
   {% if user.account_type == 1 %}
     <img src="https://www.bungie.net/img/theme/destiny/icons/icon_xbl.png" style="height: 1em">
@@ -62,7 +90,7 @@ Glimmer: {{user.currency.glimmer}}<br>
     <td colspan="5"><h3 style="background: url(https://www.bungie.net{{character.emblem_banner}}) no-repeat 4em; height: 4em">
       <img src="https://www.bungie.net{{character.emblem_icon}}">
       <a href="https://www.bungie.net/en/Legend/{{user.account_type}}/{{user.account_id}}/{{characterid}}" style="color: white">Level {{character.level}} {{character.race}} {{character.gender}} {{character.class}}</a><br>
-      <span style="color: yellow">Last online: <script>document.write(new Date({{character.last_online}} * 1000).toLocaleString());</script></span><br>
+      <span style="color: yellow">Last online: <script>document.write(shortDate({{character.last_online}}));</script></span><br>
     </h3></td>
   </tr><tr>
     {{inventory('subclass')}}
@@ -83,14 +111,18 @@ Glimmer: {{user.currency.glimmer}}<br>
               {{activity.type}}: {{activity.name}}
             {% endif %}
           </a></td>
-          <td colspan="2"><script>document.write(new Date({{activity.start}} * 1000).toLocaleString());</script> +{{activity.duration}}</td>
+          <td colspan="2"><script>document.write(shortDate({{activity.start}}) + ' +' + shortDuration({{activity.duration}}));</script></td>
         </tr>
         <tr>
-          {% if activity.players|length > 6 %}
-            <td colspan="2" style="font-size: .75em">&mdash; {{activity.players[:5]|join(' &bull; ')}} &hellip; {{activity.players[-1]}}</td>
-          {% else %}
-            <td colspan="2" style="font-size: .75em">&mdash; {{activity.players|join(' &bull; ')}}</td>
-          {% endif %}
+          <td colspan="2" style="font-size: .75em">
+            &mdash;
+            {% for player in activity.players[:6] %}
+              <a href="/user/{{player}}">{{player}}</a>
+            {% endfor %}
+            {% if activity.players|length > 6 %}
+              &hellip;
+            {% endif %}
+          </td>
           <td style="text-align: right">{% if activity.score %}{{activity.score}} points{% endif %}</td>
         </tr>
       {% endfor %}

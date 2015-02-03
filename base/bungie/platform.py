@@ -13,7 +13,7 @@ try:
   API_KEY = open('bungie.key').read().strip()
 except:
   logging.exception('Unable to read API Key from "bungie.key" (see '
-                    'https://www.bungie.net/en/Clan/39966):')
+                    'https://www.bungie.net/en/Clan/Post/39966/85087279/0/0):')
   API_KEY = ''
 
 
