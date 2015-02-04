@@ -9,6 +9,7 @@ import destiny
 
 class DestinyPGCR(ndb.Model):
   report = ndb.JsonProperty()
+  players = ndb.StringProperty(repeated=True)
 
 
 class CachingBungie(platform.Bungie):
@@ -17,8 +18,11 @@ class CachingBungie(platform.Bungie):
     if pgcr:
       return pgcr.report
     report = super(CachingBungie, self).DestinyStatsPostGameCarnageReport(activityid=activityid)
+    players = sorted(set(player['player']['destinyUserInfo']['displayName']
+                         for player in report['data']['entries']),
+                     key=lambda ent: ent.lower())
     logging.info('Caching activity %r.', activityid)
-    DestinyPGCR(key=ndb.Key(DestinyPGCR, activityid), report=report).put()
+    DestinyPGCR(key=ndb.Key(DestinyPGCR, activityid), report=report, players=players).put()
     return report
 
 
