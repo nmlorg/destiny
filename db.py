@@ -1,5 +1,6 @@
 # Copyright 2014 Daniel Reed <n@ml.org>
 
+import datetime
 import logging
 from google.appengine.ext import ndb
 from base.bungie import platform
@@ -10,6 +11,12 @@ import destiny
 class DestinyPGCR(ndb.Model):
   report = ndb.JsonProperty()
   players = ndb.StringProperty(repeated=True)
+  start = ndb.IntegerProperty()
+  activity = ndb.IntegerProperty()
+
+
+def ISO8601(s):
+  return long(datetime.datetime.strptime(s, '%Y-%m-%dT%H:%M:%SZ').strftime('%s'))
 
 
 class CachingBungie(platform.Bungie):
@@ -17,12 +24,16 @@ class CachingBungie(platform.Bungie):
     pgcr = DestinyPGCR.get_by_id(activityid)
     if pgcr:
       return pgcr.report
+
     report = super(CachingBungie, self).DestinyStatsPostGameCarnageReport(activityid=activityid)
     players = sorted(set(player['player']['destinyUserInfo']['displayName']
                          for player in report['data']['entries']),
                      key=lambda ent: ent.lower())
+    start = ISO8601(report['data']['period'])
+    activity = report['data']['activityDetails']['referenceId']
     logging.info('Caching activity %r.', activityid)
-    DestinyPGCR(key=ndb.Key(DestinyPGCR, activityid), report=report, players=players).put()
+    DestinyPGCR(key=ndb.Key(DestinyPGCR, activityid), report=report, players=players, start=start,
+                activity=activity).put()
     return report
 
 
