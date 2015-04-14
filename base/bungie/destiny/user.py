@@ -61,7 +61,7 @@ class Character(dict):
       self._activities = tuple(
           Activity(data, self.bungie) for data in self.bungie.DestinyStatsActivityHistory(
               accounttype=self.user.account_type, accountid=self.user.account_id,
-              characterid=self.character_id, count=15)['data']['activities'])
+              characterid=self.character_id, count=15)['data'].get('activities', ()))
     return self._activities
 
   _inventory = None
