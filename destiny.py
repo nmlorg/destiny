@@ -83,7 +83,10 @@ class Activity(dict):
     self['start'] = ISO8601(data['period'])
     self['duration'] = long(data['values']['activityDurationSeconds']['basic']['value'])
     self['completed'] = bool(data['values']['completed']['basic']['value'])
-    self['score'] = long(data['values']['score']['basic']['value'])
+    if 'score' in data['values']:
+      self['score'] = long(data['values']['score']['basic']['value'])
+    else:
+      self['score'] = 0
     self['players'] = tuple(sorted(set(player['player']['destinyUserInfo']['displayName']
                                        for player in data.players),
                                    key=lambda ent: ent.lower()))

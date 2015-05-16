@@ -19,7 +19,7 @@ class Definitions(dict):
 
     for code, d in definitions['ActivityType'].iteritems():
       self[code] = {
-          'name': d['activityTypeName'].strip(),
+          'name': (d.get('activityTypeName') or d['identifier']).strip(),
           'desc': d.get('activityTypeDescription', '').strip(),
       }
 
@@ -50,8 +50,8 @@ class Definitions(dict):
 
     for code, d in definitions['SandboxPerk'].iteritems():
       self[code] = {
-          'name': d['displayName'].strip(),
-          'desc': d['displayDescription'].strip(),
+          'name': (d.get('displayName') or str(code)).strip(),
+          'desc': d.get('displayDescription', '').strip(),
       }
 
     for code, d in definitions['Progression'].iteritems():
