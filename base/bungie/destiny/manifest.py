@@ -15,7 +15,8 @@ except ImportError:
   sqlite3 = None
 import tempfile
 import zipfile
-from base.bungie import platform
+from base import bungie
+from base.bungie import destiny
 
 
 def ListsToTuple(obj):
@@ -28,9 +29,8 @@ def ListsToTuple(obj):
 
 
 class Manifest(dict):
-  def __init__(self, bungie=None):
-    self.bungie = bungie or platform.Bungie()
-    super(Manifest, self).__init__(self.bungie.DestinyManifest())
+  def __init__(self):
+    super(Manifest, self).__init__(destiny.Manifest())
 
     definition_path = os.path.join(os.path.dirname(__file__), 'definitions.pickle.gz')
     try:
@@ -76,7 +76,7 @@ class Manifest(dict):
     return ret
 
   def FetchContent(self, url):
-    return self.bungie.Fetch(url)
+    return bungie.Fetch(url)
 
   def FetchFile(self, url):
     return StringIO.StringIO(self.FetchContent(url))

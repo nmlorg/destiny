@@ -2,176 +2,145 @@
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Orbitron:700">
-<link rel="stylesheet" href="/site.css">
-
-<title>{{user.name}} &bull; Destiny Dashboard</title>
-
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<script src="/destiny.js"></script>
+<script src="/ui.js"></script>
+<script src="/util.js"></script>
+<title>{{username}} &bull; Destiny Dashboard</title>
 <style>
-table.usergrid {
-  border: 0;
-}
-
-table.usergrid td {
-  vertical-align: top;
-}
-
-table.usergrid img {
+div.emblem {
+  background-color: #212121;
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: white;
   float: left;
-  height: 4em;
-  width: 4em;
+  height: 96px;
+  overflow: hidden;
+  position: relative;
+  white-space: nowrap;
+  width: 474px;
+}
+
+div.emblem > * {
+  position: absolute;
+}
+
+div.emblem > img {
+  left: 0px;
+  top: 0px;
+}
+
+div.emblem > div.class {
+  font-size: 40px;
+  height: 57px;
+  left: 96px;
+  top: 0px;
+}
+
+div.emblem > div.subtitle {
+  bottom: 0px;
+  font-size: 20px;
+  height: 39px;
+  left: 96px;
+}
+
+div.emblem > div.level {
+  font-size: 40px;
+  height: 57px;
+  right: 10px;
+  top: 0px;
+}
+
+div.emblem > div.light {
+  bottom: 0px;
+  color: yellow;
+  font-size: 20px;
+  height: 39px;
+  right: 10px;
+}
+
+div.item {
+  background-color: #212121;
+  color: white;
+  float: left;
+  height: 40px;
+  overflow: hidden;
+  position: relative;
+  white-space: nowrap;
+  width: 200px;
+}
+
+div.item > * {
+  position: absolute;
+}
+
+div.item > img {
+  height: 40px;
+  left: 0px;
+  top: 0px;
+  width: 40px;
+}
+
+div.item > div.quantity {
+  background-color: white;
+  bottom: 0px;
+  color: black;
+  font-size: 8px;
+  left: 0;
+  padding: 2px;
+}
+
+div.item > div.title {
+  font-size: 14px;
+  left: 40px;
+  top: 0px;
+}
+
+div.item > div.subtitle {
+  bottom: 10px;
+  font-size: 10px;
+  left: 40px;
+}
+
+div.item > div.stat {
+  background-color: #212121;
+  font-size: 14px;
+  padding-left: 4px;
+  padding-right: 10px;
+  right: 0px;
+  top: 0px;
+}
+
+div.item > div.stat-type {
+  bottom: 10px;
+  font-size: 10px;
+  right: 10px;
 }
 </style>
+<body>
 
 <script>
-function shortDate(ts) {
-  var now = new Date();
-  var then = new Date(ts * 1000);
+var user = new nmlorg.destiny.User('{{username|e}}');
+var div = document.createElement('div');
 
-  if ((now - then) > 60 * 60 * 24 * 1000)
-    return then.toLocaleDateString();
-  return then.toLocaleTimeString();
-}
+document.body.appendChild(div);
+div.textContent = 'Loading...';
 
-function shortDuration(ts) {
-  var s = [];
+user.get(function() {
+  document.title = user.name + ' \u2022 Destiny Dashboard';
+  div.textContent = '';
+  div.innerHTML += '<h1><img src="' + user.account_type_icon + '">' + user.name + '</h1>';
+  for (var i = 0; i < user.characters.length; i++) {
+    var character = user.characters[i];
 
-  if (ts >= 60 * 60) {
-    s.push(Math.floor(ts / 60 / 60) + 'h');
-    ts %= 60 * 60;
+    div.appendChild(nmlorg.ui.banner(character));
+    div.innerHTML += '<br clear="both">';
+    for (var bucket in character.inventory) {
+      div.innerHTML += '<div class="item" style="background: black; color: white">' + bucket + '</div>';
+      for (var j = 0; j < character.inventory[bucket].length; j++)
+        div.appendChild(nmlorg.ui.item(character.inventory[bucket][j]));
+    }
+    div.innerHTML += '<br clear="both">';
   }
-  if (ts >= 60) {
-    s.push(Math.floor(ts / 60) + 'm');
-    ts %= 60;
-  }
-  if (ts > 0) {
-    s.push(ts + 's');
-  }
-  return s.join(' ');
-}
+});
 </script>
-
-<h2>
-  {% if user.account_type == 1 %}
-    <img src="https://www.bungie.net/img/theme/destiny/icons/icon_xbl.png" style="height: 1em">
-  {% elif user.account_type == 2 %}
-    <img src="https://www.bungie.net/img/theme/destiny/icons/icon_psn.png" style="height: 1em">
-  {% endif %}
-  <a href="https://www.bungie.net/en/Profile/{{user.account_type}}/{{user.account_id}}">{{user.name}}</a>
-  {% if user.clan %}of {{user.clan}}{% endif %}
-</h2>
-
-Glimmer: {{user.currency.glimmer}}<br>
-
-<table class="usergrid">
-{% for characterid, character in user.characters|dictsort %}
-  {% macro inventory(name) %}
-    {% if character.inventory[name] %}
-      {% set item = character.inventory[name] %}
-      <td title="{{item.desc|e}}">
-        <img src="https://www.bungie.net{{item.icon}}">
-        {{item.name}}
-        {% if item.perks %}
-          <div style="font-size: .7em">
-            <div>Perks:</div>
-            {% for perk in item.perks %}
-              <div title="{{perk.desc|e}}">&mdash; {{perk.name}}</div>
-            {% endfor %}
-          </div>
-        {% endif %}
-      </td>
-    {% else %}
-      <td>(No {{name}} item.)</td>
-    {% endif %}
-  {% endmacro %}
-
-  <tr>
-    <td colspan="5"><h3 style="background: url(https://www.bungie.net{{character.emblem_banner}}) no-repeat 4em; height: 4em">
-      <img src="https://www.bungie.net{{character.emblem_icon}}">
-      <a href="https://www.bungie.net/en/Legend/{{user.account_type}}/{{user.account_id}}/{{characterid}}" style="color: white">Level {{character.level}} {{character.race}} {{character.gender}} {{character.class}}</a><br>
-      <span style="color: yellow">Last online: <script>document.write(shortDate({{character.last_online}}));</script></span><br>
-    </h3></td>
-  </tr><tr>
-    {{inventory('subclass')}}
-    {{inventory('helmet')}}
-    {{inventory('class_armor')}}
-    {{inventory('ships')}}
-    <td rowspan="4"><table class="activities">
-      <tr>
-        <th>Activity</th>
-        <th colspan="2">When</th>
-      </tr>
-      {% for activity in character.activities %}
-        <tr>
-          <td><a href="https://www.bungie.net/Platform/Destiny/Stats/PostGameCarnageReport/{{activity.activity_id}}/">
-            {% if activity.name.startswith(activity.type) %}
-              {{activity.name}}
-            {% else %}
-              {{activity.type}}: {{activity.name}}
-            {% endif %}
-          </a></td>
-          <td colspan="2"><script>document.write(shortDate({{activity.start}}) + ' +' + shortDuration({{activity.duration}}));</script></td>
-        </tr>
-        <tr>
-          <td colspan="2" style="font-size: .75em">
-            &mdash;
-            {% for player in activity.players[:6] %}
-              <a href="/user/{{player}}">{{player}}</a>
-            {% endfor %}
-            {% if activity.players|length > 6 %}
-              &hellip;
-            {% endif %}
-          </td>
-          <td style="text-align: right">{% if activity.score %}{{activity.score}} points{% endif %}</td>
-        </tr>
-      {% endfor %}
-    </table></td>
-    <td rowspan="4"><table class="progressions">
-      <tr>
-        <th>Progression</th>
-        <th>Level</th>
-        <th>Progress</th>
-        <th>Today</th>
-        <th>This week</th>
-      </tr>
-      {% for name, progress in character.progress|dictsort %}
-        <tr>
-          <td>{{name}}</td>
-          <td>{{progress.level}}</td>
-          <td>{{progress.current}}/{{progress.next}}</td>
-          <td>{% if progress.daily > 0 %}+{{progress.daily}}{% elif progress.daily < 0 %}{{progress.daily}}{% endif %}</td>
-          <td>{% if progress.weekly > 0 %}+{{progress.weekly}}{% elif progress.weekly < 0 %}{{progress.weekly}}{% endif %}</td>
-        </tr>
-      {% endfor %}
-    </table></td>
-  </tr><tr>
-    {{inventory('primary_weapons')}}
-    {{inventory('gauntlets')}}
-    {{inventory('ghost')}}
-    {{inventory('shaders')}}
-  </tr><tr>
-    {{inventory('special_weapons')}}
-    {{inventory('chest_armor')}}
-    {{inventory('vehicle')}}
-    {{inventory('emblems')}}
-  </tr><tr>
-    {{inventory('heavy_weapons')}}
-    {{inventory('leg_armor')}}
-    <td><table>
-      <tr><td>Level</td><td>{{character.level}} ({{(100 * character.level_progress).__int__()}}% to {{character.level + 1}})</td></tr>
-      <tr><td>Defense</td><td>{{character.stats.Defense}}</td></tr>
-      <tr><td>Intellect</td><td>{{character.stats.Intellect}}</td></tr>
-      <tr><td>Discipline</td><td>{{character.stats.Discipline}}</td></tr>
-      <tr><td>Strength</td><td>{{character.stats.Strength}}</td></tr>
-    </table></td>
-    <td><table>
-      <tr><td>Light</td><td>{{character.stats.Light}}</td></tr>
-      <tr><td>Optics</td><td>{{character.stats.Optics}}</td></tr>
-      <tr><td>Armor</td><td>{{character.stats.Armor}}</td></tr>
-      <tr><td>Recovery</td><td>{{character.stats.Recovery}}</td></tr>
-      <tr><td>Agility</td><td>{{character.stats.Agility}}</td></tr>
-    </table></td>
-  </tr>
-{% endfor %}
-</table>

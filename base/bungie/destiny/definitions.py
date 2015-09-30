@@ -6,9 +6,9 @@ from base.bungie.destiny import manifest
 
 
 class Definitions(dict):
-  def __init__(self, definitions=None, bungie=None):
+  def __init__(self, definitions=None):
     if definitions is None:
-      definitions = manifest.Manifest(bungie=bungie)['definitions']
+      definitions = manifest.Manifest()['definitions']
 
     for code, d in definitions['Activity'].iteritems():
       self[code] = {
