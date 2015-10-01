@@ -46,12 +46,11 @@ else:
     q = DestinyUser.query(DestinyUser.name_lower == username.lower())
     if accounttype:
       q = q.query(DestinyUser.accounttype == accounttype)
-    user = q.get()
-    if user:
-      return [{'displayName': user.name, 'membershipType': user.accounttype,
-               'membershipId': str(user.accountid)}]
-    ret = _SearchDestinyPlayer(username, accounttype)
-    if ret:
-      DestinyUser(name=ret[0]['displayName'], accounttype=ret[0]['membershipType'],
-                  accountid=long(ret[0]['membershipId'])).put()
+    ret = [{'displayName': user.name, 'membershipType': user.accounttype,
+            'membershipId': str(user.accountid)} for user in q]
+    if not ret:
+      ret = _SearchDestinyPlayer(username, accounttype)
+      for ent in ret:
+        DestinyUser(name=ent['displayName'], accounttype=ent['membershipType'],
+                    accountid=long(ent['membershipId'])).put()
     return ret
