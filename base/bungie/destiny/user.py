@@ -76,6 +76,7 @@ class User(dict):
           'primary_stat_type': ent.get('primaryStat') and DEFS[ent['primaryStat']['statHash']]['name'],
           'quantity': ent['quantity'],
           'state': ent['state'],
+          'tier': item_info['tier'],
           'type': item_info['type'],
       }
       if ent['characterIndex'] == -1:

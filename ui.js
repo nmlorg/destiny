@@ -69,6 +69,8 @@ nmlorg.ui.item = function(item) {
   div.appendChild(subtitleDiv);
   subtitleDiv.className = 'subtitle';
   subtitleDiv.textContent = item.type;
+  if (item.tier && (item.tier != 'Common'))
+    subtitleDiv.textContent += ' (' + item.tier + ')';
 
   var statDiv = document.createElement('div');
   div.appendChild(statDiv);

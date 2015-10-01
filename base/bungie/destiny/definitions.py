@@ -46,6 +46,7 @@ class Definitions(dict):
           'icon': d['icon'].strip(),
           'name': d.get('itemName', '').strip() or 'Item #%i' % code,
           'perks': d['perkHashes'],
+          'tier': d.get('tierTypeName', ''),
           'type': d.get('itemTypeName', ''),
       }
 
