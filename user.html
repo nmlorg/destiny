@@ -7,7 +7,35 @@
 <script src="/ui.js"></script>
 <script src="/util.js"></script>
 <title>{{username}} &bull; Destiny Dashboard</title>
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Destiny Dashboard</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <form class="navbar-form navbar-right" id="inspect-form">
+        <div class="form-group">
+          <input name="account" placeholder="Gamer tag" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-success">Inspect</button>
+      </form>
+    </div>
+  </div>
+</nav>
+
+<script>
+document.getElementById('inspect-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  window.location = '/' + this.firstElementChild.firstElementChild.value;
+});
+</script>
+
 <style>
+body {
+  padding-top: 50px;
+}
+
 div.emblem {
   background-color: #212121;
   background-repeat: no-repeat;
@@ -120,12 +148,10 @@ div.item > div.stat-type {
   right: 0px;
 }
 </style>
-<body>
 
 <script>
 var user = new nmlorg.destiny.User('{{username|e}}');
 var div = document.createElement('div');
-
 document.body.appendChild(div);
 div.textContent = 'Loading...';
 

@@ -13,11 +13,8 @@ JINJA2 = jinja2.Environment(loader=jinja2.FileSystemLoader('.'))
 
 class IndexPage(webapp2.RequestHandler):
   def get(self):
-    self.response.content_type = 'text/plain'
-    self.response.write('GetAvailableLocales:\n\n%s\n\n\n' %
-                        pprint.pformat(bungie.GetAvailableLocales()))
-    self.response.write('HelloWorld:\n\n%s\n\n\n' % pprint.pformat(bungie.HelloWorld()))
-    self.response.write('Settings:\n\n%s\n\n\n' % pprint.pformat(bungie.Settings()))
+    self.response.content_type = 'text/html'
+    self.response.write(JINJA2.get_template('index.html').render({'bungie': bungie}))
 
 
 class UserHTMLPage(webapp2.RequestHandler):
