@@ -64,13 +64,12 @@ class User(dict):
     self['vault'] = {}
     for ent in summary['inventory']['items']:
       item_info = DEFS[ent['itemHash']]
-      type_info = DEFS[item_info['type']]
       item = {
           'bound': bool(ent['transferStatus'] & 2),
           'damage_type': DAMAGE_TYPES[ent['damageType']],
           'equipped': bool(ent['transferStatus'] & 1),
           'fully_upgraded': ent['isGridComplete'],
-          'icon': item_info['icon'],
+          'icon': item_info.get('icon'),
           'id': long(ent['itemId']),
           'name': item_info['name'],
           'primary_stat_value': ent.get('primaryStat') and ent['primaryStat']['value'],
@@ -83,6 +82,10 @@ class User(dict):
         where = self['vault']
       else:
         where = self['characters'][ent['characterIndex']]['inventory']
-      if type_info['name'] not in where:
-        where[type_info['name']] = []
-      where[type_info['name']].append(item)
+      if item_info.get('type'):
+        bucket = DEFS[item_info['type']]['name']
+      else:
+        bucket = 'Undefined (%s)' % DEFS[ent['bucketHash']]['name']
+      if bucket not in where:
+        where[bucket] = []
+      where[bucket].append(item)
