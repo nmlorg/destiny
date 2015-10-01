@@ -86,6 +86,18 @@ nmlorg.ui.item = function(item) {
   else if (item.primary_stat_type)
     statTypeDiv.textContent += item.primary_stat_type;
 
+  div.title = titleDiv.textContent + (item.quantity > 1 ? ' (x ' + item.quantity + ')' : '') + '\n' +
+      subtitleDiv.textContent + '\n' +
+      statDiv.textContent + ' ' + statTypeDiv.textContent + (item.fully_upgraded ? '' : ' (in progress)') + '\n' +
+      '\n' + item.desc + '\n';
+  for (var statName in item.stats) {
+    var stat = item.stats[statName];
+    if (stat[0] == stat[1])
+      div.title += '\n' + statName + ': ' + stat[0];
+    else
+      div.title += '\n' + statName + ': ' + stat[0] + ' - ' + stat[1];
+  }
+
   return div;
 };
 

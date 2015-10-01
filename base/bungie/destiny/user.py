@@ -67,6 +67,7 @@ class User(dict):
       item = {
           'bound': bool(ent['transferStatus'] & 2),
           'damage_type': DAMAGE_TYPES[ent['damageType']],
+          'desc': item_info['desc'],
           'equipped': bool(ent['transferStatus'] & 1),
           'fully_upgraded': ent['isGridComplete'],
           'icon': item_info.get('icon', '/img/misc/missing_icon.png'),
@@ -76,6 +77,8 @@ class User(dict):
           'primary_stat_type': ent.get('primaryStat') and DEFS[ent['primaryStat']['statHash']]['name'],
           'quantity': ent['quantity'],
           'state': ent['state'],
+          'stats': {DEFS[k]['name']: (v['minimum'], v['maximum'])
+                    for k, v in item_info['stats'].iteritems()},
           'tier': item_info['tier'],
           'type': item_info['type'],
       }

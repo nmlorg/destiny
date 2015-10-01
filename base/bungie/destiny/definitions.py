@@ -46,6 +46,7 @@ class Definitions(dict):
           'icon': d['icon'].strip(),
           'name': d.get('itemName', '').strip() or 'Item #%i' % code,
           'perks': d['perkHashes'],
+          'stats': {stat['statHash']: stat for stat in d['stats'].itervalues()},
           'tier': d.get('tierTypeName', ''),
           'type': d.get('itemTypeName', ''),
       }
@@ -69,6 +70,8 @@ class Definitions(dict):
 
     for code, d in definitions['Stat'].iteritems():
       self[code] = {
+          'desc': d.get('statDescription', '').strip(),
+          'icon': d.get('icon', '').strip(),
           'name': d.get('statName', '').strip() or 'Stat #%i' % code,
       }
 
