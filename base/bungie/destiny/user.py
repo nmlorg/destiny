@@ -69,7 +69,7 @@ class User(dict):
           'damage_type': DAMAGE_TYPES[ent['damageType']],
           'equipped': bool(ent['transferStatus'] & 1),
           'fully_upgraded': ent['isGridComplete'],
-          'icon': item_info.get('icon'),
+          'icon': item_info.get('icon', '/img/misc/missing_icon.png'),
           'id': long(ent['itemId']),
           'name': item_info['name'],
           'primary_stat_value': ent.get('primaryStat') and ent['primaryStat']['value'],
