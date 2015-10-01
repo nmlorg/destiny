@@ -190,8 +190,34 @@ user.get(function() {
       items.sort();
       td = document.createElement('td');
       tr.appendChild(td);
-      for (var k = 0; k < items.length; k++)
-        td.appendChild(nmlorg.ui.item(items[k][2]));
+      if (items.length == 1)
+        td.appendChild(nmlorg.ui.item(items[0][2]));
+      else if (items.length > 1) {
+        var itemDiv = document.createElement('div');
+        td.appendChild(itemDiv);
+        itemDiv.style.display = 'none';
+        for (var k = 0; k < items.length; k++)
+          itemDiv.appendChild(nmlorg.ui.item(items[k][2]));
+        var br = document.createElement('br');
+        itemDiv.appendChild(br);
+        br.style.clear = 'both';
+        var toggleDiv = document.createElement('div');
+        td.appendChild(toggleDiv);
+        toggleDiv.textContent = '+ ' + items.length + ' ' + bucketName;
+        if (toggleDiv.textContent[toggleDiv.textContent.length - 1] != 's')
+          toggleDiv.textContent += 's';
+        toggleDiv.addEventListener('click', function() {
+          var itemDiv = this.previousElementSibling;
+          if (itemDiv.style.display == '') {
+            itemDiv.style.display = 'none';
+            this.textContent = '+' + this.textContent.substr(1);
+          } else {
+            itemDiv.style.display = '';
+            this.textContent = '-' + this.textContent.substr(1);
+          }
+        });
+        toggleDiv.style.cursor = 'pointer';
+      }
     }
   }
 });
