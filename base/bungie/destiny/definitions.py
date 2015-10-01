@@ -41,11 +41,12 @@ class Definitions(dict):
 
     for code, d in definitions['InventoryItem'].iteritems():
       self[code] = {
-          'name': d.get('itemName', '').strip() or 'Item #%i' % code,
+          'bucket': d['bucketTypeHash'],
           'desc': d.get('itemDescription', '').strip(),
-          'type': d['bucketTypeHash'],
           'icon': d['icon'].strip(),
+          'name': d.get('itemName', '').strip() or 'Item #%i' % code,
           'perks': d['perkHashes'],
+          'type': d.get('itemTypeName', ''),
       }
 
     for code, d in definitions['SandboxPerk'].iteritems():
