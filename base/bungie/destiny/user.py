@@ -78,9 +78,9 @@ class User(dict):
           'quantity': ent['quantity'],
           'state': ent['state'],
           'stats': {DEFS[k]['name']: (v['minimum'], v['maximum'])
-                    for k, v in item_info['stats'].iteritems()},
-          'tier': item_info['tier'],
-          'type': item_info['type'],
+                    for k, v in (item_info.get('stats') or {}).iteritems()},
+          'tier': item_info.get('tier', ''),
+          'type': item_info.get('type', ''),
       }
       if ent['characterIndex'] == -1:
         where = self['vault']
