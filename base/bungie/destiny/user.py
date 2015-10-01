@@ -77,13 +77,12 @@ class User(dict):
           'primary_stat_type': ent.get('primaryStat') and DEFS[ent['primaryStat']['statHash']]['name'],
           'quantity': ent['quantity'],
           'state': ent['state'],
-          'type': type_info['name'],
+          'type': '-',
       }
       if ent['characterIndex'] == -1:
         where = self['vault']
       else:
         where = self['characters'][ent['characterIndex']]['inventory']
-      bucket = DEFS[ent['bucketHash']]
-      if bucket['name'] not in where:
-        where[bucket['name']] = []
-      where[bucket['name']].append(item)
+      if type_info['name'] not in where:
+        where[type_info['name']] = []
+      where[type_info['name']].append(item)

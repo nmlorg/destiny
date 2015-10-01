@@ -18,7 +18,7 @@ div.emblem {
   overflow: hidden;
   position: relative;
   white-space: nowrap;
-  width: 474px;
+  width: 300px;
 }
 
 div.emblem > * {
@@ -129,18 +129,70 @@ div.textContent = 'Loading...';
 user.get(function() {
   document.title = user.name + ' \u2022 Destiny Dashboard';
   div.textContent = '';
-  div.innerHTML += '<h1><img src="' + user.account_type_icon + '">' + user.name + '</h1>';
+  var table = document.createElement('table');
+  div.appendChild(table);
+  table.className = 'table';
+  var thead = document.createElement('thead');
+  table.appendChild(thead);
+  var tr = document.createElement('tr');
+  thead.appendChild(tr);
+  var td = document.createElement('td');
+  tr.appendChild(td);
+  td = document.createElement('td');
+  tr.appendChild(td);
+  td.colSpan = user.characters.length + 1;
+  td.innerHTML += '<h1><img src="' + user.account_type_icon + '">' + user.name + '</h1>';
+  tr = document.createElement('tr');
+  thead.appendChild(tr);
+  td = document.createElement('td');
+  tr.appendChild(td);
   for (var i = 0; i < user.characters.length; i++) {
     var character = user.characters[i];
+    td = document.createElement('td');
+    tr.appendChild(td);
+    td.appendChild(nmlorg.ui.banner(character));
+  }
+  td = document.createElement('td');
+  tr.appendChild(td);
+  td.innerHTML = '<div class="emblem"><div class="class">Vault</div></div>';
 
-    div.appendChild(nmlorg.ui.banner(character));
-    div.innerHTML += '<br clear="both">';
-    for (var bucket in character.inventory) {
-      div.innerHTML += '<div class="item" style="background: black; color: white">' + bucket + '</div>';
-      for (var j = 0; j < character.inventory[bucket].length; j++)
-        div.appendChild(nmlorg.ui.item(character.inventory[bucket][j]));
+  var bucketNames = [];
+  for (var i = 0; i < user.characters.length; i++)
+    for (var bucket in user.characters[i].inventory)
+      if (bucketNames.indexOf(bucket) == -1)
+        bucketNames.push(bucket);
+  for (var bucket in user.vault)
+    if (bucketNames.indexOf(bucket) == -1)
+      bucketNames.push(bucket);
+  bucketNames.sort()
+
+  var tbody = document.createElement('tbody');
+  table.appendChild(tbody);
+  for (var i = 0; i < bucketNames.length; i++) {
+    var bucketName = bucketNames[i];
+    var buckets = [];
+    for (var j = 0; j < user.characters.length; j++)
+      buckets.push(user.characters[j].inventory[bucketName] || []);
+    buckets.push(user.vault[bucketName] || []);
+
+    var tr = document.createElement('tr');
+    tbody.appendChild(tr);
+    var td = document.createElement('td');
+    tr.appendChild(td);
+    td.textContent = bucketName;
+    for (var j = 0; j < buckets.length; j++) {
+      var bucket = buckets[j];
+      var items = [];
+      for (var k = 0; k < bucket.length; k++) {
+        var item = bucket[k];
+        items.push([1 / (item.primary_stat_value || 1), item.name, item]);
+      }
+      items.sort();
+      td = document.createElement('td');
+      tr.appendChild(td);
+      for (var k = 0; k < items.length; k++)
+        td.appendChild(nmlorg.ui.item(items[k][2]));
     }
-    div.innerHTML += '<br clear="both">';
   }
 });
 </script>
