@@ -57,6 +57,7 @@ class User(dict):
           'level': ent['characterLevel'],
           'light': ent['characterBase']['powerLevel'],
           'inventory': {},
+          'quests': {},
           'race': GetRaceName(ent['characterBase']['raceHash']),
       }
       self['characters'].append(character)
@@ -64,6 +65,33 @@ class User(dict):
     self['vault'] = {}
     for ent in summary['inventory']['items']:
       item_info = DEFS['InventoryItem'][ent['itemHash']]
+
+      if item_info.get('questlineItemHash'):
+        quests = self['characters'][ent['characterIndex']]['quests']
+        line_hash = item_info['questlineItemHash']
+        line_info = DEFS['InventoryItem'][line_hash]
+        quest = quests.get(line_info['itemName'])
+        if quest is None:
+          quest = quests[line_info['itemName']] = {
+              'desc': line_info['displaySource'].strip(),
+              'icon': line_info.get('icon', '/img/misc/missing_icon.png'),
+              'name': line_info['itemName'],
+              'steps': [],
+          }
+          for step_hash in line_info['setItemHashes']:
+            step_info = DEFS['InventoryItem'][step_hash]
+            quest['steps'].append({
+                'active': False,
+                'desc': step_info['displaySource'].strip(),
+                'hash': step_hash,
+                'name': step_info['itemName'],
+                'objective': step_info['itemDescription'].strip(),
+            })
+        for step in quest['steps']:
+          if step['hash'] == ent['itemHash']:
+            step['active'] = True
+        continue
+
       item = {
           'bound': bool(ent['transferStatus'] & 2),
           'damage_type': DAMAGE_TYPES[ent['damageType']],

@@ -113,6 +113,57 @@ a.item > div.stat-type {
   padding-right: 10px;
   right: 0px;
 }
+
+div.quest {
+  background-color: #212121;
+  color: white;
+  float: left;
+  height: 40px;
+  overflow: hidden;
+  position: relative;
+  white-space: nowrap;
+  width: 200px;
+}
+
+div.quest > * {
+  position: absolute;
+}
+
+div.quest > img {
+  height: 40px;
+  left: 0px;
+  top: 0px;
+  width: 40px;
+}
+
+div.quest > div.title {
+  font-size: 14px;
+  left: 40px;
+  top: 0px;
+}
+
+div.quest > div.subtitle {
+  bottom: 10px;
+  font-size: 10px;
+  left: 40px;
+}
+
+a.quest-step {
+  background-color: #636363;
+  color: white;
+  float: left;
+  font-size: 8px;
+  margin-bottom: 1px;
+  margin-top: 1px;
+  overflow: hidden;
+  position: relative;
+  white-space: nowrap;
+  width: 200px;
+}
+
+a.quest-step.active {
+  background-color: #212121;
+}
 </style>
 
 <script>
@@ -163,6 +214,41 @@ user.get(function() {
 
   var tbody = document.createElement('tbody');
   table.appendChild(tbody);
+
+  var tr = document.createElement('tr');
+  tbody.appendChild(tr);
+  var td = document.createElement('td');
+  tr.appendChild(td);
+  td.textContent = 'Quests';
+  for (var i = 0; i < user.characters.length; i++) {
+    td = document.createElement('td');
+    tr.appendChild(td);
+    var itemDiv = document.createElement('div');
+    td.appendChild(itemDiv);
+    itemDiv.style.display = 'none';
+    for (var questName in user.characters[i].quests)
+      itemDiv.appendChild(nmlorg.ui.quest(user.characters[i].quests[questName]));
+    var br = document.createElement('br');
+    itemDiv.appendChild(br);
+    br.style.clear = 'both';
+    var toggleDiv = document.createElement('div');
+    td.appendChild(toggleDiv);
+    toggleDiv.textContent = '+ Quests';
+    toggleDiv.addEventListener('click', function() {
+      var itemDiv = this.previousElementSibling;
+      if (itemDiv.style.display == '') {
+        itemDiv.style.display = 'none';
+        this.textContent = '+' + this.textContent.substr(1);
+      } else {
+        itemDiv.style.display = '';
+        this.textContent = '-' + this.textContent.substr(1);
+      }
+    });
+    toggleDiv.style.cursor = 'pointer';
+  }
+  td = document.createElement('td');
+  tr.appendChild(td);
+
   for (var i = 0; i < bucketNames.length; i++) {
     var bucketName = bucketNames[i];
     var buckets = [];

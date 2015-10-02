@@ -102,4 +102,46 @@ nmlorg.ui.item = function(item) {
   return div;
 };
 
+
+nmlorg.ui.quest = function(quest) {
+  var parent = document.createElement('div');
+
+  var div = document.createElement('div');
+  parent.appendChild(div);
+  div.className = 'quest';
+
+  var img = document.createElement('img');
+  div.appendChild(img);
+  img.src = 'https://www.bungie.net' + quest.icon;
+
+  var titleDiv = document.createElement('div');
+  div.appendChild(titleDiv);
+  titleDiv.className = 'title';
+  titleDiv.textContent = quest.name;
+
+  var subtitleDiv = document.createElement('div');
+  div.appendChild(subtitleDiv);
+  subtitleDiv.className = 'subtitle';
+  subtitleDiv.textContent = quest.desc;
+
+  div.title = titleDiv.textContent + '\n\n' + quest.desc;
+
+  for (var i = 0; i < quest.steps.length; i++)
+    parent.appendChild(nmlorg.ui.questStep(quest.steps[i]));
+
+  return parent;
+};
+
+
+nmlorg.ui.questStep = function(step) {
+  var div = document.createElement('a');
+  div.className = 'quest-step';
+  if (step.active)
+    div.className += ' active';
+  div.href = '/db/InventoryItem/' + step.hash;
+  div.textContent = step.objective;
+  div.title = step.name + '\n\n' + step.objective + '\n\n' + step.desc;
+  return div;
+};
+
 })();
