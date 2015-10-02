@@ -86,7 +86,15 @@ class User(dict):
                 'hash': step_hash,
                 'name': step_info['itemName'],
                 'objective': step_info['itemDescription'].strip(),
+                'objectives': [],
             })
+            for objective_hash in step_info['objectiveHashes']:
+              objective = DEFS['Objective'][objective_hash]
+              if objective.get('displayDescription'):
+                quest['steps'][-1]['objectives'].append({
+                    'count': objective['completionValue'],
+                    'name': objective['displayDescription'].strip(),
+                })
         for step in quest['steps']:
           if step['hash'] == ent['itemHash']:
             step['active'] = True
