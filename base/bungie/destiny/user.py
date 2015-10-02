@@ -4,7 +4,7 @@
 
 import logging
 from base.bungie import destiny
-from base.bungie.destiny import definitions
+from base.bungie.destiny import manifest
 
 
 DAMAGE_TYPES = {
@@ -24,7 +24,7 @@ class User(dict):
     global DEFS
 
     if DEFS is None:
-      DEFS = definitions.Definitions()
+      DEFS = manifest.Manifest()['definitions']
 
     if accounttype is None or accountid is None:
       for ent in destiny.SearchDestinyPlayer(username):
@@ -50,47 +50,70 @@ class User(dict):
     self['characters'] = []
     for ent in summary['characters']:
       character = {
-          'class': DEFS[ent['characterBase']['classHash']]['name'],
+          'class': GetClassName(ent['characterBase']['classHash']),
           'emblem_banner': ent['backgroundPath'],
           'emblem_icon': ent['emblemPath'],
-          'gender': DEFS[ent['characterBase']['genderHash']]['name'],
+          'gender': GetGenderName(ent['characterBase']['genderHash']),
           'level': ent['characterLevel'],
           'light': ent['characterBase']['powerLevel'],
           'inventory': {},
-          'race': DEFS[ent['characterBase']['raceHash']]['name'],
+          'race': GetRaceName(ent['characterBase']['raceHash']),
       }
       self['characters'].append(character)
 
     self['vault'] = {}
     for ent in summary['inventory']['items']:
-      item_info = DEFS[ent['itemHash']]
+      item_info = DEFS['InventoryItem'][ent['itemHash']]
       item = {
           'bound': bool(ent['transferStatus'] & 2),
           'damage_type': DAMAGE_TYPES[ent['damageType']],
-          'desc': item_info['desc'],
+          'desc': item_info.get('itemDescription', '').strip(),
           'equipped': bool(ent['transferStatus'] & 1),
           'fully_upgraded': ent['isGridComplete'],
           'hash': ent['itemHash'],
           'icon': item_info.get('icon', '/img/misc/missing_icon.png'),
           'id': long(ent['itemId']),
-          'name': item_info['name'],
+          'name': item_info.get('itemName', '').strip() or 'Item #%i' % ent['itemHash'],
           'primary_stat_value': ent.get('primaryStat') and ent['primaryStat']['value'],
-          'primary_stat_type': ent.get('primaryStat') and DEFS[ent['primaryStat']['statHash']]['name'],
+          'primary_stat_type': (ent.get('primaryStat') and
+                                GetStatName(ent['primaryStat']['statHash'])),
           'quantity': ent['quantity'],
           'state': ent['state'],
-          'stats': {DEFS[k]['name']: (v['minimum'], v['maximum'])
-                    for k, v in (item_info.get('stats') or {}).iteritems()},
-          'tier': item_info.get('tier', ''),
-          'type': item_info.get('type', ''),
+          'stats': {GetStatName(stat['statHash']): (stat['minimum'], stat['maximum'])
+                    for stat in (item_info.get('stats') or {}).itervalues()},
+          'tier': item_info.get('tierTypeName', '').strip(),
+          'type': item_info.get('itemTypeName', '').strip(),
       }
       if ent['characterIndex'] == -1:
         where = self['vault']
       else:
         where = self['characters'][ent['characterIndex']]['inventory']
-      if item_info.get('bucket'):
-        bucket = DEFS[item_info['bucket']]['name']
+      if item_info.get('bucketTypeHash'):
+        bucket = GetBucketName(item_info['bucketTypeHash'])
       else:
-        bucket = 'Undefined (%s)' % DEFS[ent['bucketHash']]['name']
+        bucket = 'Undefined (%s)' % GetBucketName(ent['bucketHash'])
       if bucket not in where:
         where[bucket] = []
       where[bucket].append(item)
+
+
+def GetBucketName(code):
+  bucket = DEFS['InventoryBucket'][code]
+  return (bucket.get('bucketName') or bucket.get('bucketIdentifier') or 'Bucket #%i' % code).strip()
+
+
+def GetClassName(code):
+  return DEFS['Class'][code]['className']
+
+
+def GetGenderName(code):
+  return DEFS['Gender'][code]['genderName']
+
+
+def GetRaceName(code):
+  return DEFS['Race'][code]['raceName']
+
+
+def GetStatName(code):
+  stat = DEFS['Stat'][code]
+  return (stat.get('statName') or 'Stat #%i' % code).strip()
