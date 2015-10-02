@@ -1,5 +1,4 @@
-application: nmlorgdev
-module: destiny
+application: destiny-db
 version: 1
 runtime: python27
 api_version: 1

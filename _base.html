@@ -6,7 +6,7 @@
 <script src="/destiny.js"></script>
 <script src="/ui.js"></script>
 <script src="/util.js"></script>
-<title>Destiny Dashboard</title>
+<title>{% block title %}Destiny Dashboard{% endblock %}</title>
 
 <nav class="navbar navbar-inverse navbar-fixed-top">
   <div class="container">
@@ -37,17 +37,4 @@ body {
 }
 </style>
 
-<div class="container">
-  <ul>
-    {% for name, data in bungie.Settings().systems.iteritems() %}
-      <li>
-        {{name}} -
-        {% if data.enabled %}
-          enabled
-        {% else %}
-          <font color="red">disabled</font>
-        {% endif %}
-      </li>
-    {% endfor %}
-  </ul>
-</div>
+{% block content %}{% endblock %}

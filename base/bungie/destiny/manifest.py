@@ -58,20 +58,16 @@ class Manifest(dict):
     sqldata = self.FetchData(url)
     ret = {}
 
-    for table in ('ActivityBundle', 'Activity', 'ActivityType', 'Class', 'Destination',
-                  'DirectorBook', 'Faction', 'Gender', 'GrimoireCard', 'Grimoire',
-                  'InventoryBucket', 'InventoryItem', 'Place', 'Progression', 'Race', 'SandboxPerk',
-                  'SpecialEvent', 'Stat', 'StatGroup', 'TalentGrid', 'UnlockFlag', 'Vendor'):
-      ret[table] = {}
-      for rowid, rowjson in sqldata.execute('select id, json from Destiny%sDefinition' % (table,)):
-        if rowid < 0:
+    for table in sqldata.execute('select name from sqlite_master where type="table"'):
+      table = table[0]
+      if not table.startswith('Destiny') or not table.endswith('Definition'):
+        continue
+      key = table[len('Destiny'):-len('Definition')]
+      ret[key] = {}
+      for rowid, rowjson in sqldata.execute('select * from ' + table):
+        if isinstance(rowid, (int, long)) and rowid < 0:
           rowid += 2 ** 32
-        ret[table][rowid] = ListsToTuple(json.loads(rowjson))
-
-    for table in ('HistoricalStats',):
-      ret[table] = {
-          k: ListsToTuple(json.loads(v))
-          for k, v in sqldata.execute('select key, json from Destiny%sDefinition' % (table,))}
+        ret[key][rowid] = ListsToTuple(json.loads(rowjson))
 
     return ret
 

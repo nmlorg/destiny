@@ -1,0 +1,15 @@
+{% extends "_base.html" %}
+{% block title %}Object{% endblock %}
+{% block content %}
+
+<div class="container">
+  <ul>
+    {% for k in defs|sort %}
+      {% if not k.startswith('_') %}
+        <li><a href="/db/{{k}}/">{{k}}</a></li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+</div>
+
+{% endblock %}

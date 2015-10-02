@@ -70,6 +70,7 @@ class User(dict):
           'desc': item_info['desc'],
           'equipped': bool(ent['transferStatus'] & 1),
           'fully_upgraded': ent['isGridComplete'],
+          'hash': ent['itemHash'],
           'icon': item_info.get('icon', '/img/misc/missing_icon.png'),
           'id': long(ent['itemId']),
           'name': item_info['name'],
