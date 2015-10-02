@@ -61,9 +61,11 @@
     <a href="/db/TalentGrid/{{v}}">{{v}}</a>
   {% elif k == 'itemCategoryHash' or k == 'itemCategoryHashes' %}
     <a href="/db/ItemCategory/{{v}}">{{v}}</a>
-  {% elif k == 'itemHash' %}
+  {% elif k == 'itemHash' or k == 'questlineItemHash' or k == 'setItemHashes' %}
     <a href="/db/InventoryItem/{{v}}">{{v}}</a>
-  {% elif k == 'objectiveHash' %}
+  {% elif k == 'locationHash' %}
+    <a href="/db/Location/{{v}}">{{v}}</a>
+  {% elif k == 'objectiveHash' or k == 'objectiveHashes' %}
     <a href="/db/Objective/{{v}}">{{v}}</a>
   {% elif k == 'perkHash' %}
     <a href="/db/SandboxPerk/{{v}}">{{v}}</a>
