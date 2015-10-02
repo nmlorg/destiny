@@ -2,19 +2,33 @@
 {% block title %}Object{% endblock %}
 
 {% macro ShowDict(obj) %}
-  <ul>
+  {% if obj %}
+    {% if obj|count > 5 %}
+      <button class="btn" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display == '' ? 'none' : '';">{{obj|count}} items</button>
+      <ul style="display: none">
+    {% else %}
+      <ul>
+    {% endif %}
     {% for k, v in obj.iteritems()|sort %}
       <li>{{k}}: {{ShowVal(k, v)}}</li>
     {% endfor %}
-  </ul>
+    </ul>
+  {% endif %}
 {% endmacro %}
 
 {% macro ShowList(k, obj) %}
-  <ol>
+  {% if obj %}
+    {% if obj|count > 5 %}
+      <button class="btn" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display == '' ? 'none' : '';">{{obj|count}} items</button>
+      <ol style="display: none">
+    {% else %}
+      <ol>
+    {% endif %}
     {% for v in obj %}
       <li>{{ShowVal(k, v)}}</li>
     {% endfor %}
-  </ol>
+    </ol>
+  {% endif %}
 {% endmacro %}
 
 {% macro ShowVal(k, v) %}
