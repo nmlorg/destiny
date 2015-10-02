@@ -22,18 +22,18 @@
     { {{ShowDict(v)}} }
   {% elif v.__iter__ %}
     [ {{ShowList(k, v)}} ]
-  {% elif k == 'backgroundImageMobile' or k == 'factionIcon' or k == 'icon' or k == 'iconPath' or k == 'secondaryIcon' or k == 'sheetPath' or k == 'vendorIcon' or k == 'vendorPortrait' %}
+  {% elif k == 'backgroundImageMobile' or k == 'backgroundPath' or k == 'emblemPath' or k == 'factionIcon' or k == 'icon' or k == 'iconPath' or k == 'secondaryIcon' or k == 'sheetPath' or k == 'vendorIcon' or k == 'vendorPortrait' %}
     {{v}}<br>
     <img src="https://www.bungie.net{{v}}" style="border: 1px solid black">
   {% elif k == 'activityBundleHashes' %}
     <a href="/db/ActivityBundle/{{v}}">{{v}}</a>
-  {% elif k == 'activityHash' or k == 'activityHashes' %}
+  {% elif k == 'activityHash' or k == 'activityHashes' or k == 'currentActivityHash' %}
     <a href="/db/Activity/{{v}}">{{v}}</a>
   {% elif k == 'activityTypeHash' %}
     <a href="/db/ActivityType/{{v}}">{{v}}</a>
   {% elif k == 'bookHash' or k == 'directorBookHash' %}
     <a href="/db/DirectorBook/{{v}}">{{v}}</a>
-  {% elif k == 'bucketTypeHash' %}
+  {% elif k == 'bucketHash' or k == 'bucketTypeHash' %}
     <a href="/db/InventoryBucket/{{v}}">{{v}}</a>
   {% elif k == 'classHash' %}
     <a href="/db/Class/{{v}}">{{v}}</a>
@@ -67,7 +67,7 @@
     <a href="/db/Race/{{v}}">{{v}}</a>
   {% elif k == 'skullHash' %}
     <a href="/db/ScriptedSkull/{{v}}">{{v}}</a>
-  {% elif k == 'statGroupHash' %}
+  {% elif k == 'buildStatGroupHash' or k == 'statGroupHash' %}
     <a href="/db/StatGroup/{{v}}">{{v}}</a>
   {% elif k == 'statHash' %}
     <a href="/db/Stat/{{v}}">{{v}}</a>

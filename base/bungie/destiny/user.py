@@ -38,7 +38,7 @@ class User(dict):
 
     self['name'] = username
     self['account_type'] = accounttype
-    self['account_id'] = accountid
+    self['account_id'] = str(accountid)
 
     summary = destiny.GetAccountSummary(accounttype, accountid)['data']
     all_items = destiny.GetAllItemsSummary(accounttype, accountid)['data']

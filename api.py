@@ -5,6 +5,7 @@ import json
 import pprint
 import webapp2
 from base import bungie
+from base.bungie import destiny
 from base.bungie.destiny import manifest
 from base.bungie.destiny import user as destiny_user
 
@@ -67,6 +68,17 @@ class UserJSONPage(webapp2.RequestHandler):
     self.response.write(json.dumps(user, indent=4, sort_keys=True))
 
 
+class UserObjectPage(webapp2.RequestHandler):
+  def get(self, accounttype, accountid):
+    accounttype = int(accounttype)
+    accountid = long(accountid)
+    all_items = destiny.GetAllItemsSummary(accounttype, accountid)['data']
+    summary = destiny.GetAccountSummary(accounttype, accountid)['data']
+    summary['inventory']['items'] = all_items['items']
+    self.response.content_type = 'text/html'
+    self.response.write(JINJA2.get_template('db_object.html').render({'obj': summary}))
+
+
 class UserPyPage(webapp2.RequestHandler):
   def get(self, username):
     user = destiny_user.User(username)
@@ -86,6 +98,7 @@ app = webapp2.WSGIApplication([
     ('/db/([a-zA-Z]+)/?', DBBucketPage),
     ('/db/([a-zA-Z]+)/([0-9]+)/?', DBObjectPage),
     ('/([0-9]+)', ObjectSearchPage),
+    ('/([0-9]+)/([0-9]+)', UserObjectPage),
     ('/([a-zA-Z0-9]+)', UserHTMLPage),
     ('/([a-zA-Z0-9]+)[.]json', UserJSONPage),
     ('/([a-zA-Z0-9]+)[.]py', UserPyPage),

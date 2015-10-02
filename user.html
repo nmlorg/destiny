@@ -136,7 +136,7 @@ user.get(function() {
   td = document.createElement('td');
   tr.appendChild(td);
   td.colSpan = user.characters.length + 1;
-  td.innerHTML += '<h1><img src="' + user.account_type_icon + '">' + user.name + '</h1>';
+  td.innerHTML += '<h1><a href="/' + user.account_type + '/' + user.account_id + '"><img src="' + user.account_type_icon + '"> ' + user.name + '</a></h1>';
   tr = document.createElement('tr');
   thead.appendChild(tr);
   td = document.createElement('td');
