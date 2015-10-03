@@ -18,6 +18,10 @@ def GetAllItemsSummary(accounttype, accountid):
   return Fetch('%s/Account/%i/Items/', accounttype, accountid)
 
 
+def GetCharacterProgression(accounttype, accountid, charid):
+  return Fetch('%s/Account/%i/%i/Progression/', accounttype, accountid, charid)
+
+
 def Manifest():
   return Fetch('Manifest/')
 

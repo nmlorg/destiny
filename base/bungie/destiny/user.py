@@ -16,16 +16,8 @@ DAMAGE_TYPES = {
 }
 
 
-DEFS = None
-
-
 class User(dict):
   def __init__(self, username, accounttype=None, accountid=None):
-    global DEFS
-
-    if DEFS is None:
-      DEFS = manifest.Manifest()['definitions']
-
     if accounttype is None or accountid is None:
       for ent in destiny.SearchDestinyPlayer(username):
         logging.info('Found account %r.', ent)
@@ -64,12 +56,12 @@ class User(dict):
 
     self['vault'] = {}
     for ent in summary['inventory']['items']:
-      item_info = DEFS['InventoryItem'][ent['itemHash']]
+      item_info = manifest.GetDef('InventoryItem', ent['itemHash'])
 
       if item_info.get('questlineItemHash'):
         quests = self['characters'][ent['characterIndex']]['quests']
         line_hash = item_info['questlineItemHash']
-        line_info = DEFS['InventoryItem'][line_hash]
+        line_info = manifest.GetDef('InventoryItem', line_hash)
         quest = quests.get(line_info['itemName'])
         if quest is None:
           quest = quests[line_info['itemName']] = {
@@ -79,7 +71,7 @@ class User(dict):
               'steps': [],
           }
           for step_hash in line_info['setItemHashes']:
-            step_info = DEFS['InventoryItem'][step_hash]
+            step_info = manifest.GetDef('InventoryItem', step_hash)
             quest['steps'].append({
                 'active': False,
                 'desc': step_info['displaySource'].strip(),
@@ -127,33 +119,33 @@ class User(dict):
 
 
 def GetActivityName(code):
-  return DEFS['Activity'][code]['activityName'].strip()
+  return manifest.GetDef('Activity', code)['activityName'].strip()
 
 
 def GetBucketName(code):
-  bucket = DEFS['InventoryBucket'][code]
+  bucket = manifest.GetDef('InventoryBucket', code)
   return (bucket.get('bucketName') or bucket.get('bucketIdentifier') or 'Bucket #%i' % code).strip()
 
 
 def GetClassName(code):
-  return DEFS['Class'][code]['className']
+  return manifest.GetDef('Class', code)['className']
 
 
 def GetDestinationName(code):
-  return DEFS['Destination'][code]['destinationName'].strip()
+  return manifest.GetDef('Destination', code)['destinationName'].strip()
 
 
 def GetGenderName(code):
-  return DEFS['Gender'][code]['genderName']
+  return manifest.GetDef('Gender', code)['genderName']
 
 
 def GetObjective(code):
-  objective = DEFS['Objective'][code]
+  objective = manifest.GetDef('Objective', code)
   ret = {'count': objective['completionValue']}
   if objective.get('displayDescription'):
     ret['name'] = objective['displayDescription'].strip()
   elif objective.get('locationHash'):
-    location = DEFS['Location'][objective['locationHash']]
+    location = manifest.GetDef('Location', objective['locationHash'])
     for location_release in location['locationReleases']:
       if location_release.get('activityHash'):
         ret['name'] = 'Activity: ' + GetActivityName(location_release['activityHash'])
@@ -169,9 +161,9 @@ def GetObjective(code):
 
 
 def GetRaceName(code):
-  return DEFS['Race'][code]['raceName']
+  return manifest.GetDef('Race', code)['raceName']
 
 
 def GetStatName(code):
-  stat = DEFS['Stat'][code]
+  stat = manifest.GetDef('Stat', code)
   return (stat.get('statName') or 'Stat #%i' % code).strip()

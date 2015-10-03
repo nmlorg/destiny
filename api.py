@@ -13,27 +13,16 @@ from base.bungie.destiny import user as destiny_user
 JINJA2 = jinja2.Environment(loader=jinja2.FileSystemLoader('.'))
 
 
-MANIFEST = None
-
-def Manifest():
-  global MANIFEST
-
-  if MANIFEST is None:
-    MANIFEST = manifest.Manifest()
-  return MANIFEST
-
-
 class DBPage(webapp2.RequestHandler):
   def get(self):
-    defs = Manifest()['definitions']
+    defs = manifest.GetDef()
     self.response.content_type = 'text/html'
     self.response.write(JINJA2.get_template('db_index.html').render({'defs': defs}))
 
 
 class DBBucketPage(webapp2.RequestHandler):
   def get(self, bucket_name):
-    defs = Manifest()['definitions']
-    bucket = defs[bucket_name]
+    bucket = manifest.GetDef(bucket_name)
     self.response.content_type = 'text/html'
     self.response.write(JINJA2.get_template('db_bucket.html').render(
         {'bucket_name': bucket_name, 'bucket': bucket}))
@@ -41,9 +30,7 @@ class DBBucketPage(webapp2.RequestHandler):
 
 class DBObjectPage(webapp2.RequestHandler):
   def get(self, bucket_name, hashcode):
-    defs = Manifest()['definitions']
-    bucket = defs[bucket_name]
-    obj = bucket[long(hashcode)]
+    obj = manifest.GetDef(bucket_name, long(hashcode))
     self.response.content_type = 'text/html'
     self.response.write(JINJA2.get_template('db_object.html').render({'obj': obj}))
 
@@ -65,7 +52,7 @@ class UserJSONPage(webapp2.RequestHandler):
   def get(self, username):
     user = destiny_user.User(username)
     self.response.headers['content-type'] = 'application/json'
-    self.response.write(json.dumps(user, indent=4, sort_keys=True))
+    self.response.write(json.dumps(user))
 
 
 class UserObjectPage(webapp2.RequestHandler):

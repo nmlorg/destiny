@@ -87,6 +87,44 @@ class Manifest(dict):
       return sqlite3.connect(tmp.name)
 
 
+MANIFEST = None
+
+
+def GetDef(group=None, key=None):
+  global MANIFEST
+
+  if MANIFEST is None:
+    logging.warning('Loading manifest.')
+    MANIFEST = Manifest()
+
+  if group is None:
+    return MANIFEST['definitions'].keys()
+  if key is None:
+    return MANIFEST['definitions'][group].keys()
+  return MANIFEST['definitions'][group][key]
+
+
+try:
+  from google.appengine.api import memcache
+except ImportError:
+  pass
+else:
+  _GetDef = GetDef
+
+  _CACHE = {}
+
+  def GetDef(group=None, key=None):
+    k = 'db:%s:%s' % (group or '-', key or '-')
+    ret = _CACHE.get(k)
+    if ret is None:
+      ret = memcache.get(k)
+    if ret is None:
+      ret = _GetDef(group, key)
+      _CACHE[k] = ret
+      memcache.set(k, ret)
+    return ret
+
+
 if __name__ == '__main__':
   manifest = Manifest()
 
