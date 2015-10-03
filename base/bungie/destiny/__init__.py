@@ -1,3 +1,4 @@
+import logging
 import urlparse
 from base import bungie
 
@@ -53,6 +54,7 @@ else:
     ret = [{'displayName': user.name, 'membershipType': user.accounttype,
             'membershipId': str(user.accountid)} for user in q]
     if not ret:
+      logging.warning('Looking up accounttype=%r username=%r.', accounttype, username)
       ret = _SearchDestinyPlayer(username, accounttype)
       for ent in ret:
         DestinyUser(name=ent['displayName'], accounttype=ent['membershipType'],

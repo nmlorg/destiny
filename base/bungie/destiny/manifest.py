@@ -105,23 +105,22 @@ def GetDef(group=None, key=None):
 
 
 try:
-  from google.appengine.api import memcache
+  from google.appengine.ext import ndb
 except ImportError:
   pass
 else:
-  _GetDef = GetDef
+  class DestinyDefinition(ndb.Model):
+    data = ndb.JsonProperty()
 
-  _CACHE = {}
+  _GetDef = GetDef
 
   def GetDef(group=None, key=None):
     k = 'db:%s:%s' % (group or '-', key or '-')
-    ret = _CACHE.get(k)
-    if ret is None:
-      ret = memcache.get(k)
-    if ret is None:
-      ret = _GetDef(group, key)
-      _CACHE[k] = ret
-      memcache.set(k, ret)
+    ent = DestinyDefinition.get_by_id(k)
+    if ent is not None:
+      return ent.data
+    ret = _GetDef(group, key)
+    DestinyDefinition(id=k, data=ret).put()
     return ret
 
 

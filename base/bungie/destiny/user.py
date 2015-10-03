@@ -20,10 +20,10 @@ class User(dict):
   def __init__(self, username, accounttype=None, accountid=None):
     if accounttype is None or accountid is None:
       for ent in destiny.SearchDestinyPlayer(username):
-        logging.info('Found account %r.', ent)
         username = ent['displayName']
         accounttype = ent['membershipType']
         accountid = long(ent['membershipId'])
+        break
 
     assert isinstance(accounttype, (int, long)), accounttype
     assert isinstance(accountid, (int, long)), accountid
