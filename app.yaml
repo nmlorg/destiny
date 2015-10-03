@@ -15,6 +15,7 @@ handlers:
   upload: .*[.](css|ico|js)
 
 - url: /.*
+  secure: always
   script: api.app
 
 inbound_services:

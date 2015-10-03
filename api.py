@@ -52,7 +52,7 @@ class UserJSONPage(webapp2.RequestHandler):
   def get(self, username):
     user = destiny_user.User(username)
     self.response.headers['content-type'] = 'application/json'
-    self.response.write(json.dumps(user))
+    self.response.write(json.dumps(user, sort_keys=True))
 
 
 class UserObjectPage(webapp2.RequestHandler):
