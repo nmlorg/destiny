@@ -141,8 +141,13 @@ nmlorg.ui.questStep = function(step) {
   div.href = '/db/InventoryItem/' + step.hash;
   div.textContent = step.objective;
   div.title = step.name + '\n\n' + step.objective + '\n';
-  for (var i = 0; i < step.objectives.length; i++)
-    div.title += '- ' + step.objectives[i].name + ': ' + step.objectives[i].count + '\n';
+  for (var i = 0; i < step.objectives.length; i++) {
+    var objective = step.objectives[i];
+    if (objective.count > 1)
+      div.title += '- ' + objective.count + ' ' + objective.name + '\n';
+    else
+      div.title += '- ' + objective.name + '\n';
+  }
   div.title += '\n' + step.desc;
   return div;
 };

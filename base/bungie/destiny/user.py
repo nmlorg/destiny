@@ -86,15 +86,8 @@ class User(dict):
                 'hash': step_hash,
                 'name': step_info['itemName'],
                 'objective': step_info['itemDescription'].strip(),
-                'objectives': [],
+                'objectives': [GetObjective(code) for code in step_info['objectiveHashes']],
             })
-            for objective_hash in step_info['objectiveHashes']:
-              objective = DEFS['Objective'][objective_hash]
-              if objective.get('displayDescription'):
-                quest['steps'][-1]['objectives'].append({
-                    'count': objective['completionValue'],
-                    'name': objective['displayDescription'].strip(),
-                })
         for step in quest['steps']:
           if step['hash'] == ent['itemHash']:
             step['active'] = True
@@ -133,6 +126,10 @@ class User(dict):
       where[bucket].append(item)
 
 
+def GetActivityName(code):
+  return DEFS['Activity'][code]['activityName'].strip()
+
+
 def GetBucketName(code):
   bucket = DEFS['InventoryBucket'][code]
   return (bucket.get('bucketName') or bucket.get('bucketIdentifier') or 'Bucket #%i' % code).strip()
@@ -142,8 +139,33 @@ def GetClassName(code):
   return DEFS['Class'][code]['className']
 
 
+def GetDestinationName(code):
+  return DEFS['Destination'][code]['destinationName'].strip()
+
+
 def GetGenderName(code):
   return DEFS['Gender'][code]['genderName']
+
+
+def GetObjective(code):
+  objective = DEFS['Objective'][code]
+  ret = {'count': objective['completionValue']}
+  if objective.get('displayDescription'):
+    ret['name'] = objective['displayDescription'].strip()
+  elif objective.get('locationHash'):
+    location = DEFS['Location'][objective['locationHash']]
+    for location_release in location['locationReleases']:
+      if location_release.get('activityHash'):
+        ret['name'] = 'Activity: ' + GetActivityName(location_release['activityHash'])
+        break
+      elif location_release.get('destinationHash'):
+        ret['name'] = 'Destination: ' + GetDestinationName(location_release['destinationHash'])
+        break
+    else:
+      ret['name'] = 'Location #%i' % objective['locationHash']
+  else:
+    ret['name'] = 'Objective #%i' % code
+  return ret
 
 
 def GetRaceName(code):
