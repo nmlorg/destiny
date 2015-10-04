@@ -62,7 +62,7 @@ div.emblem > div.stats {
 }
 
 a.item {
-  background-color: #212121;
+  background-color: #636363;
   color: white;
   float: left;
   height: 40px;
@@ -70,6 +70,10 @@ a.item {
   position: relative;
   white-space: nowrap;
   width: 300px;
+}
+
+a.item.active {
+  background-color: #212121;
 }
 
 a.item > * {
@@ -105,7 +109,7 @@ a.item > div.subtitle {
 }
 
 a.item > div.stat {
-  background-color: #212121;
+  background-color: #636363;
   font-size: 14px;
   padding-left: 4px;
   padding-right: 10px;
@@ -113,13 +117,21 @@ a.item > div.stat {
   top: 0px;
 }
 
-a.item > div.stat-type {
+a.item.active > div.stat {
   background-color: #212121;
+}
+
+a.item > div.stat-type {
+  background-color: #636363;
   bottom: 10px;
   font-size: 10px;
   padding-left: 4px;
   padding-right: 10px;
   right: 0px;
+}
+
+a.item.active > div.stat-type {
+  background-color: #212121;
 }
 
 a.item > div.perks {

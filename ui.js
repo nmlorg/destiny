@@ -59,6 +59,8 @@ nmlorg.ui.character = function(character) {
 nmlorg.ui.item = function(item) {
   var div = document.createElement('a');
   div.className = 'item';
+  if (item.equipped)
+    div.className += ' active';
   div.href = '/db/InventoryItem/' + item.hash;
 
   var img = document.createElement('img');
