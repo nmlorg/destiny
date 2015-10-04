@@ -30,7 +30,7 @@ def ListsToTuple(obj):
 
 class Manifest(dict):
   def __init__(self):
-    super(Manifest, self).__init__(destiny.Manifest())
+    super(Manifest, self).__init__(destiny.GetDestinyManifest())
 
     definition_path = os.path.join(os.path.dirname(__file__), 'definitions.pickle.gz')
     try:

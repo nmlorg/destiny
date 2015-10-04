@@ -17,22 +17,41 @@ class DBPage(webapp2.RequestHandler):
   def get(self):
     defs = manifest.GetDef()
     self.response.content_type = 'text/html'
-    self.response.write(JINJA2.get_template('db_index.html').render({'defs': defs}))
+    self.response.write(JINJA2.get_template('db_index.html').render({
+        'breadcrumbs': (
+            ('/db/', 'DB'),
+        ),
+        'defs': defs,
+    }))
 
 
 class DBBucketPage(webapp2.RequestHandler):
   def get(self, bucket_name):
     bucket = manifest.GetDef(bucket_name)
     self.response.content_type = 'text/html'
-    self.response.write(JINJA2.get_template('db_bucket.html').render(
-        {'bucket_name': bucket_name, 'bucket': bucket}))
+    self.response.write(JINJA2.get_template('db_bucket.html').render({
+        'breadcrumbs': (
+            ('/db/', 'DB'),
+            ('/db/%s/' % bucket_name, bucket_name),
+        ),
+        'bucket_name': bucket_name,
+        'bucket': bucket,
+    }))
 
 
 class DBObjectPage(webapp2.RequestHandler):
   def get(self, bucket_name, hashcode):
-    obj = manifest.GetDef(bucket_name, long(hashcode))
+    hashcode = long(hashcode)
+    obj = manifest.GetDef(bucket_name, hashcode)
     self.response.content_type = 'text/html'
-    self.response.write(JINJA2.get_template('db_object.html').render({'obj': obj}))
+    self.response.write(JINJA2.get_template('db_object.html').render({
+        'breadcrumbs': (
+            ('/db/', 'DB'),
+            ('/db/%s/' % bucket_name, bucket_name),
+            ('/db/%s/%i' % (bucket_name, hashcode), hashcode),
+        ),
+        'obj': obj,
+    }))
 
 
 class ObjectSearchPage(webapp2.RequestHandler):
@@ -45,7 +64,12 @@ class ObjectSearchPage(webapp2.RequestHandler):
 class UserHTMLPage(webapp2.RequestHandler):
   def get(self, username):
     self.response.content_type = 'text/html'
-    self.response.write(JINJA2.get_template('user.html').render({'username': username}))
+    self.response.write(JINJA2.get_template('user.html').render({
+        'breadcrumbs': (
+            ('/' + username, username),
+        ),
+        'username': username,
+    }))
 
 
 class UserJSONPage(webapp2.RequestHandler):
@@ -63,7 +87,12 @@ class UserObjectPage(webapp2.RequestHandler):
     summary = destiny.GetAccountSummary(accounttype, accountid)['data']
     summary['inventory']['items'] = all_items['items']
     self.response.content_type = 'text/html'
-    self.response.write(JINJA2.get_template('db_object.html').render({'obj': summary}))
+    self.response.write(JINJA2.get_template('db_object.html').render({
+        'breadcrumbs': (
+            ('/%s/%s' % (accounttype, accountid), accountid),
+        ),
+        'obj': summary,
+    }))
 
 
 class UserPyPage(webapp2.RequestHandler):

@@ -23,8 +23,12 @@ def GetCharacterProgression(accounttype, accountid, charid):
   return Fetch('%s/Account/%i/%i/Progression/', accounttype, accountid, charid)
 
 
-def Manifest():
+def GetDestinyManifest():
   return Fetch('Manifest/')
+
+
+def GetPublicAdvisors():
+  return Fetch('Advisors/')
 
 
 def SearchDestinyPlayer(username, accounttype=None):
