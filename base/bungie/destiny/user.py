@@ -97,6 +97,7 @@ class User(dict):
           'icon': item_info.get('icon', '/img/misc/missing_icon.png'),
           'id': ent['itemId'],
           'name': item_info.get('itemName', '').strip() or 'Item #%i' % ent['itemHash'],
+          'perks': [GetPerk(code) for code in item_info['perkHashes']],
           'primary_stat_value': ent.get('primaryStat') and ent['primaryStat']['value'],
           'primary_stat_type': (ent.get('primaryStat') and
                                 GetStatName(ent['primaryStat']['statHash'])),
@@ -166,6 +167,15 @@ def GetObjective(code):
     ret['name'] = 'Objective #%i' % code
   return ret
 
+
+def GetPerk(code):
+  perk = manifest.GetDef('SandboxPerk', code)
+  return {
+      'desc': perk.get('displayDescription', 'Undefined perk').strip(),
+      'hidden': not perk['isDisplayable'],
+      'icon': perk['displayIcon'],
+      'name': perk.get('displayName') or '#%i' % code,
+  }
 
 def GetRaceName(code):
   return manifest.GetDef('Race', code)['raceName']

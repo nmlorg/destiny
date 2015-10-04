@@ -105,10 +105,23 @@ nmlorg.ui.item = function(item) {
   else if (item.primary_stat_type)
     statTypeDiv.textContent += item.primary_stat_type;
 
+  var perkDiv = document.createElement('div');
+  div.appendChild(perkDiv);
+  perkDiv.className = 'perks';
+  var perks = [];
+  for (var i = 0; i < item.perks.length; i++)
+    perks.push(item.perks[i].name);
+  perkDiv.textContent = perks.join(' \u2022 ');
+
   div.title = titleDiv.textContent + (item.quantity > 1 ? ' (x ' + item.quantity + ')' : '') + '\n' +
       subtitleDiv.textContent + '\n' +
       statDiv.textContent + ' ' + statTypeDiv.textContent + (item.fully_upgraded ? '' : ' (in progress)') + '\n' +
       '\n' + item.desc;
+  if (item.perks.length) {
+    div.title += '\n\nPerks:';
+    for (var i = 0; i < item.perks.length; i++)
+      div.title += '\n- ' + item.perks[i].name + ': ' + item.perks[i].desc;
+  }
 
   return div;
 };
