@@ -234,15 +234,15 @@ user.get(function() {
     br.style.clear = 'both';
     var toggleDiv = document.createElement('div');
     td.appendChild(toggleDiv);
-    toggleDiv.textContent = '+ Quests';
+    toggleDiv.textContent = '\u25b6 Quests';
     toggleDiv.addEventListener('click', function() {
       var itemDiv = this.previousElementSibling;
       if (itemDiv.style.display == '') {
         itemDiv.style.display = 'none';
-        this.textContent = '+' + this.textContent.substr(1);
+        this.textContent = '\u25b6' + this.textContent.substr(1);
       } else {
         itemDiv.style.display = '';
-        this.textContent = '-' + this.textContent.substr(1);
+        this.textContent = '\u25b2' + this.textContent.substr(1);
       }
     });
     toggleDiv.style.cursor = 'pointer';
@@ -285,17 +285,17 @@ user.get(function() {
         br.style.clear = 'both';
         var toggleDiv = document.createElement('div');
         td.appendChild(toggleDiv);
-        toggleDiv.textContent = '+ ' + items.length + ' ' + bucketName;
+        toggleDiv.textContent = '\u25b6 ' + items.length + ' ' + bucketName;
         if (toggleDiv.textContent[toggleDiv.textContent.length - 1] != 's')
           toggleDiv.textContent += 's';
         toggleDiv.addEventListener('click', function() {
           var itemDiv = this.previousElementSibling;
           if (itemDiv.style.display == '') {
             itemDiv.style.display = 'none';
-            this.textContent = '+' + this.textContent.substr(1);
+            this.textContent = '\u25b6' + this.textContent.substr(1);
           } else {
             itemDiv.style.display = '';
-            this.textContent = '-' + this.textContent.substr(1);
+            this.textContent = '\u25b2' + this.textContent.substr(1);
           }
         });
         toggleDiv.style.cursor = 'pointer';
