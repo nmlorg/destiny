@@ -54,6 +54,14 @@ class DBObjectPage(webapp2.RequestHandler):
     }))
 
 
+class IndexPage(webapp2.RequestHandler):
+  def get(self):
+    self.response.content_type = 'text/html'
+    self.response.write(JINJA2.get_template('index.html').render({
+        'breadcrumbs': (),
+    }))
+
+
 class ObjectSearchPage(webapp2.RequestHandler):
   def get(self, hashcode):
     self.response.content_type = 'text/html'
@@ -109,7 +117,7 @@ class Warmup(webapp2.RequestHandler):
 
 app = webapp2.WSGIApplication([
     ('/_ah/warmup', Warmup),
-    ('/', DBPage),
+    ('/', IndexPage),
     ('/db/?', DBPage),
     ('/db/([a-zA-Z]+)/?', DBBucketPage),
     ('/db/([a-zA-Z]+)/([0-9]+)/?', DBObjectPage),
