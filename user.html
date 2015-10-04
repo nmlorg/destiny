@@ -26,31 +26,39 @@ div.emblem > img {
 
 div.emblem > div.class {
   font-size: 40px;
-  height: 57px;
+  height: 50px;
   left: 96px;
   top: 0px;
 }
 
 div.emblem > div.subtitle {
-  bottom: 0px;
+  bottom: 20px;
   font-size: 20px;
-  height: 39px;
-  left: 96px;
+  height: 30px;
+  left: 100px;
 }
 
 div.emblem > div.level {
   font-size: 40px;
-  height: 57px;
+  height: 50px;
   right: 10px;
   top: 0px;
 }
 
 div.emblem > div.light {
-  bottom: 0px;
+  bottom: 20px;
   color: yellow;
   font-size: 20px;
-  height: 39px;
+  height: 30px;
   right: 10px;
+}
+
+div.emblem > div.stats {
+  bottom: 2px;
+  color: #bdbdbd;
+  font-size: 10px;
+  height: 20px;
+  left: 101px;
 }
 
 a.item {
@@ -189,7 +197,7 @@ user.get(function() {
     var character = user.characters[i];
     td = document.createElement('td');
     tr.appendChild(td);
-    td.appendChild(nmlorg.ui.banner(character));
+    td.appendChild(nmlorg.ui.character(character));
   }
   td = document.createElement('td');
   tr.appendChild(td);

@@ -12,7 +12,7 @@ nmlorg = window.nmlorg || {};
 nmlorg.ui = nmlorg.ui || {};
 
 
-nmlorg.ui.banner = function(character) {
+nmlorg.ui.character = function(character) {
   var div = document.createElement('div');
   div.className = 'emblem';
   div.style.backgroundImage = "url('https://www.bungie.net" + character.emblem_banner + "')";
@@ -40,7 +40,18 @@ nmlorg.ui.banner = function(character) {
   div.appendChild(lightDiv);
   lightDiv.className = 'light';
   lightDiv.textContent = '\u2666 ' + character.light;
-  
+
+  var statsDiv = document.createElement('div');
+  div.appendChild(statsDiv);
+  statsDiv.className = 'stats';
+  var norm = (character.stats.Agility + character.stats.Armor + character.stats.Recovery) / 100;
+  var stats = [[100 + Math.round(character.stats.Agility / norm), 'Agility'],
+               [100 + Math.round(character.stats.Armor / norm), 'Armor'],
+               [100 + Math.round(character.stats.Recovery / norm), 'Recovery']];
+  stats.sort();
+  statsDiv.textContent = stats[2][1] + ' > ' + stats[1][1] + ' > ' + stats[0][1];
+  statsDiv.title = (stats[2][0] - 100) + '% > ' + (stats[1][0] - 100) + '% > ' + (stats[0][0] - 100) + '%';
+
   return div;
 };
 
@@ -90,14 +101,7 @@ nmlorg.ui.item = function(item) {
   div.title = titleDiv.textContent + (item.quantity > 1 ? ' (x ' + item.quantity + ')' : '') + '\n' +
       subtitleDiv.textContent + '\n' +
       statDiv.textContent + ' ' + statTypeDiv.textContent + (item.fully_upgraded ? '' : ' (in progress)') + '\n' +
-      '\n' + item.desc + '\n';
-  for (var statName in item.stats) {
-    var stat = item.stats[statName];
-    if (stat[0] == stat[1])
-      div.title += '\n' + statName + ': ' + stat[0];
-    else
-      div.title += '\n' + statName + ': ' + stat[0] + ' - ' + stat[1];
-  }
+      '\n' + item.desc;
 
   return div;
 };

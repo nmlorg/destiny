@@ -41,7 +41,7 @@ class User(dict):
 
     self['characters'] = []
     for ent in summary['characters']:
-      character = {
+      self['characters'].append({
           'class': GetClassName(ent['characterBase']['classHash']),
           'emblem_banner': ent['backgroundPath'],
           'emblem_icon': ent['emblemPath'],
@@ -51,8 +51,9 @@ class User(dict):
           'inventory': {},
           'quests': {},
           'race': GetRaceName(ent['characterBase']['raceHash']),
-      }
-      self['characters'].append(character)
+          'stats': {GetStatName(stat['statHash']): stat['value']
+                    for stat in ent['characterBase']['stats'].itervalues()},
+      })
 
     self['vault'] = {}
     for ent in summary['inventory']['items']:
@@ -93,15 +94,13 @@ class User(dict):
           'fully_upgraded': ent['isGridComplete'],
           'hash': ent['itemHash'],
           'icon': item_info.get('icon', '/img/misc/missing_icon.png'),
-          'id': long(ent['itemId']),
+          'id': ent['itemId'],
           'name': item_info.get('itemName', '').strip() or 'Item #%i' % ent['itemHash'],
           'primary_stat_value': ent.get('primaryStat') and ent['primaryStat']['value'],
           'primary_stat_type': (ent.get('primaryStat') and
                                 GetStatName(ent['primaryStat']['statHash'])),
           'quantity': ent['quantity'],
           'state': ent['state'],
-          'stats': {GetStatName(stat['statHash']): (stat['minimum'], stat['maximum'])
-                    for stat in (item_info.get('stats') or {}).itervalues()},
           'tier': item_info.get('tierTypeName', '').strip(),
           'type': item_info.get('itemTypeName', '').strip(),
       }
