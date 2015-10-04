@@ -24,7 +24,7 @@ nmlorg.ui.character = function(character) {
   var classDiv = document.createElement('div');
   div.appendChild(classDiv);
   classDiv.className = 'class';
-  classDiv.textContent = character['class'];
+  classDiv.textContent = character.class;
 
   var subDiv = document.createElement('div');
   div.appendChild(subDiv);
@@ -81,8 +81,15 @@ nmlorg.ui.item = function(item) {
   div.appendChild(subtitleDiv);
   subtitleDiv.className = 'subtitle';
   subtitleDiv.textContent = item.type;
+  var subs = [];
+  if (item.class)
+    subs.push(item.class)
   if (item.tier && (item.tier != 'Common'))
-    subtitleDiv.textContent += ' (' + item.tier + ')';
+    subs.push(item.tier);
+  if (subs.length) {
+    subs.sort();
+    subtitleDiv.textContent += ' (' + subs.join(', ') + ')';
+  }
 
   var statDiv = document.createElement('div');
   div.appendChild(statDiv);

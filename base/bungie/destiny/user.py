@@ -88,6 +88,7 @@ class User(dict):
 
       item = {
           'bound': bool(ent['transferStatus'] & 2),
+          'class': GetClassFromCategories(item_info['itemCategoryHashes']),
           'damage_type': DAMAGE_TYPES[ent['damageType']],
           'desc': item_info.get('itemDescription', '').strip(),
           'equipped': bool(ent['transferStatus'] & 1),
@@ -124,6 +125,13 @@ def GetActivityName(code):
 def GetBucketName(code):
   bucket = manifest.GetDef('InventoryBucket', code)
   return (bucket.get('bucketName') or bucket.get('bucketIdentifier') or 'Bucket #%i' % code).strip()
+
+
+def GetClassFromCategories(codes):
+  for code in codes:
+    category = manifest.GetDef('ItemCategory', code)
+    if category['identifier'].startswith('CATEGORY_CLASS_'):
+      return category['title'].strip()
 
 
 def GetClassName(code):
