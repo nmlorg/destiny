@@ -10,6 +10,10 @@ handlers:
 - url: /_ah/warmup
   script: api.app
 
+- url: /(google38371e7df630b0a7[.]html)
+  static_files: \1
+  upload: google38371e7df630b0a7.html
+
 - url: /(.*[.](css|ico|js|txt))
   static_files: \1
   upload: .*[.](css|ico|js|txt)
