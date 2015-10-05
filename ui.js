@@ -25,21 +25,25 @@ nmlorg.ui.bounty = function(bounty) {
   div.appendChild(titleDiv);
   titleDiv.className = 'title';
   titleDiv.textContent = bounty.name;
+  for (var i = bounty.rewards.length - 1; i >= 0; i--) {
+    var reward = bounty.rewards[i];
+    var img = document.createElement('img');
+    titleDiv.insertBefore(img, titleDiv.firstChild);
+    img.src = 'https://www.bungie.net' + reward.icon;
+    img.height = 14;
+    img.style.paddingRight = '3px';
+    img.title = reward.name;
+  }
+
 
   var subtitleDiv = document.createElement('div');
   div.appendChild(subtitleDiv);
   subtitleDiv.className = 'subtitle';
-  for (var i = 0; i < bounty.rewards.length; i++) {
-    var reward = bounty.rewards[i];
-    var img = document.createElement('img');
-    subtitleDiv.appendChild(img);
-    img.src = 'https://www.bungie.net' + reward.icon;
-    img.height = 10;
-    img.style.paddingRight = '2px';
-    img.title = reward.name;
-  }
+  subtitleDiv.textContent = bounty.desc;
 
-  div.title = titleDiv.textContent + '\n\n' + bounty.desc;
+  div.title = titleDiv.textContent + '\n\n' + bounty.desc + '\n\nRewards:';
+  for (var i = 0; i < bounty.rewards.length; i++)
+    div.title += '\n- ' + bounty.rewards[i].name;
 
   return div;
 };
