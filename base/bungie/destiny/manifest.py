@@ -125,8 +125,22 @@ else:
 
 
 if __name__ == '__main__':
+  import pprint
+
   manifest = Manifest()
 
-  for k, v in sorted(manifest['definitions'].iteritems()):
-    if k != '__url__':
-      print '%s: %i definitions.' % (k, len(v))
+  while True:
+    key = raw_input('>>> ')
+    if not key:
+      break
+    try:
+      key = long(key)
+    except ValueError:
+      pass
+    ret = {}
+    for group, codes in manifest['definitions'].iteritems():
+      if isinstance(codes, dict):
+        v = codes.get(key)
+        if v is not None:
+          ret[group] = v
+    pprint.pprint(ret)
