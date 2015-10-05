@@ -10,9 +10,9 @@ handlers:
 - url: /_ah/warmup
   script: api.app
 
-- url: /(.*[.](css|ico|js))
+- url: /(.*[.](css|ico|js|txt))
   static_files: \1
-  upload: .*[.](css|ico|js)
+  upload: .*[.](css|ico|js|txt)
 
 - url: /.*
   secure: always
