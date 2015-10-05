@@ -80,6 +80,7 @@ class User(dict):
                 'name': step_info['itemName'],
                 'objective': step_info['itemDescription'].strip(),
                 'objectives': [GetObjective(code) for code in step_info['objectiveHashes']],
+                'rewards': [GetReward(long(code)) for code in step_info['values']],
             })
         for step in quest['steps']:
           if step['hash'] == ent['itemHash']:
@@ -179,6 +180,14 @@ def GetPerk(code):
 
 def GetRaceName(code):
   return manifest.GetDef('Race', code)['raceName']
+
+
+def GetReward(code):
+  reward = manifest.GetDef('InventoryItem', code)
+  return {
+      'icon': reward['icon'],
+      'name': reward['itemName'],
+  }
 
 
 def GetStatName(code):

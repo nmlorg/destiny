@@ -166,6 +166,15 @@ nmlorg.ui.questStep = function(step) {
     div.className += ' active';
   div.href = '/db/InventoryItem/' + step.hash;
   div.textContent = step.objective;
+  for (var i = step.rewards.length - 1; i >= 0; i--) {
+    var img = document.createElement('img');
+    div.insertBefore(img, div.firstChild);
+    var reward = step.rewards[i];
+    img.src = 'https://www.bungie.net' + reward.icon;
+    img.height = 10;
+    img.style.paddingRight = '2px';
+    img.title = reward.name;
+  }
   div.title = step.name + '\n\n' + step.objective + '\n';
   for (var i = 0; i < step.objectives.length; i++) {
     var objective = step.objectives[i];
