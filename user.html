@@ -42,42 +42,29 @@ user.get(function() {
       bucketNames.push(bucket);
   bucketNames.sort()
 
-  var tbody = document.createElement('tbody');
-  table.appendChild(tbody);
+  var data = [];
 
-  var tr = document.createElement('tr');
-  tbody.appendChild(tr);
-  var td = document.createElement('td');
-  tr.appendChild(td);
-  td.textContent = 'Quests';
+  var row = [];
+  data.push(row);
+  row.push('Bounties');
   for (var i = 0; i < user.characters.length; i++) {
-    td = document.createElement('td');
-    tr.appendChild(td);
-    var itemDiv = document.createElement('div');
-    td.appendChild(itemDiv);
-    itemDiv.style.display = 'none';
-    for (var questName in user.characters[i].quests)
-      itemDiv.appendChild(nmlorg.ui.quest(user.characters[i].quests[questName]));
-    var br = document.createElement('br');
-    itemDiv.appendChild(br);
-    br.style.clear = 'both';
-    var toggleDiv = document.createElement('div');
-    td.appendChild(toggleDiv);
-    toggleDiv.textContent = '\u25b6 Quests';
-    toggleDiv.addEventListener('click', function() {
-      var itemDiv = this.previousElementSibling;
-      if (itemDiv.style.display == '') {
-        itemDiv.style.display = 'none';
-        this.textContent = '\u25b6' + this.textContent.substr(1);
-      } else {
-        itemDiv.style.display = '';
-        this.textContent = '\u25b2' + this.textContent.substr(1);
-      }
-    });
-    toggleDiv.style.cursor = 'pointer';
+    var character = user.characters[i];
+    var cell = [];
+    row.push(cell);
+    for (var j = 0; j < character.bounties.length; j++)
+      cell.push(nmlorg.ui.bounty(character.bounties[j]));
   }
-  td = document.createElement('td');
-  tr.appendChild(td);
+
+  var row = [];
+  data.push(row);
+  row.push('Quests');
+  for (var i = 0; i < user.characters.length; i++) {
+    var character = user.characters[i];
+    var cell = [];
+    row.push(cell);
+    for (var questName in character.quests)
+      cell.push(nmlorg.ui.quest(character.quests[questName]));
+  }
 
   for (var i = 0; i < bucketNames.length; i++) {
     var bucketName = bucketNames[i];
@@ -86,11 +73,9 @@ user.get(function() {
       buckets.push(user.characters[j].inventory[bucketName] || []);
     buckets.push(user.vault[bucketName] || []);
 
-    var tr = document.createElement('tr');
-    tbody.appendChild(tr);
-    var td = document.createElement('td');
-    tr.appendChild(td);
-    td.textContent = bucketName;
+    var row = [];
+    data.push(row);
+    row.push(bucketName);
     for (var j = 0; j < buckets.length; j++) {
       var bucket = buckets[j];
       var items = [];
@@ -99,22 +84,41 @@ user.get(function() {
         items.push([1 / (item.primary_stat_value || 1), item.name, item]);
       }
       items.sort();
-      td = document.createElement('td');
+      var cell = [];
+      row.push(cell);
+      for (var k = 0; k < items.length; k++)
+        cell.push(nmlorg.ui.item(items[k][2]));
+    }
+  }
+
+  var tbody = document.createElement('tbody');
+  table.appendChild(tbody);
+
+  for (var i = 0; i < data.length; i++) {
+    var row = data[i];
+    var tr = document.createElement('tr');
+    tbody.appendChild(tr);
+    for (var j = 0; j < row.length; j++) {
+      var cell = row[j];
+      var td = document.createElement('td');
       tr.appendChild(td);
-      if (items.length == 1)
-        td.appendChild(nmlorg.ui.item(items[0][2]));
-      else if (items.length > 1) {
+      if (typeof(cell) == 'string')
+        td.textContent = cell;
+      else if (cell.length == 1)
+        td.appendChild(cell[0]);
+      else if (cell.length > 1) {
         var itemDiv = document.createElement('div');
         td.appendChild(itemDiv);
         itemDiv.style.display = 'none';
-        for (var k = 0; k < items.length; k++)
-          itemDiv.appendChild(nmlorg.ui.item(items[k][2]));
+        for (var k = 0; k < cell.length; k++)
+          itemDiv.appendChild(cell[k]);
         var br = document.createElement('br');
         itemDiv.appendChild(br);
         br.style.clear = 'both';
         var toggleDiv = document.createElement('div');
         td.appendChild(toggleDiv);
-        toggleDiv.textContent = '\u25b6 ' + items.length + ' ' + bucketName;
+        toggleDiv.style.cursor = 'pointer';
+        toggleDiv.textContent = '\u25b6 ' + cell.length + ' ' + row[0];
         if (toggleDiv.textContent[toggleDiv.textContent.length - 1] != 's')
           toggleDiv.textContent += 's';
         toggleDiv.addEventListener('click', function() {
@@ -127,7 +131,6 @@ user.get(function() {
             this.textContent = '\u25b2' + this.textContent.substr(1);
           }
         });
-        toggleDiv.style.cursor = 'pointer';
       }
     }
   }

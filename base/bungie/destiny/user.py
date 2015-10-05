@@ -42,6 +42,7 @@ class User(dict):
     self['characters'] = []
     for ent in summary['characters']:
       self['characters'].append({
+          'bounties': [],
           'class': GetClassName(ent['characterBase']['classHash']),
           'emblem_banner': ent['backgroundPath'],
           'emblem_icon': ent['emblemPath'],
@@ -58,6 +59,10 @@ class User(dict):
     self['vault'] = {}
     for ent in summary['inventory']['items']:
       item_info = manifest.GetDef('InventoryItem', ent['itemHash'])
+      if item_info.get('bucketTypeHash'):
+        bucket_name = GetBucketName(item_info['bucketTypeHash'])
+      else:
+        bucket_name = 'Undefined (%s)' % GetBucketName(ent['bucketHash'])
 
       if item_info.get('questlineItemHash'):
         quests = self['characters'][ent['characterIndex']]['quests']
@@ -87,6 +92,17 @@ class User(dict):
             step['active'] = True
         continue
 
+      if bucket_name == 'Bounties':
+        bounties = self['characters'][ent['characterIndex']]['bounties']
+        bounties.append({
+            'desc': item_info.get('itemDescription', '').strip(),
+            'hash': ent['itemHash'],
+            'icon': item_info.get('icon', '/img/misc/missing_icon.png'),
+            'name': item_info.get('itemName', '').strip() or 'Item #%i' % ent['itemHash'],
+            'rewards': [GetReward(long(code)) for code in item_info['values']],
+        })
+        continue
+
       item = {
           'bound': bool(ent['transferStatus'] & 2),
           'class': GetClassFromCategories(item_info['itemCategoryHashes']),
@@ -111,13 +127,9 @@ class User(dict):
         where = self['vault']
       else:
         where = self['characters'][ent['characterIndex']]['inventory']
-      if item_info.get('bucketTypeHash'):
-        bucket = GetBucketName(item_info['bucketTypeHash'])
-      else:
-        bucket = 'Undefined (%s)' % GetBucketName(ent['bucketHash'])
-      if bucket not in where:
-        where[bucket] = []
-      where[bucket].append(item)
+      if bucket_name not in where:
+        where[bucket_name] = []
+      where[bucket_name].append(item)
 
 
 def GetActivityName(code):

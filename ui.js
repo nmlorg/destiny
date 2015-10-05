@@ -12,6 +12,39 @@ nmlorg = window.nmlorg || {};
 nmlorg.ui = nmlorg.ui || {};
 
 
+nmlorg.ui.bounty = function(bounty) {
+  var div = document.createElement('a');
+  div.className = 'item';
+  div.href = '/db/InventoryItem/' + bounty.hash;
+
+  var img = document.createElement('img');
+  div.appendChild(img);
+  img.src = 'https://www.bungie.net' + bounty.icon;
+
+  var titleDiv = document.createElement('div');
+  div.appendChild(titleDiv);
+  titleDiv.className = 'title';
+  titleDiv.textContent = bounty.name;
+
+  var subtitleDiv = document.createElement('div');
+  div.appendChild(subtitleDiv);
+  subtitleDiv.className = 'subtitle';
+  for (var i = 0; i < bounty.rewards.length; i++) {
+    var reward = bounty.rewards[i];
+    var img = document.createElement('img');
+    subtitleDiv.appendChild(img);
+    img.src = 'https://www.bungie.net' + reward.icon;
+    img.height = 10;
+    img.style.paddingRight = '2px';
+    img.title = reward.name;
+  }
+
+  div.title = titleDiv.textContent + '\n\n' + bounty.desc;
+
+  return div;
+};
+
+
 nmlorg.ui.character = function(character) {
   var div = document.createElement('div');
   div.className = 'emblem';
@@ -167,9 +200,9 @@ nmlorg.ui.questStep = function(step) {
   div.href = '/db/InventoryItem/' + step.hash;
   div.textContent = step.objective;
   for (var i = step.rewards.length - 1; i >= 0; i--) {
+    var reward = step.rewards[i];
     var img = document.createElement('img');
     div.insertBefore(img, div.firstChild);
-    var reward = step.rewards[i];
     img.src = 'https://www.bungie.net' + reward.icon;
     img.height = 10;
     img.style.paddingRight = '2px';
