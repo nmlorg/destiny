@@ -20,7 +20,7 @@ def GetAllItemsSummary(accounttype, accountid):
 
 
 def GetCharacterProgression(accounttype, accountid, charid):
-  return Fetch('%s/Account/%i/%i/Progression/', accounttype, accountid, charid)
+  return Fetch('%s/Account/%i/Character/%i/Progression/', accounttype, accountid, charid)
 
 
 def GetDestinyManifest():

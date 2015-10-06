@@ -89,6 +89,14 @@ nmlorg.ui.character = function(character) {
   statsDiv.textContent = stats[2][1] + ' > ' + stats[1][1] + ' > ' + stats[0][1];
   statsDiv.title = (stats[2][0] - 100) + '% > ' + (stats[1][0] - 100) + '% > ' + (stats[0][0] - 100) + '%';
 
+  div.title = levelDiv.textContent + ' ' + subDiv.textContent + ' ' + classDiv.textContent + ' ' +
+      lightDiv.textContent + '\n\nProgress:';
+  for (var i = 0; i < character.progress.length; i++) {
+    var prog = character.progress[i];
+    if (prog.current)
+      div.title += '\n- ' + prog.name + ': ' + prog.current;
+  }
+
   return div;
 };
 

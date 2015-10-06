@@ -41,6 +41,8 @@ class User(dict):
 
     self['characters'] = []
     for ent in summary['characters']:
+      charid = long(ent['characterBase']['characterId'])
+      progress = destiny.GetCharacterProgression(accounttype, accountid, charid)['data']
       self['characters'].append({
           'bounties': [],
           'class': GetClassName(ent['characterBase']['classHash']),
@@ -50,6 +52,8 @@ class User(dict):
           'level': ent['characterLevel'],
           'light': ent['characterBase']['powerLevel'],
           'inventory': {},
+          'progress': sorted((GetProgression(prog) for prog in progress['progressions']),
+                             key=lambda ent: ent['name']),
           'quests': {},
           'race': GetRaceName(ent['characterBase']['raceHash']),
           'stats': {GetStatName(stat['statHash']): stat['value']
@@ -189,6 +193,19 @@ def GetPerk(code):
       'icon': perk['displayIcon'],
       'name': perk.get('displayName') or '#%i' % code,
   }
+
+
+def GetProgression(progression):
+  info = manifest.GetDef('Progression', progression['progressionHash'])
+  return {
+      'current': progression['currentProgress'],
+      'daily': progression['dailyProgress'],
+      'icon': info.get('icon', '/img/misc/missing_icon.png'),
+      'level': progression['level'],
+      'name': info['name'],
+      'weekly': progression['weeklyProgress'],
+  }
+
 
 def GetRaceName(code):
   return manifest.GetDef('Race', code)['raceName']
