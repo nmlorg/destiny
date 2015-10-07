@@ -12,40 +12,147 @@ nmlorg = window.nmlorg || {};
 nmlorg.ui = nmlorg.ui || {};
 
 
-nmlorg.ui.bounty = function(bounty) {
-  var div = document.createElement('a');
-  div.className = 'item';
-  div.href = '/db/InventoryItem/' + bounty.hash;
-
+nmlorg.ui.icon = function(src, dim) {
+  if (typeof(src) != 'string')
+    src = src.icon;
+  if (src[0] == '/')
+    src = 'https://www.bungie.net' + src;
   var img = document.createElement('img');
-  div.appendChild(img);
-  img.src = 'https://www.bungie.net' + bounty.icon;
+  img.height = dim;
+  img.src = src;
+  return img;
+};
 
-  var titleDiv = document.createElement('div');
-  div.appendChild(titleDiv);
-  titleDiv.className = 'title';
-  titleDiv.textContent = bounty.name;
-  for (var i = bounty.rewards.length - 1; i >= 0; i--) {
-    var reward = bounty.rewards[i];
-    var img = document.createElement('img');
-    titleDiv.insertBefore(img, titleDiv.firstChild);
-    img.src = 'https://www.bungie.net' + reward.icon;
-    img.height = 14;
-    img.style.paddingRight = '3px';
-    img.title = reward.name;
+
+nmlorg.ui.iconLine = function(icons, height) {
+  var div = document.createElement('div');
+  for (var i = 0; i < icons.length; i++) {
+    var img = nmlorg.ui.icon(icons[i], height);
+    div.appendChild(img);
+    if (i)
+      img.style.paddingLeft = Math.ceil(height / 4) + 'px';
   }
-
-
-  var subtitleDiv = document.createElement('div');
-  div.appendChild(subtitleDiv);
-  subtitleDiv.className = 'subtitle';
-  subtitleDiv.textContent = bounty.desc;
-
-  div.title = titleDiv.textContent + '\n\n' + bounty.desc + '\n\nRewards:';
-  for (var i = 0; i < bounty.rewards.length; i++)
-    div.title += '\n- ' + bounty.rewards[i].name;
-
   return div;
+};
+
+
+nmlorg.ui.placard = function(data) {
+  var div = document.createElement('div');
+  div.style.backgroundColor = data.active ? '#212121' : '#636363';
+  div.style.color = 'white';
+  div.style.height = data.height + 'px';
+  div.style.position = 'relative';
+  div.style.width = '300px';
+  var front = document.createElement('div');
+  div.appendChild(front);
+  front.style.height = div.style.height;
+  front.style.overflow = 'hidden';
+  front.style.position = 'relative';
+  front.style.whiteSpace = 'nowrap';
+  front.style.width = div.style.width;
+  var offsets = {'left': 0, 'right': 0};
+  if (data.icon) {
+    front.appendChild(nmlorg.ui.icon(data.icon, data.height));
+    offsets.left += data.height;
+  }
+  var numLines = Math.max(data.left ? data.left.length : 0, data.right ? data.right.length : 0);
+  var lineHeightDiv = numLines * 2 + 1;
+  for (var side in {'left': 1, 'right': 2}) {
+    if (!data[side] || !data[side].length)
+      continue;
+    for (var i = 0; i < data[side].length; i++) {
+      var line = data[side][i];
+      if (!line)
+        continue;
+      var lineDiv = document.createElement('div');
+      front.appendChild(lineDiv);
+      var lineHeight = data.height * (i ? 2 : 3) / lineHeightDiv;
+      var fontSize = Math.ceil(2 * lineHeight / 3);
+      lineDiv.style.backgroundColor = div.style.backgroundColor;
+      lineDiv.style.fontSize = fontSize + 'px';
+      lineDiv.style.height = lineHeight + 'px';
+      lineDiv.style.paddingLeft = lineDiv.style.paddingRight = '2px';
+      lineDiv.style.position = 'absolute';
+      lineDiv.style.top = (i ? data.height * (1 + i * 2) / lineHeightDiv : 0) + 'px';
+      lineDiv.style[side] = offsets[side] + 'px';
+      if (typeof(line) == 'string')
+        lineDiv.textContent = line;
+      else if (line instanceof Array)
+        lineDiv.appendChild(nmlorg.ui.iconLine(line, fontSize));
+      else
+        lineDiv.appendChild(line);
+    }
+  }
+  if (data.drawer || data.link) {
+    var drawer = document.createElement('div');
+    div.appendChild(drawer);
+    drawer.style.backgroundColor = '#dedede';
+    drawer.style.border = '5px solid ' + div.style.backgroundColor;
+    drawer.style.color = div.style.backgroundColor;
+    drawer.style.display = 'none';
+    drawer.style.fontSize = '10px';
+    drawer.style.left = '10px';
+    drawer.style.padding = '3px';
+    drawer.style.position = 'absolute';
+    drawer.style.top = div.style.height;
+    drawer.style.width = '280px';
+    drawer.style.zIndex = 1;
+    div.style.cursor = 'pointer';
+    div.addEventListener('click', function() {
+      drawer.style.display = drawer.style.display == '' ? 'none' : '';
+    });
+    for (var i = 0; i < data.drawer.length; i++) {
+      var line = data.drawer[i];
+      if (line instanceof Array) {
+        for (var j = 0; j < line.length; j++) {
+          var item = line[j];
+          if (item.icon)
+            drawer.appendChild(nmlorg.ui.icon(item, 10));
+          else
+            drawer.appendChild(document.createTextNode('\u2002'));
+          drawer.appendChild(document.createTextNode(' ' + item.name));
+          drawer.appendChild(document.createElement('br'));
+        }
+      } else {
+        drawer.appendChild(document.createTextNode(line || ''));
+        drawer.appendChild(document.createElement('br'));
+      }
+    }
+    if (data.link) {
+      if (data.drawer && data.drawer.length)
+        drawer.appendChild(document.createElement('br'));
+      var a = document.createElement('a');
+      drawer.appendChild(a);
+      a.href = data.link;
+      a.textContent = 'DB definition';
+    }
+  }
+  return div;
+};
+
+
+nmlorg.ui.bounty = function(bounty) {
+  return nmlorg.ui.placard({
+      'active': true,
+      'height': 40,
+      'icon': bounty.icon,
+      'left': [
+          bounty.name,
+          bounty.desc,
+      ],
+      'right': [
+          bounty.rewards,
+      ],
+      'drawer': [
+          bounty.name,
+          '',
+          bounty.desc,
+          '',
+          'Rewards:',
+          bounty.rewards,
+      ],
+      'link': '/db/InventoryItem/' + bounty.hash,
+  });
 };
 
 
