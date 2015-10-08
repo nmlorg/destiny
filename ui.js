@@ -75,7 +75,7 @@ nmlorg.ui.placard = function(data) {
       lineDiv.style.position = 'absolute';
       lineDiv.style.top = (i ? data.height * (1 + i * 2) / lineHeightDiv : 0) + 'px';
       lineDiv.style[side] = offsets[side] + 'px';
-      if (typeof(line) == 'string')
+      if ((typeof(line) == 'string') || (typeof(line) == 'number'))
         lineDiv.textContent = line;
       else if (line instanceof Array)
         lineDiv.appendChild(nmlorg.ui.iconLine(line, fontSize));
@@ -109,7 +109,7 @@ nmlorg.ui.placard = function(data) {
           if (item.icon)
             drawer.appendChild(nmlorg.ui.icon(item, 10));
           else
-            drawer.appendChild(document.createTextNode('\u2002'));
+            drawer.appendChild(document.createTextNode('\u2022'));
           drawer.appendChild(document.createTextNode(' ' + item.name));
           drawer.appendChild(document.createElement('br'));
         }
@@ -209,32 +209,7 @@ nmlorg.ui.character = function(character) {
 
 
 nmlorg.ui.item = function(item) {
-  var div = document.createElement('a');
-  div.className = 'item';
-  if (item.equipped)
-    div.className += ' active';
-  div.href = '/db/InventoryItem/' + item.hash;
-
-  var img = document.createElement('img');
-  div.appendChild(img);
-  img.src = 'https://www.bungie.net' + item.icon;
-
-  if (item.quantity > 1) {
-    var quantityDiv = document.createElement('div');
-    div.appendChild(quantityDiv);
-    quantityDiv.className = 'quantity';
-    quantityDiv.textContent = item.quantity;
-  }
-
-  var titleDiv = document.createElement('div');
-  div.appendChild(titleDiv);
-  titleDiv.className = 'title';
-  titleDiv.textContent = item.name;
-
-  var subtitleDiv = document.createElement('div');
-  div.appendChild(subtitleDiv);
-  subtitleDiv.className = 'subtitle';
-  subtitleDiv.textContent = item.type;
+  var typeStr = item.type;
   var subs = [];
   if (item.class)
     subs.push(item.class)
@@ -242,39 +217,51 @@ nmlorg.ui.item = function(item) {
     subs.push(item.tier);
   if (subs.length) {
     subs.sort();
-    subtitleDiv.textContent += ' (' + subs.join(', ') + ')';
+    typeStr += ' (' + subs.join(', ') + ')';
   }
 
-  var statDiv = document.createElement('div');
-  div.appendChild(statDiv);
-  statDiv.className = 'stat';
-  if (item.primary_stat_value)
-    statDiv.textContent = item.primary_stat_value;
-
-  var statTypeDiv = document.createElement('div');
-  div.appendChild(statTypeDiv);
-  statTypeDiv.className = 'stat-type';
+  var statType = '';
   if (item.damage_type)
-    statTypeDiv.textContent = item.damage_type[0].toUpperCase() + item.damage_type.substr(1).toLowerCase() + ' ';
+    statType = item.damage_type[0].toUpperCase() + item.damage_type.substr(1).toLowerCase();
   else if (item.primary_stat_type)
-    statTypeDiv.textContent += item.primary_stat_type;
+    statType = item.primary_stat_type;
 
-  var perkDiv = document.createElement('div');
-  div.appendChild(perkDiv);
-  perkDiv.className = 'perks';
-  var perks = [];
-  for (var i = 0; i < item.perks.length; i++)
-    perks.push(item.perks[i].name);
-  perkDiv.textContent = perks.join(' \u2022 ');
+  var div = nmlorg.ui.placard({
+      'active': item.equipped,
+      'height': 40,
+      'icon': item.icon,
+      'left': [
+          item.name,
+          typeStr,
+          item.perks,
+      ],
+      'right': [
+          item.primary_stat_value,
+          statType,
+      ],
+      'drawer': [
+          item.name + (item.quantity > 1 ? ' (x ' + item.quantity + ')' : ''),
+          typeStr,
+          item.primary_stat_value ? item.primary_stat_value + ' ' + statType + (item.fully_upgraded ? '' : ' (in progress)') : '',
+          '',
+          item.desc,
+          '',
+          'Perks:',
+          item.perks,
+      ],
+      'link': '/db/InventoryItem/' + item.hash,
+  });
 
-  div.title = titleDiv.textContent + (item.quantity > 1 ? ' (x ' + item.quantity + ')' : '') + '\n' +
-      subtitleDiv.textContent + '\n' +
-      statDiv.textContent + ' ' + statTypeDiv.textContent + (item.fully_upgraded ? '' : ' (in progress)') + '\n' +
-      '\n' + item.desc;
-  if (item.perks.length) {
-    div.title += '\n\nPerks:';
-    for (var i = 0; i < item.perks.length; i++)
-      div.title += '\n- ' + item.perks[i].name + ': ' + item.perks[i].desc;
+  if (item.quantity > 1) {
+    var quantityDiv = document.createElement('div');
+    div.appendChild(quantityDiv);
+    quantityDiv.style.backgroundColor = 'white';
+    quantityDiv.style.bottom = '0px';
+    quantityDiv.style.color = 'black';
+    quantityDiv.style.fontSize = '8px';
+    quantityDiv.style.padding = '2px';
+    quantityDiv.style.position = 'absolute';
+    quantityDiv.textContent = item.quantity;
   }
 
   return div;
