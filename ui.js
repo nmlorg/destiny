@@ -240,6 +240,7 @@ nmlorg.ui.item = function(item) {
       'right': [
           item.primary_stat_value,
           statType,
+          item.sources,
       ],
       'drawer': [
           item.name + (item.quantity > 1 ? ' (x ' + item.quantity + ')' : ''),
@@ -248,6 +249,7 @@ nmlorg.ui.item = function(item) {
           '',
           item.desc,
           ['Perks:', item.perks, '{name}: {desc}'],
+          ['Sources:', item.sources],
       ],
       'link': '/db/InventoryItem/' + item.hash,
   });

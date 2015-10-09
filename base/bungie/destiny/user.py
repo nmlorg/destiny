@@ -124,6 +124,7 @@ class User(dict):
           'primary_stat_type': (ent.get('primaryStat') and
                                 GetStatName(ent['primaryStat']['statHash'])),
           'quantity': ent['quantity'],
+          'sources': [GetSource(code) for code in item_info.get('sourceHashes', ())],
           'state': ent['state'],
           'tier': item_info.get('tierTypeName', '').strip(),
           'type': item_info.get('itemTypeName', '').strip(),
@@ -217,6 +218,15 @@ def GetReward(code):
   return {
       'icon': reward['icon'],
       'name': reward['itemName'],
+  }
+
+
+def GetSource(code):
+  source = manifest.GetDef('RewardSource', code) or {}
+  return {
+      'desc': source.get('description', ''),
+      'icon': source.get('icon', '/img/misc/missing_icon.png'),
+      'name': source.get('sourceName') or 'Source #%i' % code,
   }
 
 
