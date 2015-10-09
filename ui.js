@@ -270,60 +270,57 @@ nmlorg.ui.item = function(item) {
 
 nmlorg.ui.quest = function(quest) {
   var parent = document.createElement('div');
+  parent.style.position = 'relative';
 
-  var div = document.createElement('div');
-  parent.appendChild(div);
-  div.className = 'quest';
+  parent.appendChild(nmlorg.ui.placard({
+      'active': true,
+      'height': 40,
+      'icon': quest.icon,
+      'left': [
+          quest.name,
+          quest.desc,
+      ],
+      'drawer': [
+          quest.name,
+          '',
+          quest.desc,
+      ],
+      'link': '/db/InventoryItem/' + quest.hash,
+  }));
 
-  var img = document.createElement('img');
-  div.appendChild(img);
-  img.src = 'https://www.bungie.net' + quest.icon;
-
-  var titleDiv = document.createElement('div');
-  div.appendChild(titleDiv);
-  titleDiv.className = 'title';
-  titleDiv.textContent = quest.name;
-
-  var subtitleDiv = document.createElement('div');
-  div.appendChild(subtitleDiv);
-  subtitleDiv.className = 'subtitle';
-  subtitleDiv.textContent = quest.desc;
-
-  div.title = titleDiv.textContent + '\n\n' + quest.desc;
-
-  for (var i = 0; i < quest.steps.length; i++)
-    parent.appendChild(nmlorg.ui.questStep(quest.steps[i]));
+  for (var i = 0; i < quest.steps.length; i++) {
+    var step = nmlorg.ui.questStep(quest.steps[i]);
+    parent.appendChild(step);
+    step.style.marginBottom = step.style.marginTop = '1px';
+  }
 
   return parent;
 };
 
 
 nmlorg.ui.questStep = function(step) {
-  var div = document.createElement('a');
-  div.className = 'quest-step';
-  if (step.active)
-    div.className += ' active';
-  div.href = '/db/InventoryItem/' + step.hash;
-  div.textContent = step.objective;
-  for (var i = step.rewards.length - 1; i >= 0; i--) {
-    var reward = step.rewards[i];
-    var img = document.createElement('img');
-    div.insertBefore(img, div.firstChild);
-    img.src = 'https://www.bungie.net' + reward.icon;
-    img.height = 10;
-    img.style.paddingRight = '2px';
-    img.title = reward.name;
-  }
-  div.title = step.name + '\n\n' + step.objective + '\n';
-  for (var i = 0; i < step.objectives.length; i++) {
-    var objective = step.objectives[i];
-    if (objective.count > 1)
-      div.title += '- ' + objective.count + ' ' + objective.name + '\n';
-    else
-      div.title += '- ' + objective.name + '\n';
-  }
-  div.title += '\n' + step.desc;
-  return div;
+  return nmlorg.ui.placard({
+      'active': step.active,
+      'height': 12,
+      'left': [
+          step.objective,
+      ],
+      'right': [
+          step.rewards,
+      ],
+      'drawer': [
+          step.name,
+          '',
+          step.objective,
+          '',
+          'Objectives:',
+          step.objectives,
+          '',
+          'Rewards:',
+          step.rewards,
+      ],
+      'link': '/db/InventoryItem/' + step.hash,
+  });
 };
 
 })();

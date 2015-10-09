@@ -112,9 +112,6 @@ user.get(function() {
         itemDiv.style.display = 'none';
         for (var k = 0; k < cell.length; k++)
           itemDiv.appendChild(cell[k]);
-        var br = document.createElement('br');
-        itemDiv.appendChild(br);
-        br.style.clear = 'both';
         var toggleDiv = document.createElement('div');
         td.appendChild(toggleDiv);
         toggleDiv.style.cursor = 'pointer';

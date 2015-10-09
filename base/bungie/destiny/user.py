@@ -76,6 +76,7 @@ class User(dict):
         if quest is None:
           quest = quests[line_info['itemName']] = {
               'desc': line_info['displaySource'].strip(),
+              'hash': line_hash,
               'icon': line_info.get('icon', '/img/misc/missing_icon.png'),
               'name': line_info['itemName'],
               'steps': [],
