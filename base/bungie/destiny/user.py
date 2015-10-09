@@ -62,7 +62,7 @@ class User(dict):
 
     self['vault'] = {}
     for ent in summary['inventory']['items']:
-      item_info = manifest.GetDef('InventoryItem', ent['itemHash'])
+      item_info = manifest.GetDef('InventoryItem', ent['itemHash']) or {}
       if item_info.get('bucketTypeHash'):
         bucket_name = GetBucketName(item_info['bucketTypeHash'])
       else:
@@ -109,7 +109,7 @@ class User(dict):
 
       item = {
           'bound': bool(ent['transferStatus'] & 2),
-          'class': GetClassFromCategories(item_info['itemCategoryHashes']),
+          'class': GetClassFromCategories(item_info.get('itemCategoryHashes', ())),
           'damage_type': DAMAGE_TYPES[ent['damageType']],
           'desc': item_info.get('itemDescription', '').strip(),
           'equipped': bool(ent['transferStatus'] & 1),
@@ -118,7 +118,7 @@ class User(dict):
           'icon': item_info.get('icon', '/img/misc/missing_icon.png'),
           'id': ent['itemId'],
           'name': item_info.get('itemName', '').strip() or 'Item #%i' % ent['itemHash'],
-          'perks': [GetPerk(code) for code in item_info['perkHashes']],
+          'perks': [GetPerk(code) for code in item_info.get('perkHashes', ())],
           'primary_stat_value': ent.get('primaryStat') and ent['primaryStat']['value'],
           'primary_stat_type': (ent.get('primaryStat') and
                                 GetStatName(ent['primaryStat']['statHash'])),

@@ -101,7 +101,7 @@ def GetDef(group=None, key=None):
     return MANIFEST['definitions'].keys()
   if key is None:
     return MANIFEST['definitions'][group].keys()
-  return MANIFEST['definitions'][group][key]
+  return MANIFEST['definitions'][group].get(key)
 
 
 try:
