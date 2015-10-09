@@ -1,8 +1,6 @@
 {% extends "_base.html" %}
 {% block content %}
 
-<link rel="stylesheet" href="user.css">
-
 <script>
 var user = new nmlorg.destiny.User('{{username|e}}');
 var div = document.createElement('div');
@@ -30,7 +28,12 @@ user.get(function() {
   }
   td = document.createElement('td');
   tr.appendChild(td);
-  td.innerHTML = '<div class="emblem"><div class="class">Vault</div></div>';
+  td.appendChild(nmlorg.ui.placard({
+      'active': true,
+      'height': 96,
+      'icon': '/img/misc/missing_icon.png',
+      'left': ['Vault', '', ''],
+  }));
 
   var bucketNames = [];
   for (var i = 0; i < user.characters.length; i++)

@@ -104,13 +104,39 @@ nmlorg.ui.placard = function(data) {
     for (var i = 0; i < data.drawer.length; i++) {
       var line = data.drawer[i];
       if (line instanceof Array) {
-        for (var j = 0; j < line.length; j++) {
-          var item = line[j];
-          if (item.icon)
-            drawer.appendChild(nmlorg.ui.icon(item, 10));
-          else
-            drawer.appendChild(document.createTextNode('\u2022'));
-          drawer.appendChild(document.createTextNode(' ' + item.name));
+        var label = line[0];
+        var lineData = line[1];
+        var format = line[2] || '{name}';
+
+        if (lineData instanceof Array) {
+          var tmp = {};
+          for (var j = 0; j < lineData.length; j++)
+            tmp[lineData[j].name] = lineData[j];
+          lineData = tmp;
+        }
+        var first = true;
+        for (var name in lineData) {
+          if (first) {
+            first = false;
+            drawer.appendChild(document.createElement('br'));
+            drawer.appendChild(document.createTextNode(label));
+            drawer.appendChild(document.createElement('br'));
+          }
+          var item = lineData[name];
+          if (item instanceof Object) {
+            if (item.icon)
+              drawer.appendChild(nmlorg.ui.icon(item, 10));
+            else
+              drawer.appendChild(document.createTextNode('\u2022'));
+            drawer.appendChild(document.createTextNode(' '));
+            var tmp = format.split(/{([^}]*)}/g);
+            drawer.appendChild(document.createTextNode(tmp[0]));
+            for (var j = 1; j + 1 < tmp.length; j += 2) {
+              drawer.appendChild(document.createTextNode(item[tmp[j]]));
+              drawer.appendChild(document.createTextNode(tmp[j + 1]));
+            }
+          } else
+            drawer.appendChild(document.createTextNode('\u2022 ' + name + ': ' + item));
           drawer.appendChild(document.createElement('br'));
         }
       } else {
@@ -147,9 +173,7 @@ nmlorg.ui.bounty = function(bounty) {
           bounty.name,
           '',
           bounty.desc,
-          '',
-          'Rewards:',
-          bounty.rewards,
+          ['Rewards:', bounty.rewards],
       ],
       'link': '/db/InventoryItem/' + bounty.hash,
   });
@@ -157,54 +181,32 @@ nmlorg.ui.bounty = function(bounty) {
 
 
 nmlorg.ui.character = function(character) {
-  var div = document.createElement('div');
-  div.className = 'emblem';
-  div.style.backgroundImage = "url('https://www.bungie.net" + character.emblem_banner + "')";
-
-  var img = document.createElement('img');
-  div.appendChild(img);
-  img.src = 'https://www.bungie.net' + character.emblem_icon;
-
-  var classDiv = document.createElement('div');
-  div.appendChild(classDiv);
-  classDiv.className = 'class';
-  classDiv.textContent = character.class;
-
-  var subDiv = document.createElement('div');
-  div.appendChild(subDiv);
-  subDiv.className = 'subtitle';
-  subDiv.textContent = character.race + ' ' + character.gender;
-
-  var levelDiv = document.createElement('div');
-  div.appendChild(levelDiv);
-  levelDiv.className = 'level';
-  levelDiv.textContent = character.level;
-
-  var lightDiv = document.createElement('div');
-  div.appendChild(lightDiv);
-  lightDiv.className = 'light';
-  lightDiv.textContent = '\u2666 ' + character.light;
-
-  var statsDiv = document.createElement('div');
-  div.appendChild(statsDiv);
-  statsDiv.className = 'stats';
   var norm = (character.stats.Agility + character.stats.Armor + character.stats.Recovery) / 100;
   var stats = [[100 + Math.round(character.stats.Agility / norm), 'Agility'],
                [100 + Math.round(character.stats.Armor / norm), 'Armor'],
                [100 + Math.round(character.stats.Recovery / norm), 'Recovery']];
   stats.sort();
-  statsDiv.textContent = stats[2][1] + ' > ' + stats[1][1] + ' > ' + stats[0][1];
-  statsDiv.title = (stats[2][0] - 100) + '% > ' + (stats[1][0] - 100) + '% > ' + (stats[0][0] - 100) + '%';
 
-  div.title = levelDiv.textContent + ' ' + subDiv.textContent + ' ' + classDiv.textContent + ' ' +
-      lightDiv.textContent + '\n\nProgress:';
-  for (var i = 0; i < character.progress.length; i++) {
-    var prog = character.progress[i];
-    if (prog.current)
-      div.title += '\n- ' + prog.name + ': ' + prog.current;
-  }
-
-  return div;
+  return nmlorg.ui.placard({
+      'active': true,
+      'height': 96,
+      'icon': character.emblem_icon,
+      'left': [
+          character.class,
+          character.race + ' ' + character.gender,
+          stats[2][1] + ' > ' + stats[1][1] + ' > ' + stats[0][1],
+      ],
+      'right': [
+          character.level,
+          '\u2666 ' + character.light,
+      ],
+      'drawer': [
+          character.level + ' ' + character.race + ' ' + character.gender + ' ' +
+              character.class + ' ' + character.light,
+          ['Stats:', character.stats],
+          ['Progress:', character.progress, '{name}: {level} ({daily} / {weekly} / {current})'],
+      ],
+  });
 };
 
 
@@ -245,9 +247,7 @@ nmlorg.ui.item = function(item) {
           item.primary_stat_value ? item.primary_stat_value + ' ' + statType + (item.fully_upgraded ? '' : ' (in progress)') : '',
           '',
           item.desc,
-          '',
-          'Perks:',
-          item.perks,
+          ['Perks:', item.perks, '{name}: {desc}'],
       ],
       'link': '/db/InventoryItem/' + item.hash,
   });
@@ -312,12 +312,8 @@ nmlorg.ui.questStep = function(step) {
           step.name,
           '',
           step.objective,
-          '',
-          'Objectives:',
-          step.objectives,
-          '',
-          'Rewards:',
-          step.rewards,
+          ['Objectives:', step.objectives, '{count} {name}'],
+          ['Rewards:', step.rewards],
       ],
       'link': '/db/InventoryItem/' + step.hash,
   });
