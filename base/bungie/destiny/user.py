@@ -214,10 +214,10 @@ def GetRaceName(code):
 
 
 def GetReward(code):
-  reward = manifest.GetDef('InventoryItem', code)
+  reward = manifest.GetDef('InventoryItem', code) or {}
   return {
-      'icon': reward['icon'],
-      'name': reward['itemName'],
+      'icon': reward.get('icon', '/img/misc/missing_icon.png'),
+      'name': reward.get('itemName') or 'Reward #%i' % code,
   }
 
 
