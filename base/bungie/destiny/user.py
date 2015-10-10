@@ -111,7 +111,9 @@ class User(dict):
             'hash': ent['itemHash'],
             'icon': item_info.get('icon', '/img/misc/missing_icon.png'),
             'name': item_info.get('itemName', '').strip() or 'Item #%i' % ent['itemHash'],
+            'objectives': [GetObjective(code) for code in item_info['objectiveHashes']],
             'rewards': [GetReward(long(code)) for code in item_info['values']],
+            'sources': [GetSource(code) for code in item_info.get('sourceHashes', ())],
         })
         continue
 

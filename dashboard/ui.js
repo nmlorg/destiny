@@ -173,6 +173,8 @@ nmlorg.ui.bounty = function(bounty) {
           bounty.name,
           '',
           bounty.desc,
+          ['Objectives:', bounty.objectives, '{count} {name}'],
+          ['Sources:', bounty.sources],
           ['Rewards:', bounty.rewards],
       ],
       'link': '/db/InventoryItem/' + bounty.hash,
