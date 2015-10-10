@@ -1,0 +1,9 @@
+{% extends "dashboard/_base.html" %}
+{% block title %}{{user_info.user.displayName}}{% endblock %}
+{% block content %}
+
+<div class="container">
+  Welcome, {{user_info.user.displayName}}!
+</div>
+
+{% endblock %}

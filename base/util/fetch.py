@@ -4,13 +4,18 @@
 
 import json
 import logging
+import threading
 import time
 import urllib
 import urllib2
 
 
+_local = threading.local()
+
+
 def Fetch(url, data=None, headers={}, tries=50):
   start = time.time()
+  opener = getattr(_local, 'opener', None) or urllib2._opener or urllib2.build_opener()
 
   if isinstance(data, dict):
     data = urllib.urlencode(data)
@@ -25,7 +30,7 @@ def Fetch(url, data=None, headers={}, tries=50):
 
     try:
       req = urllib2.Request(url, data=data, headers=headers)
-      conn = urllib2.urlopen(req, timeout=backoff)
+      conn = opener.open(req, timeout=backoff)
       content = conn.read()
     except:
       logging.exception('Exception while fetching %s:', url)
@@ -42,3 +47,7 @@ def Fetch(url, data=None, headers={}, tries=50):
     return content
 
   logging.error('Failed to fetch %s (in %.3f s).', url, time.time() - start)
+
+
+def SetOpener(opener):
+  _local.opener = opener

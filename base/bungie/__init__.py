@@ -39,6 +39,10 @@ def GetAvailableLocales():
   return Fetch('GetAvailableLocales/')
 
 
+def GetCurrentUser():
+  return Fetch('User/GetBungieNetUser/')
+
+
 def HelloWorld():
   return Fetch('HelloWorld/')
 

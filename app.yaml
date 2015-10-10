@@ -18,6 +18,11 @@ handlers:
   static_files: dashboard/\1
   upload: .*[.](css|ico|js|txt)
 
+- url: /me/?
+  secure: always
+  login: required
+  script: dashboard.me.app
+
 - url: /.*
   secure: always
   script: dashboard.api.app
