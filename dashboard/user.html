@@ -19,7 +19,7 @@ user.get(function() {
   thead.appendChild(tr);
   var td = document.createElement('td');
   tr.appendChild(td);
-  td.innerHTML += '<a href="/' + user.account_type + '/' + user.account_id + '"><img src="' + user.account_type_icon + '"> ' + user.name + '</a>';
+  td.innerHTML += '<a href="/' + user.name + '.raw"><img src="' + user.account_type_icon + '"> ' + user.name + '</a>';
   for (var i = 0; i < user.characters.length; i++) {
     var character = user.characters[i];
     td = document.createElement('td');

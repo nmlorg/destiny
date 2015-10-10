@@ -62,13 +62,6 @@ class IndexPage(webapp2.RequestHandler):
     }))
 
 
-class ObjectSearchPage(webapp2.RequestHandler):
-  def get(self, hashcode):
-    self.response.content_type = 'text/html'
-    #self.response.write(JINJA2.get_template('dashboard/object_search.html').render(
-    #    {'object': definitions.Definitions()[long(hashcode)]}))
-
-
 class UserHTMLPage(webapp2.RequestHandler):
   def get(self, username):
     self.response.content_type = 'text/html'
@@ -87,27 +80,23 @@ class UserJSONPage(webapp2.RequestHandler):
     self.response.write(json.dumps(user, sort_keys=True))
 
 
-class UserObjectPage(webapp2.RequestHandler):
-  def get(self, accounttype, accountid):
-    accounttype = int(accounttype)
-    accountid = long(accountid)
-    all_items = destiny.GetAllItemsSummary(accounttype, accountid)['data']
-    summary = destiny.GetAccountSummary(accounttype, accountid)['data']
-    summary['inventory']['items'] = all_items['items']
-    self.response.content_type = 'text/html'
-    self.response.write(JINJA2.get_template('dashboard/db_object.html').render({
-        'breadcrumbs': (
-            ('/%s/%s' % (accounttype, accountid), accountid),
-        ),
-        'obj': summary,
-    }))
-
-
 class UserPyPage(webapp2.RequestHandler):
   def get(self, username):
     user = destiny_user.User(username)
     self.response.headers['content-type'] = 'text/plain'
     self.response.write(pprint.pformat(user))
+
+
+class UserRawPage(webapp2.RequestHandler):
+  def get(self, username):
+    username, accounttype, accountid, summary = destiny_user.GetDestinyUser(username)
+    self.response.content_type = 'text/html'
+    self.response.write(JINJA2.get_template('dashboard/db_object.html').render({
+        'breadcrumbs': (
+            ('/%s.raw' % username, username),
+        ),
+        'obj': summary,
+    }))
 
 
 class Warmup(webapp2.RequestHandler):
@@ -121,9 +110,8 @@ app = webapp2.WSGIApplication([
     ('/db/?', DBPage),
     ('/db/([a-zA-Z]+)/?', DBBucketPage),
     ('/db/([a-zA-Z]+)/([0-9]+)/?', DBObjectPage),
-    ('/([0-9]+)', ObjectSearchPage),
-    ('/([0-9]+)/([0-9]+)', UserObjectPage),
     ('/([a-zA-Z0-9-_ ]+)', UserHTMLPage),
     ('/([a-zA-Z0-9-_ ]+)[.]json', UserJSONPage),
     ('/([a-zA-Z0-9-_ ]+)[.]py', UserPyPage),
+    ('/([a-zA-Z0-9-_ ]+)[.]raw', UserRawPage),
 ], debug=True)

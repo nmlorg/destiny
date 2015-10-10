@@ -16,33 +16,40 @@ DAMAGE_TYPES = {
 }
 
 
+def GetDestinyUser(username, accounttype=None, accountid=None):
+  if accounttype is None or accountid is None:
+    for ent in destiny.SearchDestinyPlayer(username):
+      username = ent['displayName']
+      accounttype = ent['membershipType']
+      accountid = long(ent['membershipId'])
+      break
+
+  assert isinstance(accounttype, (int, long)), accounttype
+  assert isinstance(accountid, (int, long)), accountid
+
+  summary = destiny.GetAccountSummary(accounttype, accountid)['data']
+  all_items = destiny.GetAllItemsSummary(accounttype, accountid)['data']
+  summary['inventory']['items'] = all_items['items']
+  for ent in summary['characters']:
+    charid = long(ent['characterBase']['characterId'])
+    ent['progressions'] = destiny.GetCharacterProgression(
+        accounttype, accountid, charid)['data']['progressions']
+
+  return username, accounttype, accountid, summary
+
+
 class User(dict):
   def __init__(self, username, accounttype=None, accountid=None):
-    if accounttype is None or accountid is None:
-      for ent in destiny.SearchDestinyPlayer(username):
-        username = ent['displayName']
-        accounttype = ent['membershipType']
-        accountid = long(ent['membershipId'])
-        break
-
-    assert isinstance(accounttype, (int, long)), accounttype
-    assert isinstance(accountid, (int, long)), accountid
+    username, accounttype, accountid, summary = GetDestinyUser(username, accounttype, accountid)
 
     self['name'] = username
     self['account_type'] = accounttype
     self['account_id'] = str(accountid)
-
-    summary = destiny.GetAccountSummary(accounttype, accountid)['data']
-    all_items = destiny.GetAllItemsSummary(accounttype, accountid)['data']
-    summary['inventory']['items'] = all_items['items']
     self['clan_name'] = summary.get('clanName', '').strip()
     self['clan_tag'] = summary.get('clanTag', '').strip()
     self['grimoire_score'] = summary.get('grimoireScore', 0)
-
     self['characters'] = []
     for ent in summary['characters']:
-      charid = long(ent['characterBase']['characterId'])
-      progress = destiny.GetCharacterProgression(accounttype, accountid, charid)['data']
       self['characters'].append({
           'bounties': [],
           'class': GetClassName(ent['characterBase']['classHash']),
@@ -52,7 +59,7 @@ class User(dict):
           'level': ent['characterLevel'],
           'light': ent['characterBase']['powerLevel'],
           'inventory': {},
-          'progress': sorted((GetProgression(prog) for prog in progress['progressions']),
+          'progress': sorted((GetProgression(prog) for prog in ent['progressions']),
                              key=lambda ent: ent['name']),
           'quests': {},
           'race': GetRaceName(ent['characterBase']['raceHash']),
