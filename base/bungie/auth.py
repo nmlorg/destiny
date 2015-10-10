@@ -31,12 +31,27 @@ def Auth(username, password):
   conn = opener.open(req)
   _ = conn.read()
 
-  opener.add_handler(HeaderAdder({
-      'x-api-key': API_KEY,
-      'x-csrf': jar._cookies['www.bungie.net']['/']['bungled'].value,
-  }))
+  return (jar._cookies['www.bungie.net']['/']['bungled'].value,
+          jar._cookies['www.bungie.net']['/']['bungleatk'].value)
 
+
+def BuildOpener(bungled, bungleatk):
+  opener = urllib2.build_opener()
+  jar = cookielib.CookieJar()
+  jar.set_cookie(BungieCookie('bungled', bungled))
+  jar.set_cookie(BungieCookie('bungleatk', bungleatk))
+  opener.add_handler(urllib2.HTTPCookieProcessor(jar))
+  opener.extra_headers = {'x-api-key': API_KEY, 'x-csrf': bungled}
+  opener.add_handler(HeaderAdder(opener.extra_headers))
   return opener
+
+
+def BungieCookie(name, value):
+  return cookielib.Cookie(
+      version=0, name=name, value=value, port=None, port_specified=False, domain='www.bungie.net',
+      domain_specified=False, domain_initial_dot=False, path='/', path_specified=True, secure=True,
+      expires=None, discard=False, comment=None, comment_url=None, rest={'HttpOnly': None},
+      rfc2109=False)
 
 
 class HeaderAdder(urllib2.BaseHandler):
