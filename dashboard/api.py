@@ -123,7 +123,7 @@ app = webapp2.WSGIApplication([
     ('/db/([a-zA-Z]+)/([0-9]+)/?', DBObjectPage),
     ('/([0-9]+)', ObjectSearchPage),
     ('/([0-9]+)/([0-9]+)', UserObjectPage),
-    ('/([a-zA-Z0-9]+)', UserHTMLPage),
-    ('/([a-zA-Z0-9]+)[.]json', UserJSONPage),
-    ('/([a-zA-Z0-9]+)[.]py', UserPyPage),
+    ('/([a-zA-Z0-9-_ ]+)', UserHTMLPage),
+    ('/([a-zA-Z0-9-_ ]+)[.]json', UserJSONPage),
+    ('/([a-zA-Z0-9-_ ]+)[.]py', UserPyPage),
 ], debug=True)
