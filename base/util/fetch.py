@@ -10,12 +10,18 @@ import urllib
 import urllib2
 
 
-_local = threading.local()
+class _Local(threading.local):
+  def __init__(self):
+    if urllib2._opener is None:
+      urllib2._opener = urllib2.build_opener()
+    self.opener = urllib2._opener
+
+
+_LOCAL = _Local()
 
 
 def Fetch(url, data=None, headers={}, tries=50):
   start = time.time()
-  opener = getattr(_local, 'opener', None) or urllib2._opener or urllib2.build_opener()
 
   if isinstance(data, dict):
     data = urllib.urlencode(data)
@@ -30,7 +36,7 @@ def Fetch(url, data=None, headers={}, tries=50):
 
     try:
       req = urllib2.Request(url, data=data, headers=headers)
-      conn = opener.open(req, timeout=backoff)
+      conn = _LOCAL.opener.open(req, timeout=backoff)
       content = conn.read()
     except:
       logging.exception('Exception while fetching %s:', url)
@@ -50,4 +56,4 @@ def Fetch(url, data=None, headers={}, tries=50):
 
 
 def SetOpener(opener):
-  _local.opener = opener
+  _LOCAL.opener = opener
