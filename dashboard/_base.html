@@ -19,6 +19,9 @@
           <li{% if loop.last %} class="active"{% endif %}><a href="{{link}}">{{name}}</a></li>
         {% endfor %}
       </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="{{login_url}}">{% if user %}{{user.key.id()}}{% else %}Login{% endif %}</a></li>
+      </ul>
       <form class="navbar-form navbar-right" id="inspect-form">
         <div class="form-group">
           <input name="account" placeholder="Gamer tag" class="form-control">
