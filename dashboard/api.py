@@ -6,8 +6,6 @@ import pprint
 import webapp2
 from base import bungie
 from base.bungie import auth
-from base.bungie import destiny
-from base.bungie.destiny import manifest
 from base.bungie.destiny import user as destiny_user
 from base.util import fetch
 from google.appengine.api import users
@@ -15,47 +13,6 @@ from google.appengine.ext import ndb
 
 
 JINJA2 = jinja2.Environment(loader=jinja2.FileSystemLoader('.'))
-
-
-class DBPage(webapp2.RequestHandler):
-  def get(self):
-    defs = manifest.GetDef()
-    self.response.content_type = 'text/html'
-    self.response.write(JINJA2.get_template('dashboard/db_index.html').render({
-        'breadcrumbs': (
-            ('/db/', 'DB'),
-        ),
-        'defs': defs,
-    }))
-
-
-class DBBucketPage(webapp2.RequestHandler):
-  def get(self, bucket_name):
-    bucket = manifest.GetDef(bucket_name)
-    self.response.content_type = 'text/html'
-    self.response.write(JINJA2.get_template('dashboard/db_bucket.html').render({
-        'breadcrumbs': (
-            ('/db/', 'DB'),
-            ('/db/%s/' % bucket_name, bucket_name),
-        ),
-        'bucket_name': bucket_name,
-        'bucket': bucket,
-    }))
-
-
-class DBObjectPage(webapp2.RequestHandler):
-  def get(self, bucket_name, hashcode):
-    hashcode = long(hashcode)
-    obj = manifest.GetDef(bucket_name, hashcode)
-    self.response.content_type = 'text/html'
-    self.response.write(JINJA2.get_template('dashboard/db_object.html').render({
-        'breadcrumbs': (
-            ('/db/', 'DB'),
-            ('/db/%s/' % bucket_name, bucket_name),
-            ('/db/%s/%i' % (bucket_name, hashcode), hashcode),
-        ),
-        'obj': obj,
-    }))
 
 
 class User(ndb.Model):
@@ -164,9 +121,6 @@ class Warmup(webapp2.RequestHandler):
 app = webapp2.WSGIApplication([
     ('/_ah/warmup', Warmup),
     ('/', MePage),
-    ('/db/?', DBPage),
-    ('/db/([a-zA-Z]+)/?', DBBucketPage),
-    ('/db/([a-zA-Z]+)/([0-9]+)/?', DBObjectPage),
     ('/([a-zA-Z0-9-_ ]+)', UserHTMLPage),
     ('/([a-zA-Z0-9-_ ]+)[.]json', UserJSONPage),
     ('/([a-zA-Z0-9-_ ]+)[.]py', UserPyPage),
