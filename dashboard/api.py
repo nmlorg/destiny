@@ -1,124 +1,83 @@
 # Copyright 2014 Daniel Reed <n@ml.org>
 
-import jinja2
 import json
 import pprint
-import webapp2
 from base import bungie
 from base.bungie import auth
 from base.bungie.destiny import user as destiny_user
-from base.util import fetch
-from google.appengine.api import users
-from google.appengine.ext import ndb
+from dashboard import base_app
 
 
-JINJA2 = jinja2.Environment(loader=jinja2.FileSystemLoader('.'))
-
-
-class User(ndb.Model):
-  username = ndb.StringProperty()
-  bungled = ndb.TextProperty()
-  bungleatk = ndb.TextProperty()
-
-  def Activate(self):
-    fetch.SetOpener(auth.BuildOpener(self.bungled, self.bungleatk))
-
-
-class MePage(webapp2.RequestHandler):
+class MePage(base_app.RequestHandler):
   def get(self):
-    ae_user = users.get_current_user()
-    if ae_user is None:
-      self.response.content_type = 'text/html'
-      self.response.write(JINJA2.get_template('dashboard/me_login.html').render({
-          'breadcrumbs': (),
-          'login_url': users.create_login_url(),
-      }))
-      return
+    if self.request.user is None:
+      return self.response.render('dashboard/me_login.html')
 
-    email = ae_user.email().lower()
-    user = User.get_by_id(email) or User(id=email)
-    user.Activate()
+    self.request.user.Activate()
 
     user_info = bungie.GetCurrentUser()
     if user_info is None:
-      self.response.content_type = 'text/html'
-      self.response.write(JINJA2.get_template('dashboard/me_connect.html').render({
-          'breadcrumbs': (
-              (users.create_login_url(), email),
-          ),
-      }))
-      return
+      return self.response.render('dashboard/me_connect.html')
 
-    self.response.content_type = 'text/html'
-    self.response.write(JINJA2.get_template('dashboard/me_index.html').render({
-        'breadcrumbs': (
-            (users.create_login_url(), email),
-        ),
+    self.response.render('dashboard/me_index.html', {
         'user_info': user_info,
-    }))
+    })
 
   def post(self):
-    ae_user = users.get_current_user()
-    email = ae_user.email().lower()
-    user = User.get_by_id(email)
-    if user is None:
-      user = User(id=email)
-
     try:
       bungled, bungleatk = auth.Auth(self.request.get('email'), self.request.get('password'))
     except:
       pass
     else:
-      user.bungled = bungled
-      user.bungleatk = bungleatk
-      user.put()
+      self.request.user.bungled = bungled
+      self.request.user.bungleatk = bungleatk
+      self.request.user.put()
 
-    return self.redirect('/me/')
+    return self.redirect('/')
 
 
-class UserHTMLPage(webapp2.RequestHandler):
+class UserHTMLPage(base_app.RequestHandler):
   def get(self, username):
-    self.response.content_type = 'text/html'
-    self.response.write(JINJA2.get_template('dashboard/user.html').render({
+    self.response.render('dashboard/user.html', {
         'breadcrumbs': (
             ('/' + username, username),
         ),
         'username': username,
-    }))
+    })
 
 
-class UserJSONPage(webapp2.RequestHandler):
+class UserJSONPage(base_app.RequestHandler):
   def get(self, username):
     user = destiny_user.User(username)
-    self.response.headers['content-type'] = 'application/json'
+    self.response.content_type = 'application/json'
     self.response.write(json.dumps(user, sort_keys=True))
 
 
-class UserPyPage(webapp2.RequestHandler):
+class UserPyPage(base_app.RequestHandler):
   def get(self, username):
     user = destiny_user.User(username)
-    self.response.headers['content-type'] = 'text/plain'
+    self.response.content_type = 'text/plain'
     self.response.write(pprint.pformat(user))
 
 
-class UserRawPage(webapp2.RequestHandler):
+class UserRawPage(base_app.RequestHandler):
   def get(self, username):
     username, accounttype, accountid, summary = destiny_user.GetDestinyUser(username)
     self.response.content_type = 'text/html'
-    self.response.write(JINJA2.get_template('dashboard/db_object.html').render({
+    self.response.render('dashboard/db_object.html', {
         'breadcrumbs': (
             ('/%s.raw' % username, username),
         ),
         'obj': summary,
-    }))
+    })
 
 
-class Warmup(webapp2.RequestHandler):
+class Warmup(base_app.RequestHandler):
   def get(self):
     pass
 
 
-app = webapp2.WSGIApplication([
+app = base_app.WSGIApplication([
     ('/_ah/warmup', Warmup),
     ('/', MePage),
     ('/([a-zA-Z0-9-_ ]+)', UserHTMLPage),

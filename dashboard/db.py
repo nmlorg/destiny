@@ -1,55 +1,48 @@
 # Copyright 2014 Daniel Reed <n@ml.org>
 
-import jinja2
-import webapp2
 from base.bungie.destiny import manifest
+from dashboard import base_app
 
 
-JINJA2 = jinja2.Environment(loader=jinja2.FileSystemLoader('.'))
-
-
-class IndexPage(webapp2.RequestHandler):
+class IndexPage(base_app.RequestHandler):
   def get(self):
     defs = manifest.GetDef()
-    self.response.content_type = 'text/html'
-    self.response.write(JINJA2.get_template('dashboard/db_index.html').render({
+    self.response.render('dashboard/db_index.html', {
         'breadcrumbs': (
             ('/db/', 'DB'),
         ),
         'defs': defs,
-    }))
+    })
 
 
-class BucketPage(webapp2.RequestHandler):
+class BucketPage(base_app.RequestHandler):
   def get(self, bucket_name):
     bucket = manifest.GetDef(bucket_name)
-    self.response.content_type = 'text/html'
-    self.response.write(JINJA2.get_template('dashboard/db_bucket.html').render({
+    self.response.render('dashboard/db_bucket.html', {
         'breadcrumbs': (
             ('/db/', 'DB'),
             ('/db/%s/' % bucket_name, bucket_name),
         ),
         'bucket_name': bucket_name,
         'bucket': bucket,
-    }))
+    })
 
 
-class ObjectPage(webapp2.RequestHandler):
+class ObjectPage(base_app.RequestHandler):
   def get(self, bucket_name, hashcode):
     hashcode = long(hashcode)
     obj = manifest.GetDef(bucket_name, hashcode)
-    self.response.content_type = 'text/html'
-    self.response.write(JINJA2.get_template('dashboard/db_object.html').render({
+    self.response.render('dashboard/db_object.html', {
         'breadcrumbs': (
             ('/db/', 'DB'),
             ('/db/%s/' % bucket_name, bucket_name),
             ('/db/%s/%i' % (bucket_name, hashcode), hashcode),
         ),
         'obj': obj,
-    }))
+    })
 
 
-app = webapp2.WSGIApplication([
+app = base_app.WSGIApplication([
     ('/db/?', IndexPage),
     ('/db/([a-zA-Z]+)/?', BucketPage),
     ('/db/([a-zA-Z]+)/([0-9]+)/?', ObjectPage),
