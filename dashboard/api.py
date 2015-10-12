@@ -19,8 +19,41 @@ class MePage(base_app.RequestHandler):
     if user_info is None:
       return self.response.render('dashboard/me_connect.html')
 
+    username, accounttype, accountid, summary = destiny_user.GetDestinyUser(
+        user_info['user']['displayName'])
+
+    stores = [ent['characterBase']['characterId'] for ent in summary['characters']]
+    stores.append(None)
+    buckets = {}
+    for item in summary['inventory']['items']:
+      item_info = destiny_user.manifest.GetDef('InventoryItem', item['itemHash'])
+      if item_info is None:
+        continue
+      bucket_name = destiny_user.GetBucketName(item_info['bucketTypeHash'])
+      bucket = buckets.get(bucket_name)
+      if bucket is None:
+        bucket = buckets[bucket_name] = {}
+      item_name = item_info['itemName']
+      item_data = bucket.get(item_name)
+      if item_data is None:
+        item_data = bucket[item_name] = {
+            'equippable': item_info['equippable'],
+            'ids': {ent['characterBase']['characterId']: None for ent in summary['characters']},
+            'stores': {place: {'count': 0, 'id': None} for place in stores},
+            'total': 0,
+            'transferrable': not item_info['nonTransferrable'],
+        }
+      characterid = summary['characters'][item['characterIndex']]['characterBase']['characterId']
+      store = item_data['stores'][stores[item['characterIndex']]]
+      store['count'] += item['quantity']
+      store['id'] = item['itemId']
+      item_data['total'] += item['quantity']
+
     self.response.render('dashboard/me_index.html', {
-        'user_info': user_info,
+        'accountid': accountid,
+        'accounttype': accounttype,
+        'buckets': buckets,
+        'username': username,
     })
 
   def post(self):
