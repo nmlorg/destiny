@@ -34,19 +34,19 @@ class MePage(base_app.RequestHandler):
       if bucket is None:
         bucket = buckets[bucket_name] = {}
       item_name = item_info['itemName']
+      if not item_info['nonTransferrable'] and long(item['itemId']):
+        item_name = '%s (%s)' % (item_name, item['itemId'])
       item_data = bucket.get(item_name)
       if item_data is None:
         item_data = bucket[item_name] = {
             'equippable': item_info['equippable'],
-            'ids': {ent['characterBase']['characterId']: None for ent in summary['characters']},
-            'stores': {place: {'count': 0, 'id': None} for place in stores},
+            'id': long(item['itemId']) and item['itemId'],
+            'name': item_info['itemName'],
+            'stores': {place: 0 for place in stores},
             'total': 0,
             'transferrable': not item_info['nonTransferrable'],
         }
-      characterid = summary['characters'][item['characterIndex']]['characterBase']['characterId']
-      store = item_data['stores'][stores[item['characterIndex']]]
-      store['count'] += item['quantity']
-      store['id'] = item['itemId']
+      item_data['stores'][stores[item['characterIndex']]] += item['quantity']
       item_data['total'] += item['quantity']
 
     self.response.render('dashboard/me_index.html', {

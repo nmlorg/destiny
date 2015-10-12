@@ -9,27 +9,16 @@
         <tr>
           <th>{{bucket_name}}</th>
           {% for storeid in bucket.values()[0]['stores']|sort|reverse %}
-            {% if storeid %}
-              <th colspan="3">{{storeid}}</th>
-            {% else %}
-              <th colspan="2">Vault</th>
-            {% endif %}
+            <th colspan="2">{{storeid or 'Vault'}}</th>
           {% endfor %}
         </tr>
         {% for item_name, item in bucket.iteritems()|sort %}
           <tr>
             <td>{{item_name}}</td>
-            {% for storeid, store in item['stores'].iteritems()|sort|reverse %}
-              <td style="border-left: 1px solid #ddd">{% if store.count %}{{store.count}}{% endif %}</td>
-              {% if storeid %}
-                <td>
-                  {% if item.equippable and store.count %}
-                    <button class="btn btn-default" disabled>Equip</button>
-                  {% endif %}
-                </td>
-              {% endif %}
+            {% for storeid, count in item['stores'].iteritems()|sort|reverse %}
+              <td style="border-left: 1px solid #ddd">{% if count %}{{count}}{% endif %}</td>
               <td>
-                {% if item.transferrable and item.total > store.count %}
+                {% if item.transferrable and item.total > count %}
                   <button class="btn btn-default" disabled>Move</button>
                 {% endif %}
               </td>
