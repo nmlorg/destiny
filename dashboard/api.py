@@ -40,6 +40,7 @@ class MePage(base_app.RequestHandler):
       if item_data is None:
         item_data = bucket[item_name] = {
             'equippable': item_info['equippable'],
+            'hash': item['itemHash'],
             'id': long(item['itemId']) and item['itemId'],
             'name': item_info['itemName'],
             'stores': {place: 0 for place in stores},
