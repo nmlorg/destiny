@@ -15,27 +15,16 @@ nmlorg.table = nmlorg.table || {};
 nmlorg.table.Table = function() {
   this.headRows_ = [];
   this.bodyRows_ = [];
-}
+};
 
 
 nmlorg.table.Table.prototype.push = function(toHead) {
-  var row = new nmlorg.table.Row_();
+  var row = [];
   if (toHead)
     this.headRows_.push(row);
   else
     this.bodyRows_.push(row);
   return row;
-};
-
-
-nmlorg.table.Row_ = function() {
-  this.cells_ = [];
-};
-
-
-nmlorg.table.Row_.prototype.push = function(contents) {
-  this.cells_.push(contents || []);
-  return this.cells_[this.cells_.length - 1];
 };
 
 
@@ -54,7 +43,7 @@ nmlorg.table.Table.prototype.render = function() {
 
 nmlorg.table.Table.prototype.render_ = function(rows, parent) {
   for (var i = 0; i < rows.length; i++) {
-    var row = rows[i].cells_;
+    var row = rows[i];
     var tr = document.createElement('tr');
     parent.appendChild(tr);
     for (var j = 0; j < row.length; j++) {
@@ -63,35 +52,62 @@ nmlorg.table.Table.prototype.render_ = function(rows, parent) {
       tr.appendChild(td);
       if (typeof(cell) == 'string')
         td.innerHTML = cell;
-      else if (cell instanceof HTMLElement)
+      else
         td.appendChild(cell);
-      else if (cell.length == 1)
-        td.appendChild(cell[0]);
-      else if (cell.length > 1) {
-        var itemDiv = document.createElement('div');
-        td.appendChild(itemDiv);
-        itemDiv.style.display = 'none';
-        for (var k = 0; k < cell.length; k++)
-          itemDiv.appendChild(cell[k]);
-        var toggleDiv = document.createElement('div');
-        td.appendChild(toggleDiv);
-        toggleDiv.style.cursor = 'pointer';
-        toggleDiv.textContent = '\u25b6 ' + cell.length + ' ' + row[0];
-        if (toggleDiv.textContent[toggleDiv.textContent.length - 1] != 's')
-          toggleDiv.textContent += 's';
-        toggleDiv.addEventListener('click', function() {
-          var itemDiv = this.previousElementSibling;
-          if (itemDiv.style.display == '') {
-            itemDiv.style.display = 'none';
-            this.textContent = '\u25b6' + this.textContent.substr(1);
-          } else {
-            itemDiv.style.display = '';
-            this.textContent = '\u25b2' + this.textContent.substr(1);
-          }
-        });
-      }
     }
   }
+};
+
+
+nmlorg.table.ListCell = function(label) {
+  this.label_ = label || '';
+  this.div_ = document.createElement('div');
+  this.items_ = document.createElement('div');
+  this.div_.appendChild(this.items_);
+  this.toggle_ = document.createElement('div');
+  this.div_.appendChild(this.toggle_);
+  this.toggle_.style.display = 'none';
+  this.toggle_.addEventListener('click', function() {
+    if (this.items_.children.length > 1) {
+      if (this.items_.style.display == '') {
+        this.items_.style.display = 'none';
+        this.toggle_.textContent = '\u25b6' + this.toggle_.textContent.substr(1);
+      } else {
+        this.items_.style.display = '';
+        this.toggle_.textContent = '\u25b2' + this.toggle_.textContent.substr(1);
+      }
+    }
+  }.bind(this));
+};
+
+
+nmlorg.table.ListCell.prototype.push = function(item, sortKey) {
+  if (sortKey)
+    item.dataset.sortKey = sortKey;
+
+  for (var i = 0; i < this.items_.children.length; i++)
+    if (sortKey < this.items_.children[i].dataset.sortKey) {
+      this.items_.insertBefore(item, this.items_.children[i]);
+      break;
+    }
+  if (i == this.items_.children.length)
+    this.items_.appendChild(item);
+
+  if (this.items_.children.length == 1) {
+    this.div_.style.cursor = '';
+    this.items_.style.display = '';
+    this.toggle_.style.display = 'none';
+  } else {
+    this.div_.style.cursor = 'pointer';
+    this.items_.style.display = 'none';
+    this.toggle_.style.display = '';
+    this.toggle_.textContent = '\u25b6 ' + this.items_.children.length + ' ' + this.label_;
+  }
+};
+
+
+nmlorg.table.ListCell.prototype.render = function() {
+  return this.div_;
 };
 
 })();

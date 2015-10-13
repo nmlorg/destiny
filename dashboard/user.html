@@ -42,9 +42,12 @@ user.get(function() {
   row.push('Bounties');
   for (var i = 0; i < user.characters.length; i++) {
     var character = user.characters[i];
-    var cell = row.push();
-    for (var j = 0; j < character.bounties.length; j++)
-      cell.push(nmlorg.ui.bounty(character.bounties[j]));
+    var cell = new nmlorg.table.ListCell('Bounties');
+    row.push(cell.render());
+    for (var j = 0; j < character.bounties.length; j++) {
+      var bounty = character.bounties[j];
+      cell.push(nmlorg.ui.bounty(bounty), bounty.name);
+    }
   }
   row.push('');
 
@@ -52,9 +55,10 @@ user.get(function() {
   row.push('Quests');
   for (var i = 0; i < user.characters.length; i++) {
     var character = user.characters[i];
-    var cell = row.push();
+    var cell = new nmlorg.table.ListCell('Quests');
+    row.push(cell.render());
     for (var questName in character.quests)
-      cell.push(nmlorg.ui.quest(character.quests[questName]));
+      cell.push(nmlorg.ui.quest(character.quests[questName]), questName);
   }
   row.push('');
 
@@ -69,15 +73,12 @@ user.get(function() {
     row.push(bucketName);
     for (var j = 0; j < buckets.length; j++) {
       var bucket = buckets[j];
-      var items = [];
+      var cell = new nmlorg.table.ListCell(bucketName);
+      row.push(cell.render());
       for (var k = 0; k < bucket.length; k++) {
         var item = bucket[k];
-        items.push([1 / (item.primary_stat_value || 1), item.name, item]);
+        cell.push(nmlorg.ui.item(item), [1 / (item.primary_stat_value || 1), item.name]);
       }
-      items.sort();
-      var cell = row.push();
-      for (var k = 0; k < items.length; k++)
-        cell.push(nmlorg.ui.item(items[k][2]));
     }
   }
 
