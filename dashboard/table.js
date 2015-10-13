@@ -13,49 +13,47 @@ nmlorg.table = nmlorg.table || {};
 
 
 nmlorg.table.Table = function() {
-  this.headRows_ = [];
-  this.bodyRows_ = [];
+  this.table_ = document.createElement('table');
+  this.table_.className = 'table';
+  this.thead_ = document.createElement('thead');
+  this.table_.appendChild(this.thead_);
+  this.tbody_ = document.createElement('tbody');
+  this.table_.appendChild(this.tbody_);
 };
 
 
 nmlorg.table.Table.prototype.push = function(toHead) {
-  var row = [];
+  var row = new nmlorg.table.Row();
   if (toHead)
-    this.headRows_.push(row);
+    this.thead_.appendChild(row.render());
   else
-    this.bodyRows_.push(row);
+    this.tbody_.appendChild(row.render());
   return row;
 };
 
 
 nmlorg.table.Table.prototype.render = function() {
-  var table = document.createElement('table');
-  table.className = 'table';
-  var thead = document.createElement('thead');
-  table.appendChild(thead);
-  this.render_(this.headRows_, thead);
-  var tbody = document.createElement('tbody');
-  table.appendChild(tbody);
-  this.render_(this.bodyRows_, tbody);
-  return table;
+  return this.table_;
 };
 
 
-nmlorg.table.Table.prototype.render_ = function(rows, parent) {
-  for (var i = 0; i < rows.length; i++) {
-    var row = rows[i];
-    var tr = document.createElement('tr');
-    parent.appendChild(tr);
-    for (var j = 0; j < row.length; j++) {
-      var cell = row[j];
-      var td = document.createElement('td');
-      tr.appendChild(td);
-      if (typeof(cell) == 'string')
-        td.innerHTML = cell;
-      else
-        td.appendChild(cell);
-    }
-  }
+nmlorg.table.Row = function() {
+  this.tr_ = document.createElement('tr');
+};
+
+
+nmlorg.table.Row.prototype.render = function() {
+  return this.tr_;
+};
+
+
+nmlorg.table.Row.prototype.push = function(cell) {
+  var td = document.createElement('td');
+  this.tr_.appendChild(td);
+  if (typeof(cell) == 'string')
+    td.innerHTML = cell;
+  else
+    td.appendChild(cell);
 };
 
 
