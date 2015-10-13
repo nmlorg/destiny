@@ -1,6 +1,10 @@
 {% extends "dashboard/_base.html" %}
 {% block content %}
 
+<script src="/destiny.js"></script>
+<script src="/table.js"></script>
+<script src="/ui.js"></script>
+<script src="/util.js"></script>
 <script>
 var user = new nmlorg.destiny.User('{{username|e}}');
 var div = document.createElement('div');
@@ -10,25 +14,14 @@ div.textContent = 'Loading...';
 user.get(function() {
   document.title = user.name + ' \u2022 Destiny Dashboard';
   div.textContent = '';
-  var table = document.createElement('table');
-  div.appendChild(table);
-  table.className = 'table';
-  var thead = document.createElement('thead');
-  table.appendChild(thead);
-  var tr = document.createElement('tr');
-  thead.appendChild(tr);
-  var td = document.createElement('td');
-  tr.appendChild(td);
-  td.innerHTML += '<a href="/' + user.name + '.raw"><img src="' + user.account_type_icon + '"> ' + user.name + '</a>';
+  var table = new nmlorg.table.Table();
+  var row = table.push(true);
+  row.push('<a href="/' + user.name + '.raw"><img src="' + user.account_type_icon + '"> ' + user.name + '</a>');
   for (var i = 0; i < user.characters.length; i++) {
     var character = user.characters[i];
-    td = document.createElement('td');
-    tr.appendChild(td);
-    td.appendChild(nmlorg.ui.character(character));
+    row.push(nmlorg.ui.character(character));
   }
-  td = document.createElement('td');
-  tr.appendChild(td);
-  td.appendChild(nmlorg.ui.placard({
+  row.push(nmlorg.ui.placard({
       'active': true,
       'height': 96,
       'icon': '/img/misc/missing_icon.png',
@@ -45,29 +38,25 @@ user.get(function() {
       bucketNames.push(bucket);
   bucketNames.sort()
 
-  var data = [];
-
-  var row = [];
-  data.push(row);
+  var row = table.push();
   row.push('Bounties');
   for (var i = 0; i < user.characters.length; i++) {
     var character = user.characters[i];
-    var cell = [];
-    row.push(cell);
+    var cell = row.push();
     for (var j = 0; j < character.bounties.length; j++)
       cell.push(nmlorg.ui.bounty(character.bounties[j]));
   }
+  row.push('');
 
-  var row = [];
-  data.push(row);
+  var row = table.push();
   row.push('Quests');
   for (var i = 0; i < user.characters.length; i++) {
     var character = user.characters[i];
-    var cell = [];
-    row.push(cell);
+    var cell = row.push();
     for (var questName in character.quests)
       cell.push(nmlorg.ui.quest(character.quests[questName]));
   }
+  row.push('');
 
   for (var i = 0; i < bucketNames.length; i++) {
     var bucketName = bucketNames[i];
@@ -76,8 +65,7 @@ user.get(function() {
       buckets.push(user.characters[j].inventory[bucketName] || []);
     buckets.push(user.vault[bucketName] || []);
 
-    var row = [];
-    data.push(row);
+    var row = table.push();
     row.push(bucketName);
     for (var j = 0; j < buckets.length; j++) {
       var bucket = buckets[j];
@@ -87,53 +75,13 @@ user.get(function() {
         items.push([1 / (item.primary_stat_value || 1), item.name, item]);
       }
       items.sort();
-      var cell = [];
-      row.push(cell);
+      var cell = row.push();
       for (var k = 0; k < items.length; k++)
         cell.push(nmlorg.ui.item(items[k][2]));
     }
   }
 
-  var tbody = document.createElement('tbody');
-  table.appendChild(tbody);
-
-  for (var i = 0; i < data.length; i++) {
-    var row = data[i];
-    var tr = document.createElement('tr');
-    tbody.appendChild(tr);
-    for (var j = 0; j < row.length; j++) {
-      var cell = row[j];
-      var td = document.createElement('td');
-      tr.appendChild(td);
-      if (typeof(cell) == 'string')
-        td.textContent = cell;
-      else if (cell.length == 1)
-        td.appendChild(cell[0]);
-      else if (cell.length > 1) {
-        var itemDiv = document.createElement('div');
-        td.appendChild(itemDiv);
-        itemDiv.style.display = 'none';
-        for (var k = 0; k < cell.length; k++)
-          itemDiv.appendChild(cell[k]);
-        var toggleDiv = document.createElement('div');
-        td.appendChild(toggleDiv);
-        toggleDiv.style.cursor = 'pointer';
-        toggleDiv.textContent = '\u25b6 ' + cell.length + ' ' + row[0];
-        if (toggleDiv.textContent[toggleDiv.textContent.length - 1] != 's')
-          toggleDiv.textContent += 's';
-        toggleDiv.addEventListener('click', function() {
-          var itemDiv = this.previousElementSibling;
-          if (itemDiv.style.display == '') {
-            itemDiv.style.display = 'none';
-            this.textContent = '\u25b6' + this.textContent.substr(1);
-          } else {
-            itemDiv.style.display = '';
-            this.textContent = '\u25b2' + this.textContent.substr(1);
-          }
-        });
-      }
-    }
-  }
+  div.appendChild(table.render());
 });
 </script>
 
