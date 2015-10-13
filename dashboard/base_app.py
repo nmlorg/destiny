@@ -16,9 +16,6 @@ class User(ndb.Model):
   bungled = ndb.TextProperty()
   bungleatk = ndb.TextProperty()
 
-  def Activate(self):
-    fetch.SetOpener(auth.BuildOpener(self.bungled, self.bungleatk))
-
 
 RequestHandler = webapp2.RequestHandler
 
@@ -34,6 +31,7 @@ class RequestContext(webapp2.RequestContext):
     if current_user is not None:
       email = current_user.email().lower()
       request.user = response.user = User.get_by_id(email) or User(id=email)
+      fetch.SetOpener(auth.BuildOpener(request.user.bungled, request.user.bungleatk))
     return request, response
 
 

@@ -13,8 +13,6 @@ class MePage(base_app.RequestHandler):
     if self.request.user is None:
       return self.response.render('dashboard/me_login.html')
 
-    self.request.user.Activate()
-
     user_info = bungie.GetCurrentUser()
     if user_info is None:
       return self.response.render('dashboard/me_connect.html')
