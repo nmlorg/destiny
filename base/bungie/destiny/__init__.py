@@ -16,6 +16,10 @@ def GetAccountSummary(accounttype, accountid):
   return Fetch('%s/Account/%i/Summary/', accounttype, accountid)
 
 
+def GetAdvisorsForCurrentCharacter(accounttype, charid):
+  return Fetch('%s/MyAccount/Character/%s/Advisors/', accounttype, charid)
+
+
 def GetAllItemsSummary(accounttype, accountid):
   return Fetch('%s/Account/%i/Items/', accounttype, accountid)
 

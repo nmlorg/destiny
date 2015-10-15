@@ -32,6 +32,8 @@ def GetDestinyUser(username, accounttype=None, accountid=None):
   summary['inventory']['items'] = all_items['items']
   for ent in summary['characters']:
     charid = long(ent['characterBase']['characterId'])
+    ent['advisors'] = destiny.GetAdvisorsForCurrentCharacter(
+        accounttype, charid)['data']
     ent['progressions'] = destiny.GetCharacterProgression(
         accounttype, accountid, charid)['data']['progressions']
 
@@ -50,8 +52,25 @@ class User(dict):
     self['grimoire_score'] = summary.get('grimoireScore', 0)
     self['characters'] = []
     for ent in summary['characters']:
+      bounties = []
+      for vendorid, vendor in ent['advisors']['vendorAdvisors'].iteritems():
+        if not vendor.get('pendingBounties'):
+          continue
+        for bounty in vendor['pendingBounties']['saleItems']:
+          item_info = manifest.GetDef('InventoryItem', bounty['item']['itemHash'])
+          bounties.append({
+              'active': False,
+              'desc': item_info.get('itemDescription', '').strip(),
+              'hash': bounty['item']['itemHash'],
+              'icon': item_info.get('icon', '/img/misc/missing_icon.png'),
+              'name': item_info.get('itemName', '').strip() or 'Item #%i' % ent['itemHash'],
+              'objectives': [GetObjective(code) for code in item_info['objectiveHashes']],
+              'rewards': [GetReward(long(code)) for code in item_info['values']],
+              'sources': [GetSource(code) for code in item_info.get('sourceHashes', ())],
+          })
+
       self['characters'].append({
-          'bounties': [],
+          'bounties': bounties,
           'class': GetClassName(ent['characterBase']['classHash']),
           'emblem_banner': ent['backgroundPath'],
           'emblem_icon': ent['emblemPath'],
@@ -108,6 +127,7 @@ class User(dict):
       if bucket_name == 'Bounties':
         bounties = self['characters'][ent['characterIndex']]['bounties']
         bounties.append({
+            'active': True,
             'desc': item_info.get('itemDescription', '').strip(),
             'hash': ent['itemHash'],
             'icon': item_info.get('icon', '/img/misc/missing_icon.png'),

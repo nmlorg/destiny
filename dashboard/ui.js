@@ -159,7 +159,7 @@ nmlorg.ui.placard = function(data) {
 
 nmlorg.ui.bounty = function(bounty) {
   return nmlorg.ui.placard({
-      'active': true,
+      'active': bounty.active,
       'height': 40,
       'icon': bounty.icon,
       'left': [
