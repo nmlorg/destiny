@@ -33,8 +33,8 @@ def GetDestinyUser(username, accounttype=None, accountid=None):
 
   for ent in summary['characters']:
     charid = long(ent['characterBase']['characterId'])
-    ent['advisors'] = destiny.GetAdvisorsForCurrentCharacter(
-        accounttype, charid)['data']
+    advisors = destiny.GetAdvisorsForCurrentCharacter(accounttype, charid)
+    ent['advisors'] = advisors and advisors['data'] or {'vendorAdvisors': {}}
     ent['progressions'] = destiny.GetCharacterProgression(
         accounttype, accountid, charid)['data']['progressions']
 
