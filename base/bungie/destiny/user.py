@@ -30,12 +30,20 @@ def GetDestinyUser(username, accounttype=None, accountid=None):
   summary = destiny.GetAccountSummary(accounttype, accountid)['data']
   all_items = destiny.GetAllItemsSummary(accounttype, accountid)['data']
   summary['inventory']['items'] = all_items['items']
+
   for ent in summary['characters']:
     charid = long(ent['characterBase']['characterId'])
     ent['advisors'] = destiny.GetAdvisorsForCurrentCharacter(
         accounttype, charid)['data']
     ent['progressions'] = destiny.GetCharacterProgression(
         accounttype, accountid, charid)['data']['progressions']
+
+  charids = [long(ent['characterBase']['characterId']) for ent in summary['characters']]
+  charids.append(0)
+  for ent in summary['inventory']['items']:
+    if long(ent.get('itemId', 0)):
+      charid = charids[ent['characterIndex']]
+      ent['details'] = destiny.GetItemDetail(accounttype, accountid, charid, ent['itemId'])['data']
 
   return username, accounttype, accountid, summary
 
@@ -138,6 +146,10 @@ class User(dict):
         })
         continue
 
+      if ent.get('details'):
+        perks = [GetPerk(perk['perkHash']) for perk in ent['details']['item']['perks']]
+      else:
+        perks = []
       item = {
           'class': GetClassFromCategories(item_info.get('itemCategoryHashes', ())),
           'damage_type': DAMAGE_TYPES[ent['damageType']],
@@ -149,7 +161,7 @@ class User(dict):
           'id': ent['itemId'],
           'name': item_info.get('itemName', '').strip() or 'Item #%i' % ent['itemHash'],
           'objectives': [GetObjective(code) for code in item_info['objectiveHashes']],
-          'perks': [GetPerk(code) for code in item_info.get('perkHashes', ())],
+          'perks': perks,
           'primary_stat_value': ent.get('primaryStat') and ent['primaryStat']['value'],
           'primary_stat_type': (ent.get('primaryStat') and
                                 GetStatName(ent['primaryStat']['statHash'])),

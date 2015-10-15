@@ -32,6 +32,10 @@ def GetDestinyManifest():
   return Fetch('Manifest/')
 
 
+def GetItemDetail(accounttype, accountid, charid, itemid):
+  return Fetch('%s/Account/%s/Character/%s/Inventory/%s/', accounttype, accountid, charid, itemid)
+
+
 def GetPublicAdvisors():
   return Fetch('Advisors/')
 
@@ -43,13 +47,13 @@ def SearchDestinyPlayer(username, accounttype=None):
   return Fetch('SearchDestinyPlayer/%s/%s', accounttype, username)
 
 
-def TransferItem(accounttype, characterid, item_hash, item_id=0, quantity=1, to_vault=True):
+def TransferItem(accounttype, charid, item_hash, item_id=0, quantity=1, to_vault=True):
   return Fetch('TransferItem/', data=json.dumps({
       'membershipType': accounttype,
       'itemReferenceHash': item_hash,
       'itemId': item_id,
       'stackSize': quantity,
-      'characterId': characterid,
+      'characterId': charid,
       'transferToVault': to_vault,
   }))
 
@@ -59,13 +63,38 @@ try:
 except ImportError:
   pass
 else:
+  class DestinyItem(ndb.Model):
+    accounttype = ndb.IntegerProperty()
+    accountid = ndb.IntegerProperty()
+    data = ndb.JsonProperty()
+
+
+  _GetItemDetail = GetItemDetail
+
+
+  def GetItemDetail(accounttype, accountid, charid, itemid):
+    accountid = long(accountid)
+    charid = long(charid)
+    itemid = str(long(itemid))
+    ent = DestinyItem.get_by_id(itemid)
+    if ent is not None:
+      assert ent.accounttype == accounttype
+      assert ent.accountid == accountid
+      return ent.data
+    ret = _GetItemDetail(accounttype, accountid, charid, itemid)
+    DestinyItem(id=itemid, accounttype=accounttype, accountid=accountid, data=ret).put()
+    return ret
+
+
   class DestinyUser(ndb.Model):
     name = ndb.StringProperty()
     name_lower = ndb.ComputedProperty(lambda self: self.name.lower())
     accounttype = ndb.IntegerProperty()
     accountid = ndb.IntegerProperty()
 
+
   _SearchDestinyPlayer = SearchDestinyPlayer
+
 
   def SearchDestinyPlayer(username, accounttype=None):
     q = DestinyUser.query(DestinyUser.name_lower == username.lower())
