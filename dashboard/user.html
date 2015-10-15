@@ -83,21 +83,25 @@ user.get(function() {
       });
       td.addEventListener('drop', function(cell, characterId, e) {
         var data = JSON.parse(e.dataTransfer.getData('application/json'));
-        if (data.item.characterId == characterId)
+        var itemDiv = document.getElementById(data.divId);
+        if (itemDiv.dataset.characterId == characterId)
           return;
-        console.log('TransferItem', data.item.hash, data.item.id, data.item.quantity, user.account_type, data.item.characterId, characterId);
+        console.log('TransferItem', data.item.hash, data.item.id, data.item.quantity, user.account_type, itemDiv.dataset.characterId, characterId);
         nmlorg.destiny.transferItem(
             data.item.hash, data.item.id, data.item.quantity, user.account_type,
-            data.item.characterId, characterId, function(val) {
-          if (val)
-            location.reload();
+            itemDiv.dataset.characterId, characterId, function(val) {
+          if (val) {
+            itemDiv.dataset.characterId = characterId;
+            cell.push(itemDiv);
+          }
         });
         e.preventDefault();
       }.bind(null, cell, characterId));
       for (var k = 0; k < bucket.length; k++) {
         var item = bucket[k];
-        item.characterId = characterId;
-        cell.push(nmlorg.ui.item(item), [1 / (item.primary_stat_value || 1), item.name]);
+        var itemDiv = nmlorg.ui.item(item);
+        itemDiv.dataset.characterId = characterId;
+        cell.push(itemDiv, [1 / (item.primary_stat_value || 1), item.name]);
       }
     }
   }

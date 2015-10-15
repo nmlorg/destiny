@@ -212,6 +212,9 @@ nmlorg.ui.character = function(character) {
 };
 
 
+var ITEM_NUM_ = 0;
+
+
 nmlorg.ui.item = function(item) {
   var typeStr = item.type;
   var subs = [];
@@ -270,9 +273,11 @@ nmlorg.ui.item = function(item) {
 
   if (item.transferrable) {
     div.draggable = true;
+    div.id = 'item-' + (++ITEM_NUM_);
     div.addEventListener('dragstart', function(e) {
       e.dataTransfer.effectAllowed = 'move';
       e.dataTransfer.setData('application/json', JSON.stringify({
+          'divId': div.id,
           'item': item,
       }));
     });
