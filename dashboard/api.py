@@ -5,8 +5,14 @@ import pprint
 from base import bungie
 from base.bungie import auth
 from base.bungie import destiny
+from base.bungie.destiny import manifest
 from base.bungie.destiny import user as destiny_user
 from dashboard import base_app
+
+
+class BlankPage(base_app.RequestHandler):
+  def get(self):
+    manifest.DestinyDefinition.Blank()
 
 
 class MePage(base_app.RequestHandler):
@@ -96,6 +102,7 @@ class Warmup(base_app.RequestHandler):
 app = base_app.WSGIApplication([
     ('/_ah/warmup', Warmup),
     ('/', MePage),
+    ('/admin/blank', BlankPage),
     ('/api/transfer', TransferPage),
     ('/([a-zA-Z0-9-_ ]+)', UserHTMLPage),
     ('/([a-zA-Z0-9-_ ]+)[.]json', UserJSONPage),

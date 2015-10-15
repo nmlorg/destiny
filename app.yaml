@@ -22,6 +22,11 @@ handlers:
   secure: always
   script: dashboard.db.app
 
+- url: /admin/.*
+  secure: always
+  login: admin
+  script: dashboard.api.app
+
 - url: /.*
   secure: always
   script: dashboard.api.app

@@ -112,6 +112,10 @@ else:
   class DestinyDefinition(ndb.Model):
     data = ndb.JsonProperty()
 
+    @classmethod
+    def Blank(cls):
+      ndb.delete_multi(cls.query().fetch(keys_only=True))
+
   _GetDef = GetDef
 
   def GetDef(group=None, key=None):
