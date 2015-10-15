@@ -1,89 +1,9 @@
 {% extends "dashboard/_base.html" %}
-{% block title %}{{username}}{% endblock %}
 {% block content %}
 
 <div class="container">
-  <table class="table">
-    <tbody>
-      {% for bucket_name, bucket in buckets.iteritems()|sort %}
-        <tr>
-          <th>{{bucket_name}}</th>
-          {% for storeid in bucket.values()[0]['stores']|sort|reverse %}
-            <th colspan="2">{{storeid or 'Vault'}}</th>
-          {% endfor %}
-        </tr>
-        {% for item_name, item in bucket.iteritems()|sort %}
-          <tr data-hash="{{item.hash}}" data-id="{{item.id}}" data-total="{{item.total}}">
-            <td>{{item_name}}</td>
-            {% for storeid, count in item['stores'].iteritems()|sort|reverse %}
-              <td style="border-left: 1px solid #ddd">{% if count %}{{count}}{% endif %}</td>
-              <td data-storeid="{{storeid or ''}}" data-count="{{count}}">
-                {% if storeid and item.transferrable and item.total > count %}
-                  <button class="btn btn-default">Move</button>
-                {% endif %}
-              </td>
-            {% endfor %}
-          </tr>
-        {% endfor %}
-      {% endfor %}
-    </tbody>
-  </table>
+  <a class="btn btn-primary btn-lg" href="/{{username}}">Character sheet</a><br><br>
+  <a class="btn btn-default" href="https://github.com/nmlorg/destiny/tree/master/dashboard">App code</a>
 </div>
-
-<script>
-var buttons = document.getElementsByTagName('button');
-
-for (var i = 0; i < buttons.length; i++) {
-  var button = buttons[i];
-  var tr = button.parentElement.parentElement;
-  if (!tr.dataset.hash)
-    continue;
-  var itemHash = tr.dataset.hash;
-  var itemId = tr.dataset.id;
-  var itemTotal = Number(tr.dataset.total);
-  var storeId = button.parentElement.dataset.storeid;
-  var stores = {};
-  var storeCells = tr.getElementsByTagName('td');
-  for (var j = 0; j < storeCells.length; j++) {
-    var storeCell = storeCells[j];
-    if ('storeid' in storeCell.dataset)
-      stores[storeCell.dataset.storeid] = Number(storeCell.dataset.count);
-  }
-  button.addEventListener('click', function(itemHash, itemId, itemTotal, storeId, stores) {
-    if (itemTotal == (stores[storeId] + 1)) {
-      for (var otherId in stores)
-        if (stores[otherId])
-          break;
-      transferItem(itemHash, itemId, 1, otherId, storeId);
-    } else {
-      var count = Number(prompt('How many?'));
-      if (count > stores['']) {
-        var stillNeed = count - stores[''];
-        for (var otherId in stores) {
-          if (stillNeed && otherId && (otherId != storeId) && stores[otherId]) {
-            var toTransfer = Math.min(stores[otherId], stillNeed);
-            transferItem(itemHash, itemId, toTransfer, otherId, '');
-            stillNeed -= toTransfer;
-            stores[otherId] -= toTransfer;
-            stores[''] += toTransfer;
-          }
-        }
-      }
-      transferItem(itemHash, itemId, Math.min(count, stores['']), '', storeId);
-    }
-  }.bind(null, itemHash, itemId, itemTotal, storeId, stores));
-}
-
-function transferItem(itemHash, itemId, count, from, to) {
-  if (from && to) {
-    transferItem(itemHash, itemId, count, from, '');
-    transferItem(itemHash, itemId, count, '', to);
-  } else if (from) {
-    console.log('Transfer', count, 'of', itemHash, itemId, 'from', from, 'to', 'Vault');
-  } else if (to) {
-    console.log('Transfer', count, 'of', itemHash, itemId, 'from', 'Vault', 'to', to);
-  }
-}
-</script>
 
 {% endblock %}

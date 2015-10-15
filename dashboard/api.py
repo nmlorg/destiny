@@ -18,42 +18,8 @@ class MePage(base_app.RequestHandler):
     if user_info is None:
       return self.response.render('dashboard/me_connect.html')
 
-    username, accounttype, accountid, summary = destiny_user.GetDestinyUser(
-        user_info['user']['displayName'])
-
-    stores = [ent['characterBase']['characterId'] for ent in summary['characters']]
-    stores.append(None)
-    buckets = {}
-    for item in summary['inventory']['items']:
-      item_info = destiny_user.manifest.GetDef('InventoryItem', item['itemHash'])
-      if item_info is None:
-        continue
-      bucket_name = destiny_user.GetBucketName(item_info['bucketTypeHash'])
-      bucket = buckets.get(bucket_name)
-      if bucket is None:
-        bucket = buckets[bucket_name] = {}
-      item_name = item_info['itemName']
-      if not item_info['nonTransferrable'] and long(item['itemId']):
-        item_name = '%s (%s)' % (item_name, item['itemId'])
-      item_data = bucket.get(item_name)
-      if item_data is None:
-        item_data = bucket[item_name] = {
-            'equippable': item_info['equippable'],
-            'hash': item['itemHash'],
-            'id': long(item['itemId']) and item['itemId'],
-            'name': item_info['itemName'],
-            'stores': {place: 0 for place in stores},
-            'total': 0,
-            'transferrable': not item_info['nonTransferrable'],
-        }
-      item_data['stores'][stores[item['characterIndex']]] += item['quantity']
-      item_data['total'] += item['quantity']
-
     self.response.render('dashboard/me_index.html', {
-        'accountid': accountid,
-        'accounttype': accounttype,
-        'buckets': buckets,
-        'username': username,
+        'username': user_info['user']['displayName'],
     })
 
   def post(self):
