@@ -75,6 +75,7 @@ nmlorg.table.ListCell = function(label) {
   this.itemsObserver_.observe(this.items_, {'childList': true});
   this.toggle_ = document.createElement('div');
   this.div_.appendChild(this.toggle_);
+  this.toggle_.className = 'list-cell-toggle';
   this.toggle_.style.display = 'none';
   this.toggle_.textContent = '\u25b2';
   this.toggle_.addEventListener('click', function() {

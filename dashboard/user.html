@@ -107,6 +107,11 @@ user.get(function() {
   }
 
   div.appendChild(table.render());
+
+  var toggles = document.getElementsByClassName('list-cell-toggle');
+
+  for (var i = 0; i < toggles.length; i++)
+    toggles[i].click();
 });
 </script>
 
