@@ -134,7 +134,7 @@ class User(dict):
 
       if bucket_name == 'Bounties':
         bounties = self['characters'][ent['characterIndex']]['bounties']
-        bounties.append({
+        bounty = {
             'active': True,
             'desc': item_info.get('itemDescription', '').strip(),
             'hash': ent['itemHash'],
@@ -143,7 +143,13 @@ class User(dict):
             'objectives': [GetObjective(code) for code in item_info['objectiveHashes']],
             'rewards': [GetReward(long(code)) for code in item_info['values']],
             'sources': [GetSource(code) for code in item_info.get('sourceHashes', ())],
-        })
+        }
+        for i, currentBounty in enumerate(bounties):
+          if currentBounty['hash'] == bounty['hash']:
+            bounties[i] = bounty
+            break
+        else:
+          bounties.append(bounty)
         continue
 
       if ent.get('details'):
