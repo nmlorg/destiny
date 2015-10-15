@@ -1,3 +1,4 @@
+import json
 import logging
 import urlparse
 from base import bungie
@@ -36,6 +37,17 @@ def SearchDestinyPlayer(username, accounttype=None):
     accounttype = 'all'
 
   return Fetch('SearchDestinyPlayer/%s/%s', accounttype, username)
+
+
+def TransferItem(accounttype, characterid, item_hash, item_id=0, quantity=1, to_vault=True):
+  return Fetch('TransferItem/', data=json.dumps({
+      'membershipType': accounttype,
+      'itemReferenceHash': item_hash,
+      'itemId': item_id,
+      'stackSize': quantity,
+      'characterId': characterid,
+      'transferToVault': to_vault,
+  }))
 
 
 try:

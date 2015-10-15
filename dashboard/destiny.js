@@ -32,4 +32,16 @@ nmlorg.destiny.User.prototype.get = function(cb) {
   }.bind(this));
 };
 
+
+nmlorg.destiny.transferItem = function(itemHash, itemId, quantity, accountType, from, to, cb) {
+  return nmlorg.fetch('/api/transfer', cb, {
+      'hash': itemHash,
+      'id': itemId,
+      'quantity': quantity,
+      'accounttype': accountType,
+      'from': from || '',
+      'to': to || '',
+  });
+};
+
 })();

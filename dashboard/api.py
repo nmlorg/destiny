@@ -4,6 +4,7 @@ import json
 import pprint
 from base import bungie
 from base.bungie import auth
+from base.bungie import destiny
 from base.bungie.destiny import user as destiny_user
 from dashboard import base_app
 
@@ -68,6 +69,23 @@ class MePage(base_app.RequestHandler):
     return self.redirect('/')
 
 
+class TransferPage(base_app.RequestHandler):
+  def post(self):
+    item_hash = self.request.get('hash')
+    item_id = self.request.get('id')
+    quantity = long(self.request.get('quantity'))
+    accounttype = int(self.request.get('accounttype'))
+    from_char = self.request.get('from')
+    to_char = self.request.get('to')
+    if from_char:
+      destiny.TransferItem(accounttype, from_char, item_hash, item_id, quantity, True)
+      print 'Transferred from %r to Vault.' % from_char
+    if to_char:
+      destiny.TransferItem(accounttype, to_char, item_hash, item_id, quantity, False)
+      print 'Transferred from Vault to %r.' % to_char
+    self.response.write('1')
+
+
 class UserHTMLPage(base_app.RequestHandler):
   def get(self, username):
     self.response.render('dashboard/user.html', {
@@ -112,6 +130,7 @@ class Warmup(base_app.RequestHandler):
 app = base_app.WSGIApplication([
     ('/_ah/warmup', Warmup),
     ('/', MePage),
+    ('/api/transfer', TransferPage),
     ('/([a-zA-Z0-9-_ ]+)', UserHTMLPage),
     ('/([a-zA-Z0-9-_ ]+)[.]json', UserJSONPage),
     ('/([a-zA-Z0-9-_ ]+)[.]py', UserPyPage),

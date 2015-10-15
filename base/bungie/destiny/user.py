@@ -56,6 +56,7 @@ class User(dict):
           'emblem_banner': ent['backgroundPath'],
           'emblem_icon': ent['emblemPath'],
           'gender': GetGenderName(ent['characterBase']['genderHash']),
+          'id': ent['characterBase']['characterId'],
           'level': ent['characterLevel'],
           'light': ent['characterBase']['powerLevel'],
           'inventory': {},
@@ -118,7 +119,6 @@ class User(dict):
         continue
 
       item = {
-          'bound': bool(ent['transferStatus'] & 2),
           'class': GetClassFromCategories(item_info.get('itemCategoryHashes', ())),
           'damage_type': DAMAGE_TYPES[ent['damageType']],
           'desc': item_info.get('itemDescription', '').strip(),
@@ -136,6 +136,7 @@ class User(dict):
           'sources': [GetSource(code) for code in item_info.get('sourceHashes', ())],
           'state': ent['state'],
           'tier': item_info.get('tierTypeName', '').strip(),
+          'transferrable': not item_info.get('nonTransferrable', True),
           'type': item_info.get('itemTypeName', '').strip(),
       }
       if ent['characterIndex'] == -1:

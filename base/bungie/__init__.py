@@ -21,13 +21,14 @@ BASE = 'https://www.bungie.net/platform/'
 
 
 def Fetch(suffix, *args, **kwargs):
+  data = kwargs.pop('data', None)
   if args:
     suffix %= args
   elif kwargs:
     suffix %= kwargs
 
   url = urlparse.urljoin(BASE, suffix)
-  data = fetch.Fetch(url, headers={'X-API-Key': API_KEY})
+  data = fetch.Fetch(url, data=data, headers={'X-API-Key': API_KEY})
   if isinstance(data, dict):
     if data.get('ErrorStatus') == 'Success':
       return data['Response']

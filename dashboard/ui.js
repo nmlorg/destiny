@@ -268,6 +268,16 @@ nmlorg.ui.item = function(item) {
     quantityDiv.textContent = item.quantity;
   }
 
+  if (item.transferrable) {
+    div.draggable = true;
+    div.addEventListener('dragstart', function(e) {
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('application/json', JSON.stringify({
+          'item': item,
+      }));
+    });
+  }
+
   return div;
 };
 

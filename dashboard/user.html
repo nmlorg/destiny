@@ -72,11 +72,31 @@ user.get(function() {
     var row = table.push();
     row.push(bucketName);
     for (var j = 0; j < buckets.length; j++) {
+      var characterId = (user.characters[j] || {}).id;
       var bucket = buckets[j];
       var cell = new nmlorg.table.ListCell(bucketName);
-      row.push(cell.render());
+      var cellDiv = cell.render();
+      row.push(cellDiv);
+      var td = cellDiv.parentElement;
+      td.addEventListener('dragover', function(e) {
+        e.preventDefault();
+      });
+      td.addEventListener('drop', function(cell, characterId, e) {
+        var data = JSON.parse(e.dataTransfer.getData('application/json'));
+        if (data.item.characterId == characterId)
+          return;
+        console.log('TransferItem', data.item.hash, data.item.id, data.item.quantity, user.account_type, data.item.characterId, characterId);
+        nmlorg.destiny.transferItem(
+            data.item.hash, data.item.id, data.item.quantity, user.account_type,
+            data.item.characterId, characterId, function(val) {
+          if (val)
+            location.reload();
+        });
+        e.preventDefault();
+      }.bind(null, cell, characterId));
       for (var k = 0; k < bucket.length; k++) {
         var item = bucket[k];
+        item.characterId = characterId;
         cell.push(nmlorg.ui.item(item), [1 / (item.primary_stat_value || 1), item.name]);
       }
     }
