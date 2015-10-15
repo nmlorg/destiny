@@ -84,7 +84,7 @@ nmlorg.table.ListCell.prototype.push = function(item, sortKey) {
     item.dataset.sortKey = sortKey;
 
   for (var i = 0; i < this.items_.children.length; i++)
-    if (sortKey < this.items_.children[i].dataset.sortKey) {
+    if (item.dataset.sortKey < this.items_.children[i].dataset.sortKey) {
       this.items_.insertBefore(item, this.items_.children[i]);
       break;
     }
