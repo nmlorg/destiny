@@ -254,6 +254,7 @@ nmlorg.ui.item = function(item) {
           '',
           item.desc,
           ['Perks:', item.perks, '{name}: {desc}'],
+          ['Objectives:', item.objectives, '{count} {name}'],
           ['Sources:', item.sources],
       ],
       'link': '/db/InventoryItem/' + item.hash,
