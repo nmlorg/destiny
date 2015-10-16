@@ -57,7 +57,11 @@ nmlorg.table.Row.prototype.push = function(cell) {
 };
 
 
-nmlorg.table.ListCell = function(label) {
+var UP_ARROW = '\u25b2';
+var RIGHT_ARROW = '\u25b6';
+
+
+nmlorg.table.ListCell = function(label, id) {
   this.label_ = label || '';
   this.div_ = document.createElement('div');
   this.items_ = document.createElement('div');
@@ -69,6 +73,13 @@ nmlorg.table.ListCell = function(label) {
     } else {
       this.div_.style.cursor = 'pointer';
       this.toggle_.style.display = '';
+      if (localStorage.getItem(id)) {
+        this.items_.style.display = '';
+        this.toggle_.textContent = UP_ARROW;
+      } else {
+        this.items_.style.display = 'none';
+        this.toggle_.textContent = RIGHT_ARROW;
+      }
       this.toggle_.textContent = this.toggle_.textContent[0] + ' ' + this.items_.children.length + ' ' + this.label_;
     }
   }.bind(this));
@@ -77,15 +88,16 @@ nmlorg.table.ListCell = function(label) {
   this.div_.appendChild(this.toggle_);
   this.toggle_.className = 'list-cell-toggle';
   this.toggle_.style.display = 'none';
-  this.toggle_.textContent = '\u25b2';
   this.toggle_.addEventListener('click', function() {
     if (this.items_.children.length > 1) {
       if (this.items_.style.display == '') {
         this.items_.style.display = 'none';
-        this.toggle_.textContent = '\u25b6' + this.toggle_.textContent.substr(1);
+        this.toggle_.textContent = RIGHT_ARROW + this.toggle_.textContent.substr(1);
+        localStorage.setItem(id, '');
       } else {
         this.items_.style.display = '';
-        this.toggle_.textContent = '\u25b2' + this.toggle_.textContent.substr(1);
+        this.toggle_.textContent = UP_ARROW + this.toggle_.textContent.substr(1);
+        localStorage.setItem(id, '1');
       }
     }
   }.bind(this));

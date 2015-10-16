@@ -42,7 +42,7 @@ user.get(function() {
   row.push('Bounties');
   for (var i = 0; i < user.characters.length; i++) {
     var character = user.characters[i];
-    var cell = new nmlorg.table.ListCell('Bounties');
+    var cell = new nmlorg.table.ListCell('Bounties', character.id + '--Bounties');
     row.push(cell.render());
     for (var j = 0; j < character.bounties.length; j++) {
       var bounty = character.bounties[j];
@@ -55,7 +55,7 @@ user.get(function() {
   row.push('Quests');
   for (var i = 0; i < user.characters.length; i++) {
     var character = user.characters[i];
-    var cell = new nmlorg.table.ListCell('Quests');
+    var cell = new nmlorg.table.ListCell('Quests', character.id + '--Quests');
     row.push(cell.render());
     for (var questName in character.quests)
       cell.push(nmlorg.ui.quest(character.quests[questName]), questName);
@@ -74,7 +74,7 @@ user.get(function() {
     for (var j = 0; j < buckets.length; j++) {
       var characterId = (user.characters[j] || {}).id;
       var bucket = buckets[j];
-      var cell = new nmlorg.table.ListCell(bucketName);
+      var cell = new nmlorg.table.ListCell(bucketName, characterId + '-' + bucketName);
       var cellDiv = cell.render();
       row.push(cellDiv);
       var td = cellDiv.parentElement;
@@ -107,11 +107,6 @@ user.get(function() {
   }
 
   div.appendChild(table.render());
-
-  var toggles = document.getElementsByClassName('list-cell-toggle');
-
-  for (var i = 0; i < toggles.length; i++)
-    toggles[i].click();
 });
 </script>
 
