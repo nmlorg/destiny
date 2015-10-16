@@ -8,7 +8,7 @@ threadsafe: true
 
 handlers:
 - url: /_ah/warmup
-  script: dashboard.api.app
+  script: dashboard.user.app
 
 - url: /(google38371e7df630b0a7[.]html)
   static_files: dashboard/\1
@@ -18,18 +18,22 @@ handlers:
   static_files: dashboard/\1
   upload: .*[.](css|ico|js|txt)
 
+- url: /(admin/?|admin/.*)
+  secure: always
+  login: admin
+  script: dashboard.admin.app
+
+- url: /(api/?|api/.*)
+  secure: always
+  script: dashboard.api.app
+
 - url: /(db/?|db/.*)
   secure: always
   script: dashboard.db.app
 
-- url: /admin/.*
-  secure: always
-  login: admin
-  script: dashboard.api.app
-
 - url: /.*
   secure: always
-  script: dashboard.api.app
+  script: dashboard.user.app
 
 inbound_services:
 - warmup
