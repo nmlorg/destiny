@@ -11,13 +11,13 @@ from dashboard import base_app
 class MePage(base_app.RequestHandler):
   def get(self):
     if self.request.user is None:
-      return self.response.render('dashboard/me_login.html')
+      return self.response.render('dashboard/user/login.html')
 
     user_info = bungie.GetCurrentUser()
     if user_info is None:
-      return self.response.render('dashboard/me_connect.html')
+      return self.response.render('dashboard/user/connect.html')
 
-    self.response.render('dashboard/me_index.html', {
+    self.response.render('dashboard/user/index.html', {
         'username': user_info['user']['displayName'],
     })
 
@@ -36,7 +36,7 @@ class MePage(base_app.RequestHandler):
 
 class UserHTMLPage(base_app.RequestHandler):
   def get(self, username):
-    self.response.render('dashboard/user.html', {
+    self.response.render('dashboard/user/character_sheet.html', {
         'breadcrumbs': (
             ('/' + username, username),
         ),
@@ -62,7 +62,7 @@ class UserRawPage(base_app.RequestHandler):
   def get(self, username):
     username, accounttype, accountid, summary = destiny_user.GetDestinyUser(username)
     self.response.content_type = 'text/html'
-    self.response.render('dashboard/db_object.html', {
+    self.response.render('dashboard/db/object.html', {
         'breadcrumbs': (
             ('/%s.raw' % username, username),
         ),

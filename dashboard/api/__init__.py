@@ -4,12 +4,12 @@ from base.bungie import destiny
 from dashboard import base_app
 
 
-class APIPage(base_app.RequestHandler):
+class Index(base_app.RequestHandler):
   def get(self):
-    self.response.render('dashboard/api.html')
+    self.response.render('dashboard/api/index.html')
 
 
-class TransferPage(base_app.RequestHandler):
+class TransferItem(base_app.RequestHandler):
   def post(self):
     item_hash = self.request.get('hash')
     item_id = self.request.get('id')
@@ -27,6 +27,6 @@ class TransferPage(base_app.RequestHandler):
 
 
 app = base_app.WSGIApplication([
-    ('/api/?', APIPage),
-    ('/api/TransferItem', TransferPage),
+    ('/api/?', Index),
+    ('/api/TransferItem', TransferItem),
 ], debug=True)
