@@ -10,15 +10,9 @@ from dashboard import base_app
 
 class MePage(base_app.RequestHandler):
   def get(self):
-    if self.request.user is None:
-      return self.response.render('dashboard/user/login.html')
-
-    user_info = bungie.GetCurrentUser()
-    if user_info is None:
-      return self.response.render('dashboard/user/connect.html')
-
     self.response.render('dashboard/user/index.html', {
-        'username': user_info['user']['displayName'],
+        'user': self.request.user,
+        'user_info': bungie.GetCurrentUser(),
     })
 
   def post(self):

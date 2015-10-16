@@ -2,7 +2,32 @@
 {% block content %}
 
 <div class="container">
-  <a class="btn btn-primary btn-lg" href="/{{username}}">Character sheet</a><br><br>
+  {% if not user %}
+    <a class="btn btn-primary btn-lg" href="{{login_url}}">Login</a><br><br>
+  {% elif not user_info %}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        Please enter your PlayStation™Network email address and password. (We won't store your
+        password once we've authenticated, there's just no way to connect to your Bungie.net account
+        without having access to it.)
+      </div>
+      <div class="panel-body">
+        <form method="POST">
+          <div class="form-group">
+            <label for="email">Email address</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="n00bpwn@gmail.com">
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="p4ssw0rd">
+          </div>
+          <button type="submit" class="btn btn-default">Connect</button>
+        </form>
+      </div>
+    </div>
+  {% else %}
+    <a class="btn btn-primary btn-lg" href="/{{user_info.user.displayName}}">Character sheet</a><br><br>
+  {% endif %}
   <a class="btn btn-default" href="/api/">Bungie.net Platform API</a><br><br>
   <a class="btn btn-default" href="/db/">Destiny DB</a><br><br>
   <a class="btn btn-default" href="https://github.com/nmlorg/destiny/tree/master/dashboard">App code</a><br><br>
