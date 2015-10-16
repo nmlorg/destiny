@@ -56,7 +56,7 @@ class UserRawPage(base_app.RequestHandler):
   def get(self, username):
     username, accounttype, accountid, summary = destiny_user.GetDestinyUser(username)
     self.response.content_type = 'text/html'
-    self.response.render('dashboard/db/object.html', {
+    self.response.render('dashboard/object.html', {
         'breadcrumbs': (
             ('/%s.raw' % username, username),
         ),

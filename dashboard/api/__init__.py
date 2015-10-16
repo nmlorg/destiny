@@ -1,7 +1,33 @@
 # Copyright 2015 Daniel Reed <n@ml.org>
 
+from base import bungie
 from base.bungie import destiny
 from dashboard import base_app
+
+
+ENDPOINTS = {
+    'GetAvailableLocales': (),
+    'GetCurrentUser': (),
+    'GetDestinyManifest': (),
+    'GetPublicAdvisors': (),
+    'GetPublicXurVendor': (),
+    'HelloWorld': (),
+    'Settings': (),
+    'TransferItem': (
+        ('hash', 'number', None, 'itemReferenceHash',
+         'The manifest code for all items with the same name.'),
+        ('id', 'number', 0, 'itemId',
+         'The code for a specific instance of an item. Always 0 for stackable items.'),
+        ('quantity', 'number', 1, 'stackSize',
+         'The number of items to transfer. Always 1 for non-stackable items.'),
+        ('accounttype', 'number', 2, 'membershipType',
+         'The numeric membership type (1 = Xbox, 2 = PSN).'),
+        ('from', 'text', None, 'characterId',
+         'The code for the character to take the item from. Empty when taking from the vault.'),
+        ('to', 'text', None, 'characterId',
+         'The code for the character to give the item to. Empty when storing in the vault.'),
+    ),
+}
 
 
 class Index(base_app.RequestHandler):
@@ -10,37 +36,22 @@ class Index(base_app.RequestHandler):
         'breadcrumbs': (
             ('/api/', 'Bungie.net Platform API'),
         ),
-        'endpoints': {
-            'GetPublicXurVendor': (),
-            'TransferItem': (
-                ('hash', 'number', None, 'itemReferenceHash',
-                 'The manifest code for all items with the same name.'),
-                ('id', 'number', 0, 'itemId',
-                 'The code for a specific instance of an item. Always 0 for stackable items.'),
-                ('quantity', 'number', 1, 'stackSize',
-                 'The number of items to transfer. Always 1 for non-stackable items.'),
-                ('accounttype', 'number', 2, 'membershipType',
-                 'The numeric membership type (1 = Xbox, 2 = PSN).'),
-                ('from', 'text', None, 'characterId',
-                 'The code for the character to take the item from. Empty when taking from the '
-                 'vault.'),
-                ('to', 'text', None, 'characterId',
-                 'The code for the character to give the item to. Empty when storing in the '
-                 'vault.'),
-            ),
-        },
+        'endpoints': ENDPOINTS,
     })
 
 
-class GetPublicXurVendor(base_app.RequestHandler):
-  def get(self):
+class Generic(base_app.RequestHandler):
+  def get(self, callname):
+    if callname not in ENDPOINTS:
+      return self.error(404)
+    method = getattr(destiny, callname, None) or getattr(bungie, callname)
     self.response.content_type = 'text/html'
-    self.response.render('dashboard/db/object.html', {
+    self.response.render('dashboard/object.html', {
         'breadcrumbs': (
             ('/api/', 'Bungie.net Platform API'),
-            ('/api/GetPublicXurVendor', 'GetPublicXurVendor'),
+            ('/api/' + callname, callname),
         ),
-        'obj': destiny.GetPublicXurVendor(),
+        'obj': method(),
     })
 
   post = get
@@ -65,6 +76,6 @@ class TransferItem(base_app.RequestHandler):
 
 app = base_app.WSGIApplication([
     ('/api/?', Index),
-    ('/api/GetPublicXurVendor/?', GetPublicXurVendor),
     ('/api/TransferItem/?', TransferItem),
+    ('/api/(.*)/?', Generic),
 ], debug=True)

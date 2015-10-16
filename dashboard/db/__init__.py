@@ -32,7 +32,7 @@ class ObjectPage(base_app.RequestHandler):
   def get(self, bucket_name, hashcode):
     hashcode = long(hashcode)
     obj = manifest.GetDef(bucket_name, hashcode)
-    self.response.render('dashboard/db/object.html', {
+    self.response.render('dashboard/object.html', {
         'breadcrumbs': (
             ('/db/', 'DB'),
             ('/db/%s/' % bucket_name, bucket_name),
