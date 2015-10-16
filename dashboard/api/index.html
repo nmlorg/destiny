@@ -3,38 +3,22 @@
 {% block content %}
 
 <div class="container">
-  <div class="panel panel-default">
-    <div class="panel-heading">TransferItem</div>
-    <div class="panel-body">
-      <form action="/api/TransferItem" method="POST">
-        <div class="form-group">
-          <label><code>itemReferenceHash</code> - The manifest code for all items with the same name.</label>
-          <input class="form-control" name="hash" type="number">
-        </div>
-        <div class="form-group">
-          <label><code>itemId</code> - The code for a specific instance of an item. Always 0 for stackable items.</label>
-          <input class="form-control" name="id" type="number" value="0">
-        </div>
-        <div class="form-group">
-          <label><code>stackSize</code> - The number of items to transfer. Always 1 for non-stackable items.</label>
-          <input class="form-control" name="quantity" type="number" value="1">
-        </div>
-        <div class="form-group">
-          <label><code>membershipType</code> - The numeric membership type (1 = Xbox, 2 = PSN).</label>
-          <input class="form-control" name="accounttype" type="number" value="2">
-        </div>
-        <div class="form-group">
-          <label><code>characterId</code> (from) - The code for the character to take the item from. Empty when taking from the vault.</label>
-          <input class="form-control" name="from" type="text">
-        </div>
-        <div class="form-group">
-          <label><code>characterId</code> (to) - The code for the character to give the item to. Empty when storing in the vault.</label>
-          <input class="form-control" name="to" type="text">
-        </div>
-        <button type="submit" class="btn btn-default">TransferItem</button>
-      </form>
+  {% for endpoint, data in endpoints.iteritems()|sort %}
+    <div class="panel panel-default">
+      <div class="panel-heading"><a href="http://bungienetplatform.wikia.com/wiki/{{endpoint}}">{{endpoint}}</a></div>
+      <div class="panel-body">
+        <form action="/api/{{endpoint}}" method="POST">
+          {% for param, type, default, name, desc in data %}
+            <div class="form-group">
+              <label><code>{{param}}</code> (<code>{{name}}</code>) - {{desc}}</label>
+              <input class="form-control" name="{{param}}" type="{{type}}"{% if default is not none %} value="{{default}}"{% endif %}>
+            </div>
+          {% endfor %}
+          <button type="submit" class="btn btn-default">{{endpoint}}</button>
+        </form>
+      </div>
     </div>
-  </div>
+  {% endfor %}
 </div>
 
 {% endblock %}

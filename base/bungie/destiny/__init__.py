@@ -40,6 +40,10 @@ def GetPublicAdvisors():
   return Fetch('Advisors/')
 
 
+def GetPublicXurVendor():
+  return Fetch('Advisors/Xur/')
+
+
 def SearchDestinyPlayer(username, accounttype=None):
   if not accounttype:
     accounttype = 'all'
