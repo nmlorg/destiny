@@ -45,7 +45,8 @@ body {
 {% macro ShowDict(obj) %}
   {% if obj %}
     {% if obj|count > 1 %}
-      <button class="btn" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display == '' ? 'none' : '';">{{obj|count}} items</button>
+      <button class="btn btn-default btn-sm"
+              onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display == '' ? 'none' : '';">{{obj|count}} items</button>
     {% endif %}
     <ul{% if obj|count > 5 %} style="display: none"{% endif %}>
       {% for k, v in obj.iteritems()|sort %}
@@ -57,7 +58,8 @@ body {
 {% macro ShowList(k, obj) %}
   {% if obj %}
     {% if obj|count > 1 %}
-      <button class="btn" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display == '' ? 'none' : '';">{{obj|count}} items</button>
+      <button class="btn btn-default btn-sm"
+              onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display == '' ? 'none' : '';">{{obj|count}} items</button>
     {% endif %}
     <ol{% if obj|count > 5 %} style="display: none"{% endif %}>
       {% for v in obj %}
