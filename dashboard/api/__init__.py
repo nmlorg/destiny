@@ -6,12 +6,52 @@ from dashboard import base_app
 
 
 ENDPOINTS = {
+    'GetAccountSummary': (
+        ('accounttype', 'number', 2, 'membershipType',
+         'The numeric membership type (1 = XBL, 2 = PSN).'),
+        ('accountid', 'number', None, 'destinyMembershipId',
+         'The numeric membership code.'),
+    ),
+    'GetAdvisorsForCurrentCharacter': (
+        ('accounttype', 'number', 2, 'membershipType',
+         'The numeric membership type (1 = XBL, 2 = PSN).'),
+        ('charid', 'number', None, 'characterId',
+         'The code for the character to inspect.'),
+    ),
+    'GetAllItemsSummary': (
+        ('accounttype', 'number', 2, 'membershipType',
+         'The numeric membership type (1 = XBL, 2 = PSN).'),
+        ('accountid', 'number', None, 'destinyMembershipId',
+         'The numeric membership code.'),
+    ),
     'GetAvailableLocales': (),
+    'GetCharacterProgression': (
+        ('accounttype', 'number', 2, 'membershipType',
+         'The numeric membership type (1 = XBL, 2 = PSN).'),
+        ('accountid', 'number', None, 'destinyMembershipId',
+         'The numeric membership code.'),
+        ('charid', 'number', None, 'characterId',
+         'The code for the character to inspect.'),
+    ),
     'GetCurrentUser': (),
     'GetDestinyManifest': (),
+    'GetItemDetail': (
+        ('accounttype', 'number', 2, 'membershipType',
+         'The numeric membership type (1 = XBL, 2 = PSN).'),
+        ('accountid', 'number', None, 'destinyMembershipId',
+         'The numeric membership code.'),
+        ('charid', 'number', 0, 'characterId',
+         'The code for the character to inspect. 0 for items in the vault.'),
+        ('itemid', 'number', 0, 'itemInstanceId',
+         'The code for a specific instance of an item. Always 0 for stackable items.'),
+    ),
     'GetPublicAdvisors': (),
     'GetPublicXurVendor': (),
     'HelloWorld': (),
+    'SearchDestinyPlayer': (
+        ('username', 'text', None, 'displayName',
+         'The Bungie.net username to search for.'),
+    ),
     'Settings': (),
     'TransferItem': (
         ('hash', 'number', None, 'itemReferenceHash',
@@ -21,7 +61,7 @@ ENDPOINTS = {
         ('quantity', 'number', 1, 'stackSize',
          'The number of items to transfer. Always 1 for non-stackable items.'),
         ('accounttype', 'number', 2, 'membershipType',
-         'The numeric membership type (1 = Xbox, 2 = PSN).'),
+         'The numeric membership type (1 = XBL, 2 = PSN).'),
         ('from', 'text', None, 'characterId',
          'The code for the character to take the item from. Empty when taking from the vault.'),
         ('to', 'text', None, 'characterId',
@@ -42,8 +82,15 @@ class Index(base_app.RequestHandler):
 
 class Generic(base_app.RequestHandler):
   def get(self, callname):
-    if callname not in ENDPOINTS:
+    data = ENDPOINTS.get(callname)
+    if data is None:
       return self.error(404)
+    args = []
+    for param, type, default, name, desc in data:
+      arg = self.request.get(param)
+      if type == 'number':
+        arg = long(arg)
+      args.append(arg)
     method = getattr(destiny, callname, None) or getattr(bungie, callname)
     self.response.content_type = 'text/html'
     self.response.render('dashboard/object.html', {
@@ -51,7 +98,7 @@ class Generic(base_app.RequestHandler):
             ('/api/', 'Bungie.net Platform API'),
             ('/api/' + callname, callname),
         ),
-        'obj': method(),
+        'obj': method(*args),
     })
 
   post = get
