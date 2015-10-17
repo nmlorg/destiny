@@ -12,6 +12,10 @@ def Fetch(suffix, *args, **kwargs):
   return bungie.Fetch(url, *args, **kwargs)
 
 
+def GetAccount(accounttype, accountid):
+  return Fetch('%s/Account/%i/', accounttype, accountid)
+
+
 def GetAccountSummary(accounttype, accountid):
   return Fetch('%s/Account/%i/Summary/', accounttype, accountid)
 

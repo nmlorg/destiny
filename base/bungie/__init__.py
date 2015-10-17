@@ -36,6 +36,10 @@ def Fetch(suffix, *args, **kwargs):
     return data
 
 
+def GetAdminsOfGroup(groupid):
+  return Fetch('Group/%s/Admins/', groupid)
+
+
 def GetAvailableLocales():
   return Fetch('GetAvailableLocales/')
 
