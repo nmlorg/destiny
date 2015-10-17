@@ -52,6 +52,12 @@ ENDPOINTS = {
          'Numeric non-Bungie.net membership code.'),
     ),
     'GetAvailableLocales': (),
+    'GetBungieAccount': (
+        ('profiletype', 'number', 254, 'membershipType',
+         'Numeric Bungie.net profile type.'),
+        ('profileid', 'number', 6802287, 'membershipId',
+         'Numeric Bungie.net profile code.'),
+    ),
     'GetCharacter': (
         ('accounttype', 'number', 2, 'membershipType',
          'Numeric non-Bungie.net membership type (1 = XBL, 2 = PSN).'),
@@ -102,6 +108,19 @@ ENDPOINTS = {
          'Numeric code for the character to inspect.'),
     ),
     'GetDestinyManifest': (),
+    'GetDestinySingleDefinition': (
+        ('deftype', 'text', 'InventoryItem', 'definitionType',
+         'Numeric code for the manifest chapter. See <a href="/db/">Destiny DB</a>.'),
+        ('defid', 'number', 1274330687, 'definitionId',
+         'Numeric code for the specific definition.'),
+    ),
+    'GetGlobalAlerts': (),
+    'GetGrimoireByMembership': (
+        ('accounttype', 'number', 2, 'membershipType',
+         'Numeric non-Bungie.net membership type (1 = XBL, 2 = PSN).'),
+        ('accountid', 'number', 4611686018436064455, 'destinyMembershipId',
+         'Numeric non-Bungie.net membership code.'),
+    ),
     'GetItemDetail': (
         ('accounttype', 'number', 2, 'membershipType',
          'Numeric non-Bungie.net membership type (1 = XBL, 2 = PSN).'),

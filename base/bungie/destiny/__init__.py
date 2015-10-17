@@ -61,6 +61,14 @@ def GetDestinyManifest():
   return Fetch('Manifest/')
 
 
+def GetDestinySingleDefinition(deftype, defid):
+  return Fetch('Manifest/%s/%s/', deftype, defid)
+
+
+def GetGrimoireByMembership(accounttype, accountid):
+  return Fetch('Vanguard/Grimoire/%s/%s/', accounttype, accountid)
+
+
 def GetItemDetail(accounttype, accountid, charid, itemid):
   return Fetch('%s/Account/%s/Character/%s/Inventory/%s/', accounttype, accountid, charid, itemid)
 
