@@ -12,6 +12,14 @@ def Fetch(suffix, *args, **kwargs):
   return bungie.Fetch(url, *args, **kwargs)
 
 
+def EquipItems(accounttype, charid, itemids):
+  return Fetch('EquipItems/', data=json.dumps({
+      'membershipType': accounttype,
+      'characterId': charid,
+      'itemIds': itemids,
+  }))
+
+
 def GetAccount(accounttype, accountid):
   return Fetch('%s/Account/%i/', accounttype, accountid)
 

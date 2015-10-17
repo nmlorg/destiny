@@ -6,6 +6,14 @@ from dashboard import base_app
 
 
 ENDPOINTS = {
+    'EquipItems': (
+        ('accounttype', 'number', 2, 'membershipType',
+         'Numeric non-Bungie.net membership type (1 = XBL, 2 = PSN).'),
+        ('charid', 'number', 2305843009223046587, 'characterId',
+         'Numeric code for the character to inspect.'),
+        ('itemids', 'numberlist', '6917529065725358993, 6917529067611239952', 'itemIds',
+         '1 or more codes for specific instances of an item.'),
+    ),
     'GetAccount': (
         ('accounttype', 'number', 2, 'membershipType',
          'Numeric non-Bungie.net membership type (1 = XBL, 2 = PSN).'),
@@ -126,10 +134,10 @@ ENDPOINTS = {
          'Numeric non-Bungie.net membership type (1 = XBL, 2 = PSN).'),
         ('accountid', 'number', 4611686018436064455, 'destinyMembershipId',
          'Numeric non-Bungie.net membership code.'),
-        ('charid', 'number', 0, 'characterId',
+        ('charid', 'number', 2305843009223046587, 'characterId',
          'Numeric code for the character to inspect. 0 for items in the vault.'),
-        ('itemid', 'number', 0, 'itemInstanceId',
-         'Code for a specific instance of an item. Always 0 for stackable items.'),
+        ('itemid', 'number', 6917529065725358993, 'itemInstanceId',
+         'Code for a specific instance of an item.'),
     ),
     'GetMyGrimoire': (
         ('accounttype', 'number', 2, 'membershipType',
@@ -184,6 +192,8 @@ class Generic(base_app.RequestHandler):
       arg = self.request.get(param)
       if type == 'number':
         arg = long(arg)
+      elif type == 'numberlist':
+        arg = map(long, arg.replace(',', ' ').split())
       args.append(arg)
     method = getattr(destiny, callname, None) or getattr(bungie, callname)
     self.response.content_type = 'text/html'
