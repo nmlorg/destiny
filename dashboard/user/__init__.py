@@ -11,7 +11,6 @@ from dashboard import base_app
 class MePage(base_app.RequestHandler):
   def get(self):
     self.response.render('dashboard/user/index.html', {
-        'user': self.request.user,
         'user_info': bungie.GetCurrentUser(),
     })
 
