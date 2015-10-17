@@ -23,8 +23,8 @@
     {% endfor %}
   </div>
   <div class="col-md-3">
-    <nav style="position: fixed; overflow-y: scroll">
-      <ul class="nav">
+    <nav style="position: fixed">
+      <ul class="nav nav-sm">
         {% for endpoint in endpoints|sort %}
           <li><a href="#{{endpoint}}">{{endpoint}}</a></li>
         {% endfor %}
