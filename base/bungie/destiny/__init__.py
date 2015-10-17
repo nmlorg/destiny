@@ -24,8 +24,24 @@ def GetAllItemsSummary(accounttype, accountid):
   return Fetch('%s/Account/%i/Items/', accounttype, accountid)
 
 
+def GetCharacter(accounttype, accountid, charid):
+  return Fetch('%s/Account/%s/Character/%i/Complete/', accounttype, accountid, charid)
+
+
+def GetCharacterActivities(accounttype, accountid, charid):
+  return Fetch('%s/Account/%s/Character/%i/Activities/', accounttype, accountid, charid)
+
+
+def GetCharacterInventory(accounttype, accountid, charid):
+  return Fetch('%s/Account/%s/Character/%i/Inventory/', accounttype, accountid, charid)
+
+
 def GetCharacterProgression(accounttype, accountid, charid):
   return Fetch('%s/Account/%i/Character/%i/Progression/', accounttype, accountid, charid)
+
+
+def GetCharacterSummary(accounttype, accountid, charid):
+  return Fetch('%s/Account/%s/Character/%i/', accounttype, accountid, charid)
 
 
 def GetDestinyManifest():
@@ -34,6 +50,10 @@ def GetDestinyManifest():
 
 def GetItemDetail(accounttype, accountid, charid, itemid):
   return Fetch('%s/Account/%s/Character/%s/Inventory/%s/', accounttype, accountid, charid, itemid)
+
+
+def GetMyGrimoire(accounttype):
+  return Fetch('Vanguard/Grimoire/%s/', accounttype)
 
 
 def GetPublicAdvisors():
