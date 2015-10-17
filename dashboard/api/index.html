@@ -3,22 +3,34 @@
 {% block content %}
 
 <div class="container">
-  {% for endpoint, data in endpoints.iteritems()|sort %}
-    <div class="panel panel-default">
-      <div class="panel-heading"><a href="http://bungienetplatform.wikia.com/wiki/{{endpoint}}">{{endpoint}}</a></div>
-      <div class="panel-body">
-        <form action="/api/{{endpoint}}" method="POST">
-          {% for param, type, default, name, desc in data %}
-            <div class="form-group">
-              <label><code>{{param}}</code> (<code>{{name}}</code>) - {{desc}}</label>
-              <input class="form-control" name="{{param}}" type="{{type}}"{% if default is not none %} value="{{default}}"{% endif %}>
-            </div>
-          {% endfor %}
-          <button type="submit" class="btn btn-default">{{endpoint}}</button>
-        </form>
+  <div class="col-md-9">
+    {% for endpoint, data in endpoints.iteritems()|sort %}
+      <a id="{{endpoint}}" class="anchor"></a>
+      <div class="panel panel-default">
+        <div class="panel-heading"><a href="http://bungienetplatform.wikia.com/wiki/{{endpoint}}">{{endpoint}}</a></div>
+        <div class="panel-body">
+          <form action="/api/{{endpoint}}" method="POST">
+            {% for param, type, default, name, desc in data %}
+              <div class="form-group">
+                <label><code>{{param}}</code> (<code>{{name}}</code>) - {{desc}}</label>
+                <input class="form-control" name="{{param}}" type="{{type}}"{% if default is not none %} value="{{default}}"{% endif %}>
+              </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-default">{{endpoint}}</button>
+          </form>
+        </div>
       </div>
-    </div>
-  {% endfor %}
+    {% endfor %}
+  </div>
+  <div class="col-md-3">
+    <nav style="position: fixed; overflow-y: scroll">
+      <ul class="nav">
+        {% for endpoint in endpoints|sort %}
+          <li><a href="#{{endpoint}}">{{endpoint}}</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+  </div>
 </div>
 
 {% endblock %}
