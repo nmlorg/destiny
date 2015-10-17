@@ -90,6 +90,8 @@ body {
     <a href="/db/Class/{{v}}">{{v}}</a>
   {% elif k == 'destinationHash' %}
     <a href="/db/Destination/{{v}}">{{v}}</a>
+  {% elif k == 'displayName' %}
+    <a href="/{{v}}">{{v}}</a>
   {% elif k == 'eventHash' %}
     <a href="/db/SpecialEvent/{{v}}">{{v}}</a>
   {% elif k == 'factionHash' %}
@@ -100,6 +102,8 @@ body {
     <a href="/db/Gender/{{v}}">{{v}}</a>
   {% elif k == 'gridHash' or k == 'talentGridHash' %}
     <a href="/db/TalentGrid/{{v}}">{{v}}</a>
+  {% elif k == 'instanceId' %}
+    <a href="/api/GetPostGameCarnageReport?activityid={{v}}">{{v}}</a>
   {% elif k == 'itemCategoryHash' or k == 'itemCategoryHashes' %}
     <a href="/db/ItemCategory/{{v}}">{{v}}</a>
   {% elif k == 'itemHash' or k == 'questlineItemHash' or k == 'setItemHashes' %}

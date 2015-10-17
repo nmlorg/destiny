@@ -16,6 +16,11 @@ def GetAccountSummary(accounttype, accountid):
   return Fetch('%s/Account/%i/Summary/', accounttype, accountid)
 
 
+def GetActivityHistory(accounttype, accountid, charid, mode, count=15, page=0):
+  return Fetch('Stats/ActivityHistory/%s/%s/%s/?mode=%s&count=%i&page=%i', accounttype, accountid,
+               charid, mode, count, page)
+
+
 def GetAdvisorsForCurrentCharacter(accounttype, charid):
   return Fetch('%s/MyAccount/Character/%s/Advisors/', accounttype, charid)
 
@@ -44,6 +49,10 @@ def GetCharacterSummary(accounttype, accountid, charid):
   return Fetch('%s/Account/%s/Character/%i/', accounttype, accountid, charid)
 
 
+def GetDestinyAggregateActivityStats(accounttype, accountid, charid):
+  return Fetch('Stats/AggregateActivityStats/%s/%s/%s/', accounttype, accountid, charid)
+
+
 def GetDestinyManifest():
   return Fetch('Manifest/')
 
@@ -54,6 +63,10 @@ def GetItemDetail(accounttype, accountid, charid, itemid):
 
 def GetMyGrimoire(accounttype):
   return Fetch('Vanguard/Grimoire/%s/', accounttype)
+
+
+def GetPostGameCarnageReport(activityid):
+  return Fetch('Stats/PostGameCarnageReport/%s/', activityid)
 
 
 def GetPublicAdvisors():

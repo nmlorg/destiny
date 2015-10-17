@@ -12,6 +12,23 @@ ENDPOINTS = {
         ('accountid', 'number', 4611686018436064455, 'destinyMembershipId',
          'The numeric membership code.'),
     ),
+    'GetActivityHistory': (
+        ('accounttype', 'number', 2, 'membershipType',
+         'The numeric membership type (1 = XBL, 2 = PSN).'),
+        ('accountid', 'number', 4611686018436064455, 'destinyMembershipId',
+         'The numeric membership code.'),
+        ('charid', 'number', 2305843009223046587, 'characterId',
+         'The code for the character to inspect.'),
+        ('mode', 'text', 'None', 'mode',
+         'The game mode: AllArena, AllPvE, AllPvP, AllStrikes, Arena, ArenaChallenge, Control, '
+         'Elimination, FreeForAll, Heroic, IronBanner, Lockdown, Mayhem, Nightfall, None, Patrol, '
+         'PvPIntroduction, Raid, Rift, Story, Strike, Team, ThreeVsThree, TrialsOfOsiris, or '
+         'ZoneControl. "None" returns all activities.'),
+        ('count', 'number', 250, 'count',
+         'The number of results to return (1 - 250).'),
+        ('page', 'number', 0, 'page',
+         'The page offset.'),
+    ),
     'GetAdvisorsForCurrentCharacter': (
         ('accounttype', 'number', 2, 'membershipType',
          'The numeric membership type (1 = XBL, 2 = PSN).'),
@@ -66,6 +83,14 @@ ENDPOINTS = {
          'The code for the character to inspect.'),
     ),
     'GetCurrentUser': (),
+    'GetDestinyAggregateActivityStats': (
+        ('accounttype', 'number', 2, 'membershipType',
+         'The numeric membership type (1 = XBL, 2 = PSN).'),
+        ('accountid', 'number', 4611686018436064455, 'destinyMembershipId',
+         'The numeric membership code.'),
+        ('charid', 'number', 2305843009223046587, 'characterId',
+         'The code for the character to inspect.'),
+    ),
     'GetDestinyManifest': (),
     'GetItemDetail': (
         ('accounttype', 'number', 2, 'membershipType',
@@ -80,6 +105,10 @@ ENDPOINTS = {
     'GetMyGrimoire': (
         ('accounttype', 'number', 2, 'membershipType',
          'The numeric membership type (1 = XBL, 2 = PSN).'),
+    ),
+    'GetPostGameCarnageReport': (
+        ('activityid', 'number', 3966013892, 'activityId',
+         "The activity's instanceId."),
     ),
     'GetPublicAdvisors': (),
     'GetPublicXurVendor': (),
