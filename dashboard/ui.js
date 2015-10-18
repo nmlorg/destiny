@@ -132,7 +132,7 @@ nmlorg.ui.placard = function(data) {
             var tmp = format.split(/{([^}]*)}/g);
             drawer.appendChild(document.createTextNode(tmp[0]));
             for (var j = 1; j + 1 < tmp.length; j += 2) {
-              drawer.appendChild(document.createTextNode(item[tmp[j]]));
+              drawer.appendChild(document.createTextNode(tmp[j] == 'name' ? name : item[tmp[j]]));
               drawer.appendChild(document.createTextNode(tmp[j + 1]));
             }
           } else
@@ -183,12 +183,6 @@ nmlorg.ui.bounty = function(bounty) {
 
 
 nmlorg.ui.character = function(character) {
-  var norm = (character.stats.Agility + character.stats.Armor + character.stats.Recovery) / 100;
-  var stats = [[100 + Math.round(character.stats.Agility / norm), 'Agility'],
-               [100 + Math.round(character.stats.Armor / norm), 'Armor'],
-               [100 + Math.round(character.stats.Recovery / norm), 'Recovery']];
-  stats.sort();
-
   return nmlorg.ui.placard({
       'active': true,
       'height': 96,
@@ -196,11 +190,11 @@ nmlorg.ui.character = function(character) {
       'left': [
           character.class,
           character.race + ' ' + character.gender,
-          stats[2][1] + ' > ' + stats[1][1] + ' > ' + stats[0][1],
       ],
       'right': [
           character.level,
           '\u2666 ' + character.light,
+          character.progress.r1_s4_hiveship_orbs.level + ' / 50',
       ],
       'drawer': [
           character.level + ' ' + character.race + ' ' + character.gender + ' ' +

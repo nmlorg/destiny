@@ -87,8 +87,7 @@ class User(dict):
           'level': ent['characterLevel'],
           'light': ent['characterBase']['powerLevel'],
           'inventory': {},
-          'progress': sorted((GetProgression(prog) for prog in ent['progressions']),
-                             key=lambda ent: ent['name']),
+          'progress': dict(GetProgression(prog) for prog in ent['progressions']),
           'quests': {},
           'race': GetRaceName(ent['characterBase']['raceHash']),
           'stats': {GetStatName(stat['statHash']): stat['value']
@@ -248,12 +247,11 @@ def GetPerk(code):
 
 def GetProgression(progression):
   info = manifest.GetDef('Progression', progression['progressionHash'])
-  return {
+  return info['name'], {
       'current': progression['currentProgress'],
       'daily': progression['dailyProgress'],
       'icon': info.get('icon', '/img/misc/missing_icon.png'),
       'level': progression['level'],
-      'name': info['name'],
       'weekly': progression['weeklyProgress'],
   }
 
