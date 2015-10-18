@@ -2,6 +2,7 @@
 
 import jinja2
 import webapp2
+from base import bungie
 from base.bungie import auth
 from base.util import fetch
 from google.appengine.api import users
@@ -15,6 +16,14 @@ class User(ndb.Model):
   username = ndb.StringProperty()
   bungled = ndb.TextProperty()
   bungleatk = ndb.TextProperty()
+
+  _profile = None
+
+  @property
+  def profile(self):
+    if self._profile is None:
+      self._profile = bungie.GetCurrentUser()
+    return self._profile
 
 
 RequestHandler = webapp2.RequestHandler
