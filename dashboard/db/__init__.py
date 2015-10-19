@@ -30,13 +30,16 @@ class BucketPage(base_app.RequestHandler):
 
 class ObjectPage(base_app.RequestHandler):
   def get(self, bucket_name, hashcode):
-    hashcode = long(hashcode)
+    try:
+      hashcode = long(hashcode)
+    except ValueError:
+      pass
     obj = manifest.GetDef(bucket_name, hashcode)
     self.response.render('dashboard/object.html', {
         'breadcrumbs': (
             ('/db/', 'DB'),
             ('/db/%s/' % bucket_name, bucket_name),
-            ('/db/%s/%i' % (bucket_name, hashcode), hashcode),
+            ('/db/%s/%s' % (bucket_name, hashcode), hashcode),
         ),
         'obj': obj,
     })
@@ -45,5 +48,5 @@ class ObjectPage(base_app.RequestHandler):
 app = base_app.WSGIApplication([
     ('/db/?', IndexPage),
     ('/db/([a-zA-Z]+)/?', BucketPage),
-    ('/db/([a-zA-Z]+)/([0-9]+)/?', ObjectPage),
+    ('/db/([a-zA-Z]+)/([0-9]+|[a-zA-Z]+)/?', ObjectPage),
 ], debug=True)
