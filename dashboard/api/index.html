@@ -7,7 +7,13 @@
     {% for endpoint, data in endpoints.iteritems()|sort %}
       <a id="{{endpoint}}" class="anchor"></a>
       <div class="panel panel-default">
-        <div class="panel-heading"><a href="http://bungienetplatform.wikia.com/wiki/{{endpoint}}">{{endpoint}}</a></div>
+        <div class="panel-heading">
+          {{endpoint}}
+          <div class="pull-right">
+            <a href="http://bungienetplatform.wikia.com/wiki/{{endpoint}}">API docs</a> &bull;
+            <a href="https://github.com/nmlorg/destiny/search?utf8=✓&q=%22def+{{endpoint}}%22">Example implementation</a>
+          </div>
+        </div>
         <div class="panel-body">
           <form action="/api/{{endpoint}}" method="POST">
             {% for param, type, default, name, desc in data %}
