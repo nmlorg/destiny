@@ -192,12 +192,36 @@ def GetActivity(code):
   return manifest.GetDef('Activity', code)
 
 
+RAID_STEPS = {
+    'RAID_MOON1': (
+        'Traverse the Abyss',
+        'Cross the Bridge',
+        u'Ir Y\xfbt, the Deathsinger',
+        'Crota',
+    ),
+    'RAID_TAKEN_KING': (
+        "The Warpriest's Trial",
+        'The Warpriest',
+        'Golgoroth',
+        'Daughters of Oryx',
+        'Oryx',
+    ),
+    'RAID_VENUS1': (
+        'Templar',
+        "Gorgons' Labyrinth",
+        'Gatekeeper',
+        'Atheon',
+    ),
+}
+
+
 def GetActivityCompletion(advisors):
   activities = []
   for ent in advisors.itervalues():
     if not ent.get('raidActivities'):
       continue
     bundle = manifest.GetDef('ActivityBundle', ent['activityBundleHash'])
+    step_names = RAID_STEPS.get(ent['raidActivities']['raidIdentifier'])
     for tier in ent['raidActivities']['tiers']:
       activity = GetActivity(tier['activityHash'])
       rewards = []
@@ -212,7 +236,9 @@ def GetActivityCompletion(advisors):
           'modifiers': [GetModifier(skull) for skull in activity['skulls']],
           'name': '%s (%i)' % (activity['activityName'].strip(), activity['activityLevel']),
           'rewards': rewards,
-          'steps': [step['isComplete'] for step in tier['steps']],
+          'steps': [{'complete': step['isComplete'],
+                     'name': step_names and step_names[i] or 'Step #%i' % (i + 1)}
+                    for i, step in enumerate(tier['steps'])],
       })
   return activities
 

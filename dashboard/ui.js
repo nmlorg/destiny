@@ -159,8 +159,11 @@ nmlorg.ui.placard = function(data) {
 
 nmlorg.ui.activity = function(activity) {
   var steps = [];
-  for (var i = 0; i < activity.steps.length; i++)
-    steps.push(activity.steps[i] ? '\u2611' : '\u2610');
+  for (var i = 0; i < activity.steps.length; i++) {
+    var step = activity.steps[i];
+    step.status = step.complete ? '\u2611' : '\u2610';
+    steps.push(step.status);
+  }
 
   return nmlorg.ui.placard({
       'active': true,
@@ -179,6 +182,7 @@ nmlorg.ui.activity = function(activity) {
           '',
           activity.desc,
           ['Modifiers:', activity.modifiers],
+          ['Steps:', activity.steps, '{status} {name}'],
           ['Rewards:', activity.rewards],
       ],
       'link': '/db/Activity/' + activity.hash,
