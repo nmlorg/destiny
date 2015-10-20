@@ -157,6 +157,32 @@ nmlorg.ui.placard = function(data) {
 };
 
 
+nmlorg.ui.activity = function(activity) {
+  var steps = [];
+  for (var i = 0; i < activity.steps.length; i++)
+    steps.push(activity.steps[i] ? '\u2611' : '\u2610');
+
+  return nmlorg.ui.placard({
+      'active': true,
+      'height': 40,
+      'left': [
+          activity.name,
+          activity.desc,
+      ],
+      'right': [
+          steps.join(' '),
+          activity.modifiers,
+      ],
+      'drawer': [
+          activity.name,
+          '',
+          activity.desc,
+          ['Modifiers:', activity.modifiers],
+      ],
+  });
+};
+
+
 nmlorg.ui.bounty = function(bounty) {
   return nmlorg.ui.placard({
       'active': bounty.active,

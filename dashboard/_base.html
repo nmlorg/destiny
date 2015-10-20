@@ -86,7 +86,7 @@ a.anchor {
   {% elif k.startswith('icon') or k.endswith('Icon') or k.endswith('ImageMobile') or k.endswith('Path') or k.endswith('Portrait') %}
     {{v}}<br>
     <img src="https://www.bungie.net{{v}}" style="border: 1px solid black">
-  {% elif k == 'activityBundleHashes' %}
+  {% elif k == 'activityBundleHash' or k == 'activityBundleHashes' %}
     <a href="/db/ActivityBundle/{{v}}">{{v}}</a>
   {% elif k == 'activityHash' or k == 'activityHashes' or k == 'currentActivityHash' %}
     <a href="/db/Activity/{{v}}">{{v}}</a>

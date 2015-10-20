@@ -34,7 +34,8 @@ def GetDestinyUser(username, accounttype=None, accountid=None):
   for ent in summary['characters']:
     charid = long(ent['characterBase']['characterId'])
     advisors = destiny.GetAdvisorsForCurrentCharacter(accounttype, charid)
-    ent['advisors'] = advisors and advisors['data'] or {'vendorAdvisors': {}}
+    ent['advisors'] = (
+        advisors and advisors['data'] or {'activityAdvisors': {}, 'vendorAdvisors': {}})
     ent['progressions'] = destiny.GetCharacterProgression(
         accounttype, accountid, charid)['data']['progressions']
 
@@ -61,7 +62,7 @@ class User(dict):
     self['characters'] = []
     for ent in summary['characters']:
       bounties = []
-      for vendorid, vendor in ent['advisors']['vendorAdvisors'].iteritems():
+      for vendor in ent['advisors']['vendorAdvisors'].itervalues():
         if not vendor.get('pendingBounties'):
           continue
         for bounty in vendor['pendingBounties']['saleItems']:
@@ -78,6 +79,7 @@ class User(dict):
           })
 
       self['characters'].append({
+          'activities': GetActivityCompletion(ent['advisors']['activityAdvisors']),
           'bounties': bounties,
           'class': GetClassName(ent['characterBase']['classHash']),
           'emblem_banner': ent['backgroundPath'],
@@ -186,8 +188,28 @@ class User(dict):
       where[bucket_name].append(item)
 
 
+def GetActivity(code):
+  return manifest.GetDef('Activity', code)
+
+
+def GetActivityCompletion(advisors):
+  activities = []
+  for bundle in advisors.itervalues():
+    if not bundle.get('raidActivities'):
+      continue
+    for tier in bundle['raidActivities']['tiers']:
+      activity = GetActivity(tier['activityHash'])
+      activities.append({
+          'desc': activity['activityDescription'],
+          'modifiers': [GetModifier(skull) for skull in activity['skulls']],
+          'name': '%s (%i)' % (activity['activityName'].strip(), activity['activityLevel']),
+          'steps': [step['isComplete'] for step in tier['steps']],
+      })
+  return activities
+
+
 def GetActivityName(code):
-  return manifest.GetDef('Activity', code)['activityName'].strip()
+  return GetActivity(code)['activityName'].strip()
 
 
 def GetBucketName(code):
@@ -212,6 +234,14 @@ def GetDestinationName(code):
 
 def GetGenderName(code):
   return manifest.GetDef('Gender', code)['genderName']
+
+
+def GetModifier(data):
+  return {
+      'desc': data['description'],
+      'icon': data['icon'],
+      'name': data['displayName'],
+  }
 
 
 def GetObjective(code):
