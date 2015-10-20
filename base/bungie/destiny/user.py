@@ -194,15 +194,24 @@ def GetActivity(code):
 
 def GetActivityCompletion(advisors):
   activities = []
-  for bundle in advisors.itervalues():
-    if not bundle.get('raidActivities'):
+  for ent in advisors.itervalues():
+    if not ent.get('raidActivities'):
       continue
-    for tier in bundle['raidActivities']['tiers']:
+    bundle = manifest.GetDef('ActivityBundle', ent['activityBundleHash'])
+    for tier in ent['raidActivities']['tiers']:
       activity = GetActivity(tier['activityHash'])
+      rewards = []
+      for reward_set in activity['rewards']:
+        for reward in reward_set['rewardItems']:
+          rewards.append(GetReward(reward['itemHash']))
       activities.append({
+          'complete': tier['stepsComplete'] == tier['stepsTotal'],
           'desc': activity['activityDescription'],
+          'hash': tier['activityHash'],
+          'icon': bundle['releaseIcon'],
           'modifiers': [GetModifier(skull) for skull in activity['skulls']],
           'name': '%s (%i)' % (activity['activityName'].strip(), activity['activityLevel']),
+          'rewards': rewards,
           'steps': [step['isComplete'] for step in tier['steps']],
       })
   return activities

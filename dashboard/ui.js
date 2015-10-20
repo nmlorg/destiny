@@ -165,8 +165,9 @@ nmlorg.ui.activity = function(activity) {
   return nmlorg.ui.placard({
       'active': true,
       'height': 40,
+      'icon': activity.icon,
       'left': [
-          activity.name,
+          activity.name + (activity.complete ? ' \u2714' : ''),
           activity.desc,
       ],
       'right': [
@@ -178,7 +179,9 @@ nmlorg.ui.activity = function(activity) {
           '',
           activity.desc,
           ['Modifiers:', activity.modifiers],
+          ['Rewards:', activity.rewards],
       ],
+      'link': '/db/Activity/' + activity.hash,
   });
 };
 
