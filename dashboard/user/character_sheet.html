@@ -39,6 +39,17 @@ user.get(function() {
   bucketNames.sort()
 
   var row = table.push();
+  row.push('Activities');
+  for (var i = 0; i < user.characters.length; i++) {
+    var character = user.characters[i];
+    var cell = new nmlorg.table.ListCell('Activities', character.id + '--Activities');
+    row.push(cell.render());
+    for (var j = 0; j < character.activities.length; j++)
+      cell.push(nmlorg.ui.activity(character.activities[j]));
+  }
+  row.push('');
+
+  var row = table.push();
   row.push('Bounties');
   for (var i = 0; i < user.characters.length; i++) {
     var character = user.characters[i];
@@ -59,17 +70,6 @@ user.get(function() {
     row.push(cell.render());
     for (var questName in character.quests)
       cell.push(nmlorg.ui.quest(character.quests[questName]), questName);
-  }
-  row.push('');
-
-  var row = table.push();
-  row.push('Raids');
-  for (var i = 0; i < user.characters.length; i++) {
-    var character = user.characters[i];
-    var cell = new nmlorg.table.ListCell('Raids', character.id + '--Raids');
-    row.push(cell.render());
-    for (var j = 0; j < character.activities.length; j++)
-      cell.push(nmlorg.ui.activity(character.activities[j]));
   }
   row.push('');
 

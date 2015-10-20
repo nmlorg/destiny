@@ -218,28 +218,62 @@ RAID_STEPS = {
 def GetActivityCompletion(advisors):
   activities = []
   for ent in advisors.itervalues():
-    if not ent.get('raidActivities'):
-      continue
-    bundle = manifest.GetDef('ActivityBundle', ent['activityBundleHash'])
-    step_names = RAID_STEPS.get(ent['raidActivities']['raidIdentifier'])
-    for tier in ent['raidActivities']['tiers']:
-      activity = GetActivity(tier['activityHash'])
-      rewards = []
-      for reward_set in activity['rewards']:
-        for reward in reward_set['rewardItems']:
-          rewards.append(GetReward(reward['itemHash']))
-      activities.append({
-          'complete': tier['stepsComplete'] == tier['stepsTotal'],
-          'desc': activity['activityDescription'],
-          'hash': tier['activityHash'],
-          'icon': bundle['releaseIcon'],
-          'modifiers': [GetModifier(skull) for skull in activity['skulls']],
-          'name': '%s (%i)' % (activity['activityName'].strip(), activity['activityLevel']),
-          'rewards': rewards,
-          'steps': [{'complete': step['isComplete'],
-                     'name': step_names and step_names[i] or 'Step #%i' % (i + 1)}
-                    for i, step in enumerate(tier['steps'])],
-      })
+    if ent.get('dailyChapterActivities'):
+      for code in ent['dailyChapterActivities']['tierActivityHashes']:
+        activity = GetActivity(code)
+        rewards = []
+        for reward_set in activity['rewards']:
+          for reward in reward_set['rewardItems']:
+            rewards.append(GetReward(reward['itemHash']))
+        activities.append({
+            'complete': ent['dailyChapterActivities']['isCompleted'],
+            'desc': activity['activityDescription'],
+            'hash': code,
+            'icon': activity['releaseIcon'],
+            'modifiers': [GetModifier(skull) for skull in activity['skulls']],
+            'name': '%s (%i)' % (activity['activityName'].strip(), activity['activityLevel']),
+            'rewards': rewards,
+            'steps': [],
+        })
+    elif ent.get('dailyCrucible'):
+      bundle = manifest.GetDef('ActivityBundle', ent['activityBundleHash'])
+      for code in bundle['activityHashes']:
+        activity = GetActivity(code)
+        rewards = []
+        for reward_set in activity['rewards']:
+          for reward in reward_set['rewardItems']:
+            rewards.append(GetReward(reward['itemHash']))
+        activities.append({
+            'complete': ent['dailyCrucible']['isCompleted'],
+            'desc': activity['activityDescription'],
+            'hash': code,
+            'icon': ent['dailyCrucible']['iconPath'],
+            'modifiers': [],
+            'name': activity['activityName'].strip(),
+            'rewards': rewards,
+            'steps': [],
+        })
+    elif ent.get('raidActivities'):
+      bundle = manifest.GetDef('ActivityBundle', ent['activityBundleHash'])
+      step_names = RAID_STEPS.get(ent['raidActivities']['raidIdentifier'])
+      for tier in ent['raidActivities']['tiers']:
+        activity = GetActivity(tier['activityHash'])
+        rewards = []
+        for reward_set in activity['rewards']:
+          for reward in reward_set['rewardItems']:
+            rewards.append(GetReward(reward['itemHash']))
+        activities.append({
+            'complete': tier['stepsComplete'] == tier['stepsTotal'],
+            'desc': activity['activityDescription'],
+            'hash': tier['activityHash'],
+            'icon': bundle['releaseIcon'],
+            'modifiers': [GetModifier(skull) for skull in activity['skulls']],
+            'name': '%s (%i)' % (activity['activityName'].strip(), activity['activityLevel']),
+            'rewards': rewards,
+            'steps': [{'complete': step['isComplete'],
+                       'name': step_names and step_names[i] or 'Step #%i' % (i + 1)}
+                      for i, step in enumerate(tier['steps'])],
+        })
   return activities
 
 
