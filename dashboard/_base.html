@@ -120,6 +120,8 @@ a.anchor {
     <a href="/db/ItemCategory/{{v}}">{{v}}</a>
   {% elif k == 'itemHash' or k == 'questlineItemHash' or k == 'setItemHashes' %}
     <a href="/db/InventoryItem/{{v}}">{{v}}</a>
+  {% elif k == 'itemSoidsUpgradable' %}
+    <a href="/items/{{v}}">{{v}}</a>
   {% elif k == 'locationHash' %}
     <a href="/db/Location/{{v}}">{{v}}</a>
   {% elif k == 'objectiveHash' or k == 'objectiveHashes' %}

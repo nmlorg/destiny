@@ -4,11 +4,12 @@ import json
 import pprint
 from base import bungie
 from base.bungie import auth
+from base.bungie import destiny
 from base.bungie.destiny import user as destiny_user
 from dashboard import base_app
 
 
-class MePage(base_app.RequestHandler):
+class IndexPage(base_app.RequestHandler):
   def get(self):
     self.response.render('dashboard/user/index.html')
 
@@ -23,6 +24,14 @@ class MePage(base_app.RequestHandler):
       self.request.user.put()
 
     return self.redirect('/')
+
+
+class ItemPage(base_app.RequestHandler):
+  def get(self, itemid):
+    item = destiny.DestinyItem.get_by_id(itemid)
+    self.response.render('dashboard/object.html', {
+        'obj': item and item.to_dict(),
+    })
 
 
 class UserHTMLPage(base_app.RequestHandler):
@@ -52,7 +61,6 @@ class UserPyPage(base_app.RequestHandler):
 class UserRawPage(base_app.RequestHandler):
   def get(self, username):
     username, accounttype, accountid, summary = destiny_user.GetDestinyUser(username)
-    self.response.content_type = 'text/html'
     self.response.render('dashboard/object.html', {
         'breadcrumbs': (
             ('/%s.raw' % username, username),
@@ -68,7 +76,8 @@ class Warmup(base_app.RequestHandler):
 
 app = base_app.WSGIApplication([
     ('/_ah/warmup', Warmup),
-    ('/', MePage),
+    ('/', IndexPage),
+    ('/items/([0-9]+)/?', ItemPage),
     ('/([a-zA-Z0-9-_ ]+)', UserHTMLPage),
     ('/([a-zA-Z0-9-_ ]+)[.]json', UserJSONPage),
     ('/([a-zA-Z0-9-_ ]+)[.]py', UserPyPage),
