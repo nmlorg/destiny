@@ -3,40 +3,69 @@
 {% block content %}
 
 <div class="container">
-  <div class="col-md-9">
-    {% for endpoint, data in endpoints.iteritems()|sort %}
-      <a id="{{endpoint}}" class="anchor"></a>
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          {{endpoint}}
-          <div class="pull-right">
-            <a href="http://bungienetplatform.wikia.com/wiki/{{endpoint}}">API docs</a> &bull;
-            <a href="https://github.com/nmlorg/destiny/search?utf8=✓&q=%22def+{{endpoint}}%22">Example implementation</a>
-          </div>
-        </div>
-        <div class="panel-body">
-          <form action="/api/{{endpoint}}" method="POST">
-            {% for param, type, default, name, desc in data %}
-              <div class="form-group">
-                <label><code>{{param}}</code> (<code>{{name}}</code>) - {{desc}}</label>
-                <input class="form-control" name="{{param}}" type="{{type}}"{% if default is not none %} value="{{default}}"{% endif %}>
-              </div>
-            {% endfor %}
-            <button type="submit" class="btn btn-default">{{endpoint}}</button>
-          </form>
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      How many golden chests and calcified fragments does a character have?
+    </div>
+    <div class="panel-body">
+      <ol start="0">
+        <li>(Authentication is not necessary.)</li>
+        <li>Look up the <a href="/db/Progression/">Progression</a> for the count you are interested in. For example, <a href="/db/Progression/1707948164">1707948164</a> is the number of golden chests discovered on the moon ("destination_chests_moon").</li>
+        <li>Call <a href="#GetCharacterProgression">GetCharacterProgression</a> for any character.</li>
+        <li>Look through <code>data.progressions</code> for an entry whose <code>progressionHash</code> matches the Progression you are interested in.</li>
+        <li>Look up <code>level</code> for the count.</li>
+      </ol>
+    </div>
+    <div class="panel-footer">
+      <ul>
+        <li>Chests: 1774654531 = destination_chests_cosmodrome, 2193513588 = destination_chests_mars, 1707948164 = destination_chests_moon, 2158037182 = destination_chests_venus.</li>
+        <li>Calcified fragments: 3186678724 (r1_s4_hiveship_orbs).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      What is the weekly crucible activity?
+    </div>
+    <div class="panel-body">
+      <ol>
+        <li><a href="https://github.com/nmlorg/destiny/blob/master/base/bungie/auth.py">Provide <code>bungled</code>/<code>bungleatk</code> cookies</a> in your requests. (<a href="{{login_url}}">Log in</a> and connect your account.)</li>
+        <li>Call <a href="#GetAdvisorsForCurrentCharacter">GetAdvisorsForCurrentCharacter</a> for a character owned by your account.</li>
+        <li>Look up <code>data.weeklyCrucible[0].activityBundleHash</code> as an <a href="/db/ActivityBundle/">ActivityBundle</a>.</li>
+        <li>Look up <code>activityHashes[0]</code> as an <a href="/db/Activity/">Activity</a>.</li>
+      </ol>
+    </div>
+    <div class="panel-footer">
+      <ul>
+        <li>In the GetAdvisorsForCurrentCharacter response, <code>data.weeklyCrucible[0].activeRewardIndexes</code> identifies which reward sets listed in the Activity's <code>rewards</code> list are currently available.
+      </ul>
+    </div>
+  </div>
+
+  {% for endpoint, data in endpoints.iteritems()|sort %}
+    <a id="{{endpoint}}" class="anchor"></a>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        {{endpoint}}
+        <div class="pull-right">
+          <a href="http://bungienetplatform.wikia.com/wiki/{{endpoint}}">API docs</a> &bull;
+          <a href="https://github.com/nmlorg/destiny/search?utf8=✓&q=%22def+{{endpoint}}%22">Example implementation</a>
         </div>
       </div>
-    {% endfor %}
-  </div>
-  <div class="col-md-3">
-    <nav style="position: fixed">
-      <ul class="nav nav-sm">
-        {% for endpoint in endpoints|sort %}
-          <li><a href="#{{endpoint}}">{{endpoint}}</a></li>
-        {% endfor %}
-      </ul>
-    </nav>
-  </div>
+      <div class="panel-body">
+        <form action="/api/{{endpoint}}" method="POST">
+          {% for param, type, default, name, desc in data %}
+            <div class="form-group">
+              <label><code>{{param}}</code> (<code>{{name}}</code>) - {{desc}}</label>
+              <input class="form-control" name="{{param}}" type="{{type}}"{% if default is not none %} value="{{default}}"{% endif %}>
+            </div>
+          {% endfor %}
+          <button type="submit" class="btn btn-default">{{endpoint}}</button>
+        </form>
+      </div>
+    </div>
+  {% endfor %}
 </div>
 
 {% endblock %}
