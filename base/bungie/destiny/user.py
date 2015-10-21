@@ -200,11 +200,11 @@ RAID_STEPS = {
         'Crota',
     ),
     'RAID_TAKEN_KING': (
-        "The Warpriest's Trial",
-        'The Warpriest',
-        'Golgoroth',
-        'Daughters of Oryx',
-        'Oryx',
+        "The Warpriest's Trial (Basilica)",
+        'Defeat the Warpriest (Basilica)',
+        "Defeat Golgoroth (Golgoroth's Cellar)",
+        'Defeat the Daughters of Oryx (Threshold)',
+        'Defeat Oryx (Threshold)',
     ),
     'RAID_VENUS1': (
         'Templar',
@@ -217,7 +217,7 @@ RAID_STEPS = {
 
 def GetActivityCompletion(advisors):
   activities = []
-  for ent in advisors['weeklyCrucible']:
+  for ent in advisors.get('weeklyCrucible', ()):
     bundle = manifest.GetDef('ActivityBundle', ent['activityBundleHash'])
     for code in bundle['activityHashes']:
       activity = GetActivity(code)

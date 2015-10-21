@@ -118,9 +118,9 @@ a.anchor {
     <a href="/api/GetPostGameCarnageReport?activityid={{v}}">{{v}}</a>
   {% elif k == 'itemCategoryHash' or k == 'itemCategoryHashes' %}
     <a href="/db/ItemCategory/{{v}}">{{v}}</a>
-  {% elif k == 'itemHash' or k == 'questlineItemHash' or k == 'setItemHashes' %}
+  {% elif k == 'itemHash' or k == 'materialItemHash' or k == 'questlineItemHash' or k == 'setItemHashes' %}
     <a href="/db/InventoryItem/{{v}}">{{v}}</a>
-  {% elif k == 'itemSoidsUpgradable' %}
+  {% elif k == 'itemInstanceId' or k == 'itemSoidsUpgradable' %}
     <a href="/items/{{v}}">{{v}}</a>
   {% elif k == 'locationHash' %}
     <a href="/db/Location/{{v}}">{{v}}</a>
