@@ -171,7 +171,7 @@ nmlorg.ui.activity = function(activity) {
       'icon': activity.icon,
       'left': [
           activity.name + (activity.complete ? ' \u2714' : ''),
-          activity.desc,
+          activity.period + ' ' + activity.type,
       ],
       'right': [
           steps.join(' '),
@@ -179,6 +179,7 @@ nmlorg.ui.activity = function(activity) {
       ],
       'drawer': [
           activity.name,
+          activity.period + ' ' + activity.type,
           '',
           activity.desc,
           ['Modifiers:', activity.modifiers],
