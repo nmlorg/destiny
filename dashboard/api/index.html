@@ -8,8 +8,7 @@
       How many golden chests and calcified fragments does a character have?
     </div>
     <div class="panel-body">
-      <ol start="0">
-        <li>(Authentication is not necessary.)</li>
+      <ol>
         <li>Look up the <a href="/db/Progression/">Progression</a> for the count you are interested in. For example, <a href="/db/Progression/1707948164">1707948164</a> is the number of golden chests discovered on the moon ("destination_chests_moon").</li>
         <li>Call <a href="#GetCharacterProgression">GetCharacterProgression</a> for any character.</li>
         <li>Look through <code>data.progressions</code> for an entry whose <code>progressionHash</code> matches the Progression you are interested in.</li>
@@ -18,8 +17,11 @@
     </div>
     <div class="panel-footer">
       <ul>
-        <li>Chests: 1774654531 = destination_chests_cosmodrome, 2193513588 = destination_chests_mars, 1707948164 = destination_chests_moon, 2158037182 = destination_chests_venus.</li>
-        <li>Calcified fragments: 3186678724 (r1_s4_hiveship_orbs).</li>
+        <li>Cosmodrome golden chests: <a href="/db/Progression/1774654531">1774654531</a></li>
+        <li>Dreadnaught calcified fragments: <a href="/db/Progression/3186678724">3186678724</a></li>
+        <li>Mars golden chests: <a href="/db/Progression/2193513588">2193513588</a></li>
+        <li>Moon golden chests: <a href="/db/Progression/1707948164">1707948164</a></li>
+        <li>Venus golden chests: <a href="/db/Progression/2158037182">2158037182</a></li>
       </ul>
     </div>
   </div>
@@ -30,6 +32,12 @@
     </div>
     <div class="panel-body">
       <ol>
+        <li>Call <a href="#GetPublicAdvisors">GetPublicAdvisors</a>.</li>
+        <li>Look up <code>data.weeklyCrucible[0].activityBundleHash</code> as an <a href="/db/ActivityBundle/">ActivityBundle</a>.</li>
+        <li>Look up <code>activityHashes[0]</code> as an <a href="/db/Activity/">Activity</a>.</li>
+      </ol>
+      <hr>
+      <ol start="0">
         <li><a href="https://github.com/nmlorg/destiny/blob/master/base/bungie/auth.py">Provide <code>bungled</code>/<code>bungleatk</code> cookies</a> in your requests. (<a href="{{login_url}}">Log in</a> and connect your account.)</li>
         <li>Call <a href="#GetAdvisorsForCurrentCharacter">GetAdvisorsForCurrentCharacter</a> for a character owned by your account.</li>
         <li>Look up <code>data.weeklyCrucible[0].activityBundleHash</code> as an <a href="/db/ActivityBundle/">ActivityBundle</a>.</li>
