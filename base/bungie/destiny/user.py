@@ -40,7 +40,6 @@ def GetDestinyUser(username, accounttype=None, accountid=None):
         accounttype, accountid, charid)['data']['progressions']
 
   charids = [long(ent['characterBase']['characterId']) for ent in summary['characters']]
-  charids.append(0)
   for ent in summary['inventory']['items']:
     if long(ent.get('itemId', 0)):
       charid = charids[ent['characterIndex']]

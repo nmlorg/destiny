@@ -133,7 +133,8 @@ ENDPOINTS = {
         ('accountid', 'number', 4611686018436064455, 'destinyMembershipId',
          'Numeric non-Bungie.net membership code.'),
         ('charid', 'number', 2305843009223046587, 'characterId',
-         'Numeric code for the character to inspect. 0 for items in the vault.'),
+         'Numeric code for the character to inspect. For items in the vault, use the id of any '
+         'character owned by this account.'),
         ('itemid', 'number', 6917529065725358993, 'itemInstanceId',
          'Code for a specific instance of an item.'),
     ),

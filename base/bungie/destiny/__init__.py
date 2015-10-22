@@ -134,7 +134,7 @@ else:
     charid = long(charid)
     itemid = str(long(itemid))
     ent = DestinyItem.get_by_id(itemid)
-    if ent is not None:
+    if ent is not None and ent.data:
       assert ent.accounttype == accounttype
       assert ent.accountid == accountid
       return ent.data
