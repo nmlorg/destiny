@@ -28,6 +28,43 @@
 
   <div class="panel panel-primary">
     <div class="panel-heading">
+      What is my <var>accounttype</var>, <var>accountid</var>, and <var>charid</var>?
+    </div>
+    <div class="panel-body">
+      <ol>
+        <li>Call <a href="#SearchDestinyPlayer">SearchDestinyPlayer</a> for any <a href="http://www.xbox.com/en-US/live">Xbox Live</a> or <a href="us.playstation.com/psn/signin/">PlayStation™Network</a> username.</li>
+        <li>Use <code>membershipType</code> as <var>accounttype</var> and <code>membershipId</code> as <var>accountid</var> to call <a href="#GetAccount">GetAccount</a>, <a href="#GetAccountSummary">GetAccountSummary</a>, or <a href="#GetAllItemsSummary">GetAllItemsSummary</a>.
+        <li>Look up <code>data.characters[*].characterBase.characterId</code> to get each <var>charid</var>.
+      </ol>
+      <hr>
+      <ol>
+        <li>Call <a href="#GetBungieAccount">GetBungieAccount</a> for any Bungie.net account.</li>
+        <li>Look up <code>destinyAccounts[0].userInfo.membershipType</code> and <code>.membershipId</code> to get <var>accounttype</var> and <var>accountid</var>. Look up <code>destinyAccounts[0].characters[*].characterId</code> to get each <var>charid</var>.</li>
+      </ol>
+    </div>
+    <div class="panel-footer">
+      <ul>
+        <li><var>accounttype</var> 1 refers to Xbox Live (XBL), 2 refers to PlayStation™Network (PSN).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      What is my <var>profiletype</var> and <var>profileid</var>?
+    </div>
+    <div class="panel-body">
+      <ol>
+      </ol>
+    </div>
+    <div class="panel-footer">
+      <ul>
+      </ul>
+    </div>
+  </div>
+
+  <div class="panel panel-primary">
+    <div class="panel-heading">
       What is the weekly crucible activity?
     </div>
     <div class="panel-body">
