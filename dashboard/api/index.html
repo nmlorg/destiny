@@ -28,6 +28,42 @@
 
   <div class="panel panel-primary">
     <div class="panel-heading">
+      How many times has a character completed a raid?
+    </div>
+    <div class="panel-body">
+      <ol>
+        <li>Look up the <a href="/db/Activity/">Activity</a> for the count you are interested in. For example, <a href="/db/Activity/2659248071">2659248071</a> is the normal Vault of Glass.</li>
+        <li>Call <a href="#GetDestinyAggregateActivityStats">GetDestinyAggregateActivityStats</a> for any character.</li>
+        <li>Look through <code>data.activities</code> for an entry whose <code>activityHash</code> matches the Activity you are interested in.</li>
+        <li>Look up <code>values.activityCompletions</code> for the count.</li>
+      </ol>
+    </div>
+    <div class="panel-footer">
+      <ul>
+        <li>Vault of Glass:
+          <ul>
+            <li>Normal activity: <a href="/db/Activity/2659248071">2659248071</a></li>
+            <li>Heroic activity: <a href="/db/Activity/2659248068">2659248068</a></li>
+          </ul>
+        </li>
+        <li>Crota's End:
+          <ul>
+            <li>Normal activity: <a href="/db/Activity/1836893116">1836893116</a></li>
+            <li>Heroic activity: <a href="/db/Activity/1836893119">1836893119</a></li>
+          </ul>
+        </li>
+        <li>King's Fall:
+          <ul>
+            <li>Normal activity: <a href="/db/Activity/1733556769">1733556769</a></li>
+            <li>Heroic activity: <a href="/db/Activity/3534581229">3534581229</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="panel panel-primary">
+    <div class="panel-heading">
       What checkpoints am I missing in the raids?
     </div>
     <div class="panel-body">
@@ -137,6 +173,15 @@
       <ul>
         <li>In the GetAdvisorsForCurrentCharacter response, <code>data.weeklyCrucible[0].activeRewardIndexes</code> identifies which reward sets listed in the Activity's <code>rewards</code> list are currently available.
       </ul>
+    </div>
+  </div>
+
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      How/What/Which ...?
+    </div>
+    <div class="panel-body">
+      Ping @nmlorg in the <a href="https://www.bungie.net/en/Clan/Post/39966/163894434/0/0">BungieNetPlatform forum</a>.
     </div>
   </div>
 
