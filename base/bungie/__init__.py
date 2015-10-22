@@ -5,6 +5,7 @@
 import logging
 import os
 import re
+import urllib
 import urlparse
 from base.util import fetch
 
@@ -61,7 +62,7 @@ def HelloWorld():
 
 
 def SearchUsers(username):
-  return Fetch('User/SearchUsers/?q=' + username)
+  return Fetch('User/SearchUsers/?' + urllib.urlencode({'q': username}))
 
 
 def Settings():

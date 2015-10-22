@@ -82,7 +82,7 @@ a.anchor {
   {% elif k.startswith('icon') or k.endswith('Icon') or k.endswith('Image') or k.endswith('ImageMobile') or k.endswith('Path') or k.endswith('Portrait') %}
     {{v}}
     <div class="well well-sm" style="margin-bottom: 0">
-      <img src="https://www.bungie.net{{v}}">
+      <img src="{% if v.startswith('/') %}https://www.bungie.net{% endif %}{{v}}">
     </div>
   {% elif k == 'activityBundleHash' or k == 'activityBundleHashes' %}
     <a href="/db/ActivityBundle/{{v}}">{{v}}</a>
@@ -99,7 +99,7 @@ a.anchor {
   {% elif k == 'destinationHash' %}
     <a href="/db/Destination/{{v}}">{{v}}</a>
   {% elif k == 'displayName' %}
-    <a href="/{{v}}">{{v}}</a>
+    <a href="/api/SearchUsers?username={{v}}">{{v}}</a>
   {% elif k == 'eventHash' %}
     <a href="/db/SpecialEvent/{{v}}">{{v}}</a>
   {% elif k == 'factionHash' %}
@@ -130,6 +130,8 @@ a.anchor {
     <a href="/db/Stat/{{v}}">{{v}}</a>
   {% elif k == 'progressionHash' %}
     <a href="/db/Progression/{{v}}">{{v}}</a>
+  {% elif k == 'psnDisplayName' or k == 'xboxDisplayName' %}
+    <a href="/{{v}}">{{v}}</a>
   {% elif k == 'raceHash' %}
     <a href="/db/Race/{{v}}">{{v}}</a>
   {% elif k == 'skullHash' %}
