@@ -61,8 +61,6 @@ ENDPOINTS = {
     ),
     'GetAvailableLocales': (),
     'GetBungieAccount': (
-        ('profiletype', 'number', 254, 'membershipType',
-         'Numeric Bungie.net profile type.'),
         ('profileid', 'number', 6802287, 'membershipId',
          'Numeric Bungie.net profile code.'),
     ),
@@ -151,7 +149,11 @@ ENDPOINTS = {
     'GetPublicXurVendor': (),
     'HelloWorld': (),
     'SearchDestinyPlayer': (
-        ('username', 'text', None, 'displayName',
+        ('username', 'text', 'nmlorg', 'displayName',
+         'Non-Bungie.net username to search for.'),
+    ),
+    'SearchUsers': (
+        ('username', 'text', 'nmlorg', 'q',
          'Bungie.net username to search for.'),
     ),
     'Settings': (),

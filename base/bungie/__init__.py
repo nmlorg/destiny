@@ -44,8 +44,8 @@ def GetAvailableLocales():
   return Fetch('GetAvailableLocales/')
 
 
-def GetBungieAccount(profiletype, profileid):
-  return Fetch('User/GetBungieAccount/%s/%s/', profileid, profiletype)
+def GetBungieAccount(profileid):
+  return Fetch('User/GetBungieAccount/%s/0/', profileid)
 
 
 def GetCurrentUser():
@@ -58,6 +58,10 @@ def GetGlobalAlerts():
 
 def HelloWorld():
   return Fetch('HelloWorld/')
+
+
+def SearchUsers(username):
+  return Fetch('User/SearchUsers/?q=' + username)
 
 
 def Settings():
