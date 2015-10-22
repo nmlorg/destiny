@@ -28,6 +28,48 @@
 
   <div class="panel panel-primary">
     <div class="panel-heading">
+      What checkpoints am I missing in the raids?
+    </div>
+    <div class="panel-body">
+      <ol start="0">
+        <li><a href="https://github.com/nmlorg/destiny/blob/master/base/bungie/auth.py">Provide <code>bungled</code>/<code>bungleatk</code> cookies</a> in your requests. (<a href="{{login_url}}">Log in</a> and connect your account.)</li>
+        <li>Look up the <a href="/db/ActivityBundle/">ActivityBundle</a> for the raid you are interested in. For example, <a href="/db/ActivityBundle/1733556769">1733556769</a> is the King's Fall raid.</li>
+        <li>Call <a href="#GetAdvisorsForCurrentCharacter">GetAdvisorsForCurrentCharacter</a> for a character owned by your account.</li>
+        <li>Look up <code>data.activityAdvisors.<var>ActivityBundle code</var>.raidActivities.tiers[*].steps[*].isComplete</code> to determine which of the numbered checkpoints are completed.</li>
+      </ol>
+    </div>
+    <div class="panel-footer">
+      <ul>
+        <li>Different difficulties for the same basic raid are listed under the same <code>data.activityAdvisors.<var>ActivityBundle code</var>.raidActivities</code> as different tiers.</li>
+        <li>The <a href="/db/ActivityBundle/">ActivityBundle</a> code for a raid is always the same as the <a href="/db/Activity/">Activity</a> code for its lowest tier.</li>
+        <li>Raid steps are not described anywhere in the API or DB. Example names are provided <a href="https://github.com/nmlorg/destiny/search?utf8=%E2%9C%93&q=%22RAID_STEPS%22">here</a>.</li>
+        <li>Vault of Glass:
+          <ul>
+            <li>Bundle: <a href="/db/ActivityBundle/2659248071">2659248071</a></li>
+            <li>Normal activity: <a href="/db/Activity/2659248071">2659248071</a></li>
+            <li>Heroic activity: <a href="/db/Activity/2659248068">2659248068</a></li>
+          </ul>
+        </li>
+        <li>Crota's End:
+          <ul>
+            <li>Bundle: <a href="/db/ActivityBundle/1836893116">1836893116</a></li>
+            <li>Normal activity: <a href="/db/Activity/1836893116">1836893116</a></li>
+            <li>Heroic activity: <a href="/db/Activity/1836893119">1836893119</a></li>
+          </ul>
+        </li>
+        <li>King's Fall:
+          <ul>
+            <li>Bundle: <a href="/db/ActivityBundle/1733556769">1733556769</a></li>
+            <li>Normal activity: <a href="/db/Activity/1733556769">1733556769</a></li>
+            <li>Heroic activity: <a href="/db/Activity/3534581229">3534581229</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="panel panel-primary">
+    <div class="panel-heading">
       What is my <var>accounttype</var>, <var>accountid</var>, and <var>charid</var>?
     </div>
     <div class="panel-body">
