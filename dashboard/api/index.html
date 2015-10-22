@@ -81,13 +81,25 @@
       <hr>
       <ol>
         <li>Call <a href="#GetBungieAccount">GetBungieAccount</a> for any Bungie.net account.</li>
-        <li>Look up <code>destinyAccounts[0].userInfo.membershipType</code> and <code>.membershipId</code> to get <var>accounttype</var> and <var>accountid</var>. Look up <code>destinyAccounts[0].characters[*].characterId</code> to get each <var>charid</var>.</li>
+        <li>Use <code>destinyAccounts[0].userInfo.membershipType</code> as <var>accounttype</var> and <code>.membershipId</code> as <var>accountid</var>. Look up <code>destinyAccounts[0].characters[*].characterId</code> to get each <var>charid</var>.</li>
       </ol>
     </div>
     <div class="panel-footer">
       <ul>
         <li><var>accounttype</var> 1 refers to Xbox Live (XBL), 2 refers to PlayStation™Network (PSN).</li>
       </ul>
+    </div>
+  </div>
+
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      What is my clan's <var>groupid</var>?
+    </div>
+    <div class="panel-body">
+      <ol>
+        <li>Call <a href="#GetBungieAccount">GetBungieAccount</a> for any Bungie.net account.</li>
+        <li>Use <code>clans[0].groupId</code> as <var>groupid</var>.</li>
+      </ol>
     </div>
   </div>
 
