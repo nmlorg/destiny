@@ -217,6 +217,22 @@ nmlorg.ui.bounty = function(bounty) {
 
 
 nmlorg.ui.character = function(character) {
+  for (var name in character.progress) {
+    var prog = character.progress[name];
+    var progresses = [];
+    prog.label = prog.level;
+    if (prog.current && prog.next)
+      prog.label += '.' + String(100 + Math.round(100 * prog.current / prog.next)).substr(1);
+    if (prog.levels)
+      prog.label += ' / ' + prog.levels;
+    if (prog.daily)
+      progresses.push(prog.daily + ' today');
+    if (prog.weekly)
+      progresses.push(prog.weekly + ' this week');
+    if (progresses.length)
+      prog.label += ' (' + progresses.join(', ') + ')';
+  }
+
   return nmlorg.ui.placard({
       'active': true,
       'height': 96,
@@ -228,13 +244,13 @@ nmlorg.ui.character = function(character) {
       'right': [
           character.level,
           '\u2666 ' + character.light,
-          character.progress.r1_s4_hiveship_orbs.level + ' / 50',
+          character.progress.r1_s4_hiveship_orbs.level + ' / ' + character.progress.r1_s4_hiveship_orbs.levels,
       ],
       'drawer': [
           character.level + ' ' + character.race + ' ' + character.gender + ' ' +
               character.class + ' ' + character.light,
           ['Stats:', character.stats],
-          ['Progress:', character.progress, '{name}: {level} ({daily} / {weekly} / {current})'],
+          ['Progress:', character.progress, '{name}: {label}'],
       ],
   });
 };

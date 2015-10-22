@@ -368,10 +368,13 @@ def GetPerk(code):
 def GetProgression(progression):
   info = manifest.GetDef('Progression', progression['progressionHash'])
   return info['name'], {
-      'current': progression['currentProgress'],
+      'current': progression['progressToNextLevel'],
       'daily': progression['dailyProgress'],
       'icon': info.get('icon', '/img/misc/missing_icon.png'),
       'level': progression['level'],
+      'levels': 0 if info['repeatLastStep'] else len(info['steps']),
+      'next': progression['nextLevelAt'],
+      'total': progression['currentProgress'],
       'weekly': progression['weeklyProgress'],
   }
 
