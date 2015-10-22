@@ -48,5 +48,5 @@ class ObjectPage(base_app.RequestHandler):
 app = base_app.WSGIApplication([
     ('/db/?', IndexPage),
     ('/db/([a-zA-Z]+)/?', BucketPage),
-    ('/db/([a-zA-Z]+)/([0-9]+|[a-zA-Z]+)/?', ObjectPage),
+    ('/db/([a-zA-Z]+)/([0-9a-zA-Z]+)/?', ObjectPage),
 ], debug=True)
