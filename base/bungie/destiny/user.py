@@ -206,10 +206,10 @@ RAID_STEPS = {
         'Defeat Oryx (Threshold)',
     ),
     'RAID_VENUS1': (
-        'Templar',
-        "Gorgons' Labyrinth",
-        'Gatekeeper',
-        'Atheon',
+        "Destroy the Oracles (Templar's Well)",
+        "Defeat the Templar (Templar's Well)",
+        'Awaken the Glass Throne (Vault of Glass)',
+        'Destroy Atheon (Vault of Glass)',
     ),
 }
 
