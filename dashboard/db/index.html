@@ -5,9 +5,7 @@
 <div class="container">
   <ul>
     {% for k in defs|sort %}
-      {% if not k.startswith('_') %}
-        <li><a href="/db/{{k}}/">{{k}}</a></li>
-      {% endif %}
+      <li><a href="/db/{{k}}/">{{k}}</a></li>
     {% endfor %}
   </ul>
 </div>

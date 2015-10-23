@@ -9,6 +9,14 @@ class BlankPage(base_app.RequestHandler):
     manifest.DestinyDefinition.Blank()
 
 
+class PreloadPage(base_app.RequestHandler):
+  def get(self):
+    for group in manifest.GetDef():
+      for code in manifest.GetDef(group):
+        manifest.GetDef(group, code)
+
+
 app = base_app.WSGIApplication([
     ('/admin/blank', BlankPage),
+    ('/admin/preload', PreloadPage),
 ], debug=True)

@@ -53,6 +53,7 @@ class Manifest(dict):
         logging.exception('Unable to update %r:', definition_path)
       else:
         logging.warning('Done.')
+    del self['definitions']['__url__']
 
   def FetchDefinitions(self, url):
     sqldata = self.FetchData(url)
@@ -143,8 +144,7 @@ if __name__ == '__main__':
       pass
     ret = {}
     for group, codes in manifest['definitions'].iteritems():
-      if isinstance(codes, dict):
-        v = codes.get(key)
-        if v is not None:
-          ret[group] = v
+      v = codes.get(key)
+      if v is not None:
+        ret[group] = v
     pprint.pprint(ret)
