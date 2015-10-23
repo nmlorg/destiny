@@ -256,6 +256,26 @@ nmlorg.ui.character = function(character) {
 };
 
 
+nmlorg.ui.historyActivity = function(activity) {
+  return nmlorg.ui.placard({
+      'active': true,
+      'height': 40,
+      'icon': activity.icon,
+      'left': [
+          activity.name + (activity.complete ? ' \u2714' : ''),
+          new Date(activity.start * 1000).toLocaleString() + ' \u2022 ' + activity.duration + ' \u2022 ' + new Date(activity.end * 1000).toLocaleTimeString(),
+      ],
+      'right': [
+          activity.players,
+      ],
+      'drawer': [
+          activity.name,
+          ['Players:', activity.players],
+      ],
+  });
+};
+
+
 var ITEM_NUM_ = 0;
 
 

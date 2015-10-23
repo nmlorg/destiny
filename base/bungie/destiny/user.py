@@ -2,6 +2,7 @@
 #
 # Copyright 2014 Daniel Reed <n@ml.org>
 
+import datetime
 import logging
 from base.bungie import destiny
 from base.bungie.destiny import manifest
@@ -36,6 +37,12 @@ def GetDestinyUser(username, accounttype=None, accountid=None):
     advisors = destiny.GetAdvisorsForCurrentCharacter(accounttype, charid)
     ent['advisors'] = (
         advisors and advisors['data'] or {'activityAdvisors': {}, 'vendorAdvisors': {}})
+    ent['history'] = destiny.GetActivityHistory(
+        accounttype, accountid, charid, 'None', count=20)['data']['activities']
+    for history in ent['history']:
+      for k, v in destiny.GetPostGameCarnageReport(
+          history['activityDetails']['instanceId'])['data'].iteritems():
+        history[k] = v
     ent['progressions'] = destiny.GetCharacterProgression(
         accounttype, accountid, charid)['data']['progressions']
 
@@ -84,6 +91,7 @@ class User(dict):
           'emblem_banner': ent['backgroundPath'],
           'emblem_icon': ent['emblemPath'],
           'gender': GetGenderName(ent['characterBase']['genderHash']),
+          'history': [GetHistoryActivity(activity) for activity in ent['history']],
           'id': ent['characterBase']['characterId'],
           'level': ent['characterLevel'],
           'light': ent['characterBase']['powerLevel'],
@@ -325,6 +333,28 @@ def GetGenderName(code):
   return manifest.GetDef('Gender', code)['genderName']
 
 
+def GetHistoryActivity(activity):
+  players = []
+  for ent in activity['entries']:
+    bungie_info = ent['player'].get('bungieNetUserInfo')
+    destiny_info = ent['player']['destinyUserInfo']
+    players.append({
+        'icon': bungie_info and bungie_info['iconPath'] or destiny_info['iconPath'],
+        'name': destiny_info['displayName'],
+    })
+  players.sort(key=lambda ent: ent['name'])
+
+  start = ISO8601(activity['period'])
+  return {
+      'complete': bool(activity['values']['completed']['basic']['value']),
+      'duration': activity['values']['activityDurationSeconds']['basic']['displayValue'],
+      'end': start + activity['values']['activityDurationSeconds']['basic']['value'],
+      'name': GetActivityName(activity['activityDetails']['referenceId']),
+      'players': players,
+      'start': start,
+  }
+
+
 def GetModifier(data):
   return {
       'desc': data['description'],
@@ -402,3 +432,7 @@ def GetSource(code):
 def GetStatName(code):
   stat = manifest.GetDef('Stat', code)
   return (stat.get('statName') or 'Stat #%i' % code).strip()
+
+
+def ISO8601(s):
+  return long(datetime.datetime.strptime(s, '%Y-%m-%dT%H:%M:%SZ').strftime('%s'))

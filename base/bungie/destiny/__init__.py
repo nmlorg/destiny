@@ -143,6 +143,26 @@ else:
     return ret
 
 
+  class DestinyPGCR(ndb.Model):
+    report = ndb.JsonProperty()
+    players = ndb.StringProperty(repeated=True)
+
+
+  _GetPostGameCarnageReport = GetPostGameCarnageReport
+
+
+  def GetPostGameCarnageReport(activityid):
+    ent = DestinyPGCR.get_by_id(activityid)
+    if ent:
+      return ent.report
+    ret = _GetPostGameCarnageReport(activityid)
+    players = sorted(set(player['player']['destinyUserInfo']['displayName']
+                         for player in ret['data']['entries']),
+                     key=lambda ent: ent.lower())
+    DestinyPGCR(id=activityid, report=ret, players=players).put()
+    return ret
+
+
   class DestinyUser(ndb.Model):
     name = ndb.StringProperty()
     name_lower = ndb.ComputedProperty(lambda self: self.name.lower())

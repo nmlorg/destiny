@@ -75,6 +75,19 @@ user.get(function() {
   }
   row.push('');
 
+  var row = table.push();
+  row.push('Recent Activities');
+  for (var i = 0; i < user.characters.length; i++) {
+    var character = user.characters[i];
+    var cell = new nmlorg.table.ListCell('Recent Activities', character.id + '--History');
+    row.push(cell.render());
+    for (var j = 0; j < character.history.length; j++) {
+      var activity = character.history[j];
+      cell.push(nmlorg.ui.historyActivity(activity));
+    }
+  }
+  row.push('');
+
   for (var i = 0; i < bucketNames.length; i++) {
     var bucketName = bucketNames[i];
     var buckets = [];
