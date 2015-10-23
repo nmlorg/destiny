@@ -166,7 +166,7 @@ class User(dict):
           'icon': item_info.get('icon', '/img/misc/missing_icon.png'),
           'id': ent['itemId'],
           'name': item_info.get('itemName', '').strip() or 'Item #%i' % ent['itemHash'],
-          'objectives': [GetObjective(code) for code in item_info['objectiveHashes']],
+          'objectives': [GetObjective(code) for code in item_info.get('objectiveHashes', ())],
           'perks': perks,
           'primary_stat_value': ent.get('primaryStat') and ent['primaryStat']['value'],
           'primary_stat_type': (ent.get('primaryStat') and
