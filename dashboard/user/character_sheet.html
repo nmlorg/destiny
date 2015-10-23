@@ -44,8 +44,10 @@ user.get(function() {
     var character = user.characters[i];
     var cell = new nmlorg.table.ListCell('Activities', character.id + '--Activities');
     row.push(cell.render());
-    for (var j = 0; j < character.activities.length; j++)
-      cell.push(nmlorg.ui.activity(character.activities[j]));
+    for (var j = 0; j < character.activities.length; j++) {
+      var activity = character.activities[j];
+      cell.push(nmlorg.ui.activity(activity), [activity.period, activity.type, activity.name]);
+    }
   }
   row.push('');
 
