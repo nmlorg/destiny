@@ -207,11 +207,11 @@ RAID_STEPS = {
         'Crota',
     ),
     'RAID_TAKEN_KING': (
-        "The Warpriest's Trial (Basilica)",
+        'Power the Glyph (Basilica)',
         'Defeat the Warpriest (Basilica)',
         "Defeat Golgoroth (Golgoroth's Cellar)",
         'Defeat the Daughters of Oryx (Threshold)',
-        'Defeat Oryx (Threshold)',
+        'Defeat Oryx, the Taken King (Threshold)',
     ),
     'RAID_VENUS1': (
         "Destroy the Oracles (Templar's Well)",
