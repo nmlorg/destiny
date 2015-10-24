@@ -129,11 +129,17 @@ nmlorg.ui.placard = function(data) {
             else
               drawer.appendChild(document.createTextNode('\u2022'));
             drawer.appendChild(document.createTextNode(' '));
+            var itemDiv = drawer;
+            if (item.link) {
+              itemDiv = document.createElement('a');
+              itemDiv.href = item.link;
+              drawer.appendChild(itemDiv);
+            }
             var tmp = format.split(/{([^}]*)}/g);
-            drawer.appendChild(document.createTextNode(tmp[0]));
+            itemDiv.appendChild(document.createTextNode(tmp[0]));
             for (var j = 1; j + 1 < tmp.length; j += 2) {
-              drawer.appendChild(document.createTextNode(tmp[j] == 'name' ? name : item[tmp[j]]));
-              drawer.appendChild(document.createTextNode(tmp[j + 1]));
+              itemDiv.appendChild(document.createTextNode(tmp[j] == 'name' ? name : item[tmp[j]]));
+              itemDiv.appendChild(document.createTextNode(tmp[j + 1]));
             }
           } else
             drawer.appendChild(document.createTextNode('\u2022 ' + name + ': ' + item));
@@ -257,6 +263,11 @@ nmlorg.ui.character = function(character) {
 
 
 nmlorg.ui.historyActivity = function(activity) {
+  for (var i = 0; i < activity.players.length; i++) {
+    var player = activity.players[i];
+    player.link = '/' + player.name;
+  }
+
   return nmlorg.ui.placard({
       'active': true,
       'height': 40,
