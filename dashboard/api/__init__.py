@@ -221,10 +221,8 @@ class TransferItem(base_app.RequestHandler):
     to_char = self.request.get('to')
     if from_char:
       destiny.TransferItem(accounttype, from_char, item_hash, item_id, quantity, True)
-      print 'Transferred from %r to Vault.' % from_char
     if to_char:
       destiny.TransferItem(accounttype, to_char, item_hash, item_id, quantity, False)
-      print 'Transferred from Vault to %r.' % to_char
     self.response.write('1')
 
 
