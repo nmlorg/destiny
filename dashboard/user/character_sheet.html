@@ -40,16 +40,23 @@ user.get(function() {
 
   var row = table.push();
   row.push('Activities');
-  for (var i = 0; i < user.characters.length; i++) {
-    var character = user.characters[i];
-    var cell = new nmlorg.table.ListCell('Activities', character.id + '--Activities');
-    row.push(cell.render());
-    for (var j = 0; j < character.activities.length; j++) {
-      var activity = character.activities[j];
-      cell.push(nmlorg.ui.activity(activity), [activity.period, activity.type, activity.name]);
+  if (user.characters[0].activities.length) {
+    for (var i = 0; i < user.characters.length; i++) {
+      var character = user.characters[i];
+      var cell = new nmlorg.table.ListCell('Activities', character.id + '--Activities');
+      row.push(cell.render());
+      for (var j = 0; j < character.activities.length; j++) {
+        var activity = character.activities[j];
+        cell.push(nmlorg.ui.activity(activity), [activity.period, activity.type, activity.name]);
+      }
     }
+    row.push('');
+  } else {
+    var a = document.createElement('a');
+    a.href = '/';
+    a.textContent = 'Login and connect to this player to see daily/weekly activity status, active/available bounties, quests, and non-equipped items.';
+    row.push(a).colSpan = user.characters.length + 1;
   }
-  row.push('');
 
   var row = table.push();
   row.push('Bounties');

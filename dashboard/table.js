@@ -54,6 +54,7 @@ nmlorg.table.Row.prototype.push = function(cell) {
     td.innerHTML = cell;
   else
     td.appendChild(cell);
+  return td;
 };
 
 
