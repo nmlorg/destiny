@@ -10,6 +10,10 @@ handlers:
 - url: /_ah/warmup
   script: dashboard.user.app
 
+- url: /(ezdemo[.]html)
+  static_files: dashboard/\1
+  upload: ezdemo.html
+
 - url: /(google38371e7df630b0a7[.]html)
   static_files: dashboard/\1
   upload: google38371e7df630b0a7.html

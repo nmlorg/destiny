@@ -32,4 +32,19 @@ nmlorg.fetch = function(url, data, cb) {
     return JSON.parse(req.responseText);
 };
 
+
+nmlorg.runChain = function(chain) {
+  var call = chain.shift();
+  var args;
+
+  if (call instanceof Array) {
+    args = call;
+    call = args.shift();
+  } else
+    args = [];
+  if (chain.length)
+    args.push(nmlorg.runChain.bind(null, chain));
+  call.apply(null, args);
+};
+
 })();

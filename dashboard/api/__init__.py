@@ -1,5 +1,6 @@
 # Copyright 2015 Daniel Reed <n@ml.org>
 
+import json
 from base import bungie
 from base.bungie import destiny
 from dashboard import base_app
@@ -199,14 +200,8 @@ class Generic(base_app.RequestHandler):
         arg = map(long, arg.replace(',', ' ').split())
       args.append(arg)
     method = getattr(destiny, callname, None) or getattr(bungie, callname)
-    self.response.content_type = 'text/html'
-    self.response.render('dashboard/object.html', {
-        'breadcrumbs': (
-            ('/api/', 'Bungie.net Platform API'),
-            ('/api/' + callname, callname),
-        ),
-        'obj': method(*args),
-    })
+    self.response.content_type = 'application/json'
+    self.response.write(json.dumps(method(*args)))
 
   post = get
 
