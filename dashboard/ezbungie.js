@@ -9,14 +9,14 @@ ezbungie = window.ezbungie || {};
 
 
 ezbungie.transferItem = function(itemHash, itemId, quantity, accountType, from, to, cb) {
-  return nmlorg.fetch('/api/EZTransferItem', cb, {
+  return nmlorg.fetch('/api/EZTransferItem', {
       'hash': itemHash,
       'id': itemId,
       'quantity': quantity,
       'accounttype': accountType,
       'from': from || '',
       'to': to || '',
-  });
+  }, cb);
 };
 
 })();

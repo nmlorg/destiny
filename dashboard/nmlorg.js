@@ -8,7 +8,7 @@
 nmlorg = window.nmlorg || {};
 
 
-nmlorg.fetch = function(url, cb, data) {
+nmlorg.fetch = function(url, data, cb) {
   var method = data ? 'POST' : 'GET';
   var req = new XMLHttpRequest();
 

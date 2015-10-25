@@ -18,7 +18,7 @@ nmlorg.destiny.User = function(username) {
 
 
 nmlorg.destiny.User.prototype.get = function(cb) {
-  nmlorg.fetch('/' + this.name + '.json', function(data) {
+  nmlorg.fetch('/' + this.name + '.json', null, function(data) {
     for (var k in data)
       this[k] = data[k];
 
