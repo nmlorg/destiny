@@ -1,10 +1,11 @@
 {% extends "dashboard/_base.html" %}
 {% block content %}
 
+<script src="/ezbungie.js"></script>
+<script src="/nmlorg.js"></script>
 <script src="/user/destiny.js"></script>
 <script src="/user/table.js"></script>
 <script src="/user/ui.js"></script>
-<script src="/user/util.js"></script>
 <script>
 var user = new nmlorg.destiny.User('{{username|e}}');
 var div = document.createElement('div');
@@ -119,8 +120,7 @@ user.get(function() {
         var itemDiv = document.getElementById(data.divId);
         if (itemDiv.dataset.characterId == characterId)
           return;
-        console.log('TransferItem', data.item.hash, data.item.id, data.item.quantity, user.account_type, itemDiv.dataset.characterId, characterId);
-        nmlorg.destiny.transferItem(
+        ezbungie.transferItem(
             data.item.hash, data.item.id, data.item.quantity, user.account_type,
             itemDiv.dataset.characterId, characterId, function(val) {
           if (val) {

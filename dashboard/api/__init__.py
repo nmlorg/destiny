@@ -6,6 +6,20 @@ from dashboard import base_app
 
 
 ENDPOINTS = {
+    'EZTransferItem': (
+        ('hash', 'number', None, 'itemReferenceHash',
+         'Numeric manifest code for all items with the same name.'),
+        ('id', 'number', 0, 'itemId',
+         'Numeric code for a specific instance of an item. Always 0 for stackable items.'),
+        ('quantity', 'number', 1, 'stackSize',
+         'Number of items to transfer. Always 1 for non-stackable items.'),
+        ('accounttype', 'number', 2, 'membershipType',
+         'Numeric non-Bungie.net membership type (1 = XBL, 2 = PSN).'),
+        ('from', 'text', None, 'characterId',
+         'Numeric code for the character to take the item from. Empty when taking from the vault.'),
+        ('to', 'text', None, 'characterId',
+         'Numeric code for the character to give the item to. Empty when storing in the vault.'),
+    ),
     'EquipItems': (
         ('accounttype', 'number', 2, 'membershipType',
          'Numeric non-Bungie.net membership type (1 = XBL, 2 = PSN).'),
@@ -158,20 +172,6 @@ ENDPOINTS = {
          'Bungie.net username to search for.'),
     ),
     'Settings': (),
-    'TransferItem': (
-        ('hash', 'number', None, 'itemReferenceHash',
-         'Numeric manifest code for all items with the same name.'),
-        ('id', 'number', 0, 'itemId',
-         'Numeric code for a specific instance of an item. Always 0 for stackable items.'),
-        ('quantity', 'number', 1, 'stackSize',
-         'Number of items to transfer. Always 1 for non-stackable items.'),
-        ('accounttype', 'number', 2, 'membershipType',
-         'Numeric non-Bungie.net membership type (1 = XBL, 2 = PSN).'),
-        ('from', 'text', None, 'characterId',
-         'Numeric code for the character to take the item from. Empty when taking from the vault.'),
-        ('to', 'text', None, 'characterId',
-         'Numeric code for the character to give the item to. Empty when storing in the vault.'),
-    ),
 }
 
 
@@ -211,7 +211,7 @@ class Generic(base_app.RequestHandler):
   post = get
 
 
-class TransferItem(base_app.RequestHandler):
+class EZTransferItem(base_app.RequestHandler):
   def post(self):
     item_hash = self.request.get('hash')
     item_id = self.request.get('id')
@@ -228,6 +228,6 @@ class TransferItem(base_app.RequestHandler):
 
 app = base_app.WSGIApplication([
     ('/api/?', Index),
-    ('/api/TransferItem/?', TransferItem),
+    ('/api/EZTransferItem/?', EZTransferItem),
     ('/api/(.*)/?', Generic),
 ], debug=True)
