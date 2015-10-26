@@ -2,8 +2,8 @@
 
 import json
 import pprint
-from base import bungie
 from base.bungie import auth
+from base.bungie import bungienet
 from base.bungie.destiny import user as destiny_user
 from dashboard import base_app
 
@@ -27,7 +27,7 @@ class IndexPage(base_app.RequestHandler):
 
 class ItemPage(base_app.RequestHandler):
   def get(self, itemid):
-    item = bungie.DestinyItem.get_by_id(itemid)
+    item = bungienet.DestinyItem.get_by_id(itemid)
     self.response.render('dashboard/object.html', {
         'obj': item and item.to_dict(),
     })

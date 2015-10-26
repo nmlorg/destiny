@@ -2,8 +2,8 @@
 
 import jinja2
 import webapp2
-from base import bungie
 from base.bungie import auth
+from base.bungie import bungienet
 from base.util import fetch
 from google.appengine.api import users
 from google.appengine.ext import ndb
@@ -22,7 +22,7 @@ class User(ndb.Model):
   @property
   def profile(self):
     if self._profile is None:
-      self._profile = bungie.GetCurrentUser()
+      self._profile = bungienet.GetCurrentUser()
     return self._profile
 
 

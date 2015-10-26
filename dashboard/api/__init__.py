@@ -1,7 +1,7 @@
 # Copyright 2015 Daniel Reed <n@ml.org>
 
 import json
-from base import bungie
+from base.bungie import bungienet
 from dashboard import base_app
 
 
@@ -198,7 +198,7 @@ class Generic(base_app.RequestHandler):
       elif type == 'numberlist':
         arg = map(long, arg.replace(',', ' ').split())
       args.append(arg)
-    method = getattr(bungie, callname)
+    method = getattr(bungienet, callname)
     obj = method(*args)
     if 'text/html' not in self.request.headers.get('accept', ''):
       self.response.content_type = 'application/json'
@@ -225,9 +225,9 @@ class EZTransferItem(base_app.RequestHandler):
     from_char = self.request.get('from')
     to_char = self.request.get('to')
     if from_char:
-      bungie.TransferItem(accounttype, from_char, item_hash, item_id, quantity, True)
+      bungienet.TransferItem(accounttype, from_char, item_hash, item_id, quantity, True)
     if to_char:
-      bungie.TransferItem(accounttype, to_char, item_hash, item_id, quantity, False)
+      bungienet.TransferItem(accounttype, to_char, item_hash, item_id, quantity, False)
     self.response.write('1')
 
 
