@@ -4,7 +4,7 @@
 
 import datetime
 import logging
-from base.bungie import destiny
+from base import bungie
 from base.bungie.destiny import manifest
 
 
@@ -19,7 +19,7 @@ DAMAGE_TYPES = {
 
 def GetDestinyUser(username, accounttype=None, accountid=None):
   if accounttype is None or accountid is None:
-    for ent in destiny.SearchDestinyPlayer(username):
+    for ent in bungie.SearchDestinyPlayer(username):
       username = ent['displayName']
       accounttype = ent['membershipType']
       accountid = long(ent['membershipId'])
@@ -28,29 +28,29 @@ def GetDestinyUser(username, accounttype=None, accountid=None):
   assert isinstance(accounttype, (int, long)), accounttype
   assert isinstance(accountid, (int, long)), accountid
 
-  summary = destiny.GetAccountSummary(accounttype, accountid)['data']
-  all_items = destiny.GetAllItemsSummary(accounttype, accountid)['data']
+  summary = bungie.GetAccountSummary(accounttype, accountid)['data']
+  all_items = bungie.GetAllItemsSummary(accounttype, accountid)['data']
   summary['inventory']['items'] = all_items['items']
 
   for ent in summary['characters']:
     charid = long(ent['characterBase']['characterId'])
-    advisors = destiny.GetAdvisorsForCurrentCharacter(accounttype, charid)
+    advisors = bungie.GetAdvisorsForCurrentCharacter(accounttype, charid)
     ent['advisors'] = (
         advisors and advisors['data'] or {'activityAdvisors': {}, 'vendorAdvisors': {}})
-    ent['history'] = destiny.GetActivityHistory(
+    ent['history'] = bungie.GetActivityHistory(
         accounttype, accountid, charid, 'None', count=20)['data']['activities']
     for history in ent['history']:
-      for k, v in destiny.GetPostGameCarnageReport(
+      for k, v in bungie.GetPostGameCarnageReport(
           history['activityDetails']['instanceId'])['data'].iteritems():
         history[k] = v
-    ent['progressions'] = destiny.GetCharacterProgression(
+    ent['progressions'] = bungie.GetCharacterProgression(
         accounttype, accountid, charid)['data']['progressions']
 
   charids = [long(ent['characterBase']['characterId']) for ent in summary['characters']]
   for ent in summary['inventory']['items']:
     if long(ent.get('itemId', 0)):
       charid = charids[ent['characterIndex']]
-      ent['details'] = destiny.GetItemDetail(accounttype, accountid, charid, ent['itemId'])['data']
+      ent['details'] = bungie.GetItemDetail(accounttype, accountid, charid, ent['itemId'])['data']
 
   return username, accounttype, accountid, summary
 

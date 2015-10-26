@@ -16,7 +16,6 @@ except ImportError:
 import tempfile
 import zipfile
 from base import bungie
-from base.bungie import destiny
 
 
 def ListsToTuple(obj):
@@ -30,7 +29,7 @@ def ListsToTuple(obj):
 
 class Manifest(dict):
   def __init__(self):
-    super(Manifest, self).__init__(destiny.GetDestinyManifest())
+    super(Manifest, self).__init__(bungie.GetDestinyManifest())
 
     definition_path = os.path.join(os.path.dirname(__file__), 'definitions.pickle.gz')
     try:

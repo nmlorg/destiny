@@ -2,7 +2,6 @@
 
 import json
 from base import bungie
-from base.bungie import destiny
 from dashboard import base_app
 
 
@@ -199,7 +198,7 @@ class Generic(base_app.RequestHandler):
       elif type == 'numberlist':
         arg = map(long, arg.replace(',', ' ').split())
       args.append(arg)
-    method = getattr(destiny, callname, None) or getattr(bungie, callname)
+    method = getattr(bungie, callname)
     obj = method(*args)
     if 'text/html' not in self.request.headers.get('accept', ''):
       self.response.content_type = 'application/json'
@@ -226,9 +225,9 @@ class EZTransferItem(base_app.RequestHandler):
     from_char = self.request.get('from')
     to_char = self.request.get('to')
     if from_char:
-      destiny.TransferItem(accounttype, from_char, item_hash, item_id, quantity, True)
+      bungie.TransferItem(accounttype, from_char, item_hash, item_id, quantity, True)
     if to_char:
-      destiny.TransferItem(accounttype, to_char, item_hash, item_id, quantity, False)
+      bungie.TransferItem(accounttype, to_char, item_hash, item_id, quantity, False)
     self.response.write('1')
 
 
