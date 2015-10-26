@@ -16,6 +16,7 @@ except ImportError:
 import tempfile
 import zipfile
 from base.bungie import bungienet
+from base.bungie import fetch
 
 
 def ListsToTuple(obj):
@@ -72,7 +73,7 @@ class Manifest(dict):
     return ret
 
   def FetchContent(self, url):
-    return bungienet.Fetch(url)
+    return fetch.Fetch(url)
 
   def FetchFile(self, url):
     return StringIO.StringIO(self.FetchContent(url))
