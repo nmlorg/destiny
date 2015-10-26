@@ -128,7 +128,8 @@ class User(dict):
             step_info = manifest.GetDef('InventoryItem', step_hash)
             quest['steps'].append({
                 'active': False,
-                'desc': step_info['displaySource'].strip(),
+                'desc': step_info.get('displaySource', '').strip() or
+                        step_info['itemDescription'].strip(),
                 'hash': step_hash,
                 'name': step_info['itemName'],
                 'objective': step_info['itemDescription'].strip(),
