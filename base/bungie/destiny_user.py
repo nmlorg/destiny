@@ -5,7 +5,7 @@
 import datetime
 import logging
 from base.bungie import bungienet
-from base.bungie.destiny import manifest
+from base.bungie import manifest
 
 
 DAMAGE_TYPES = {

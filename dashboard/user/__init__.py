@@ -4,7 +4,7 @@ import json
 import pprint
 from base.bungie import auth
 from base.bungie import bungienet
-from base.bungie.destiny import user as destiny_user
+from base.bungie import destiny_user
 from dashboard import base_app
 
 

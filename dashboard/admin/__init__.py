@@ -1,6 +1,6 @@
 # Copyright 2015 Daniel Reed <n@ml.org>
 
-from base.bungie.destiny import manifest
+from base.bungie import manifest
 from dashboard import base_app
 
 
