@@ -2,6 +2,7 @@
 #
 # Copyright 2014 Daniel Reed <n@ml.org>
 
+import json
 import logging
 import urllib
 from base.bungie import fetch
