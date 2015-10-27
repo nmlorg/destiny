@@ -8,15 +8,6 @@ from base.bungie import bungienet
 from base.bungie import manifest
 
 
-DAMAGE_TYPES = {
-    0: None,
-    1: 'KINETIC',
-    2: 'ARC',
-    3: 'SOLAR',
-    4: 'VOID',
-}
-
-
 def GetDestinyUser(username, accounttype=None, accountid=None):
   if accounttype is None or accountid is None:
     for ent in bungienet.SearchDestinyPlayer(username):
@@ -167,7 +158,7 @@ class User(dict):
         perks = []
       item = {
           'class': GetClassFromCategories(item_info.get('itemCategoryHashes', ())),
-          'damage_type': DAMAGE_TYPES[ent['damageType']],
+          'damage_type': GetDamageType(ent['damageTypeHash']),
           'desc': item_info.get('itemDescription', '').strip(),
           'equipped': bool(ent['transferStatus'] & 1),
           'fully_upgraded': ent['isGridComplete'],
@@ -324,6 +315,14 @@ def GetClassFromCategories(codes):
 
 def GetClassName(code):
   return manifest.GetDef('Class', code)['className']
+
+
+def GetDamageType(code):
+  damage = code and manifest.GetDef('DamageType', code) or {}
+  return {
+      'icon': damage.get('iconPath', '/img/misc/missing_icon.png'),
+      'name': damage.get('damageTypeName', 'Damage Type #%i' % code),
+  }
 
 
 def GetDestinationName(code):

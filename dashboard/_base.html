@@ -79,7 +79,7 @@ a.anchor {
     { {{ShowDict(v)}} }
   {% elif v.__iter__ %}
     [ {{ShowList(k, v)}} ]
-  {% elif k.startswith('icon') or k.endswith('Icon') or k.endswith('Image') or k.endswith('ImageMobile') or k.endswith('Path') or k.endswith('Portrait') %}
+  {% elif v.startswith and (k.startswith('icon') or k.endswith('Icon') or k.endswith('Image') or k.endswith('ImageMobile') or k.endswith('Path') or k.endswith('Portrait')) %}
     {{v}}
     <div class="well well-sm" style="margin-bottom: 0">
       <img src="{% if v.startswith('/') %}https://www.bungie.net{% endif %}{{v}}">

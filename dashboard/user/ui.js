@@ -302,11 +302,12 @@ nmlorg.ui.item = function(item) {
     typeStr += ' (' + subs.join(', ') + ')';
   }
 
-  var statType = '';
-  if (item.damage_type)
-    statType = item.damage_type[0].toUpperCase() + item.damage_type.substr(1).toLowerCase();
-  else if (item.primary_stat_type)
-    statType = item.primary_stat_type;
+  var statTypeName = item.primary_stat_type;
+  var statType = statTypeName;
+  if (statTypeName == 'Attack') {
+    statTypeName = item.damage_type.name;
+    statType = [item.damage_type];
+  }
 
   var div = nmlorg.ui.placard({
       'active': item.equipped,
@@ -325,7 +326,7 @@ nmlorg.ui.item = function(item) {
       'drawer': [
           item.name + (item.quantity > 1 ? ' (x ' + item.quantity + ')' : ''),
           typeStr,
-          item.primary_stat_value ? item.primary_stat_value + ' ' + statType + (item.fully_upgraded ? '' : ' (in progress)') : '',
+          item.primary_stat_value ? item.primary_stat_value + ' ' + statTypeName + (item.fully_upgraded ? '' : ' (in progress)') : '',
           '',
           item.desc,
           ['Perks:', item.perks, '{name}: {desc}'],
