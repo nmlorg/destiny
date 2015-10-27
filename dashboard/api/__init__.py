@@ -162,6 +162,7 @@ ENDPOINTS = {
     ),
     'GetPublicAdvisors': (),
     'GetPublicXurVendor': (),
+    'GetSpecialEventAdvisors': (),
     'HelloWorld': (),
     'SearchDestinyPlayer': (
         ('username', 'text', 'nmlorg', 'displayName',

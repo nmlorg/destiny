@@ -118,6 +118,10 @@ def GetPublicXurVendor():
   return fetch.Fetch('Destiny/Advisors/Xur/')
 
 
+def GetSpecialEventAdvisors():
+  return fetch.Fetch('Destiny/Events/')
+
+
 def HelloWorld():
   return fetch.Fetch('HelloWorld/')
 
