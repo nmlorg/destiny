@@ -229,8 +229,7 @@ def GetActivityCompletion(advisors):
           'name': activity['activityName'].strip(),
           'period': 'Weekly',
           'rewards': GetActivityRewards(activity),
-          'steps': [{'complete': ent['isCompleted'],
-                     'name': 'Completed'}],
+          'steps': [{'complete': ent['isCompleted'], 'name': 'Completed'}],
           'type': 'Crucible',
       })
   for ent in advisors['activityAdvisors'].itervalues():
@@ -263,9 +262,23 @@ def GetActivityCompletion(advisors):
             'name': activity['activityName'].strip(),
             'period': 'Daily',
             'rewards': GetActivityRewards(activity),
-            'steps': [{'complete': ent['dailyCrucible']['isCompleted'],
-                       'name': 'Completed'}],
+            'steps': [{'complete': ent['dailyCrucible']['isCompleted'], 'name': 'Completed'}],
             'type': 'Crucible',
+        })
+    elif ent.get('nightfall'):
+      for tier in ent['nightfall']['tiers']:
+        activity = GetActivity(tier['activityHash'])
+        activities.append({
+            'complete': tier['isCompleted'],
+            'desc': activity['activityDescription'],
+            'hash': tier['activityHash'],
+            'icon': ent['nightfall']['iconPath'],
+            'modifiers': [GetModifier(activity['skulls'][index]) for index in tier['skullIndexes']],
+            'name': '%s (%i)' % (activity['activityName'].strip(), activity['activityLevel']),
+            'period': 'Weekly',
+            'rewards': GetActivityRewards(activity),
+            'steps': [{'complete': tier['isCompleted'], 'name': 'Completed'}],
+            'type': 'Mission',
         })
     elif ent.get('raidActivities'):
       bundle = manifest.GetDef('ActivityBundle', ent['activityBundleHash'])
