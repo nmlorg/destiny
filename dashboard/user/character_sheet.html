@@ -1,6 +1,7 @@
 {% extends "dashboard/_base.html" %}
 {% block content %}
 
+<script src="/bungie.js"></script>
 <script src="/ezbungie.js"></script>
 <script src="/nmlorg.js"></script>
 <script src="/user/destiny.js"></script>
@@ -135,6 +136,17 @@ user.get(function() {
         var itemDiv = nmlorg.ui.item(item);
         itemDiv.dataset.characterId = characterId;
         cell.push(itemDiv, [1 / (item.primary_stat_value || 1), item.name]);
+        if (item.equipable && (item.id != '0'))
+          itemDiv.addEventListener('dblclick', function(itemDiv, accountType, charId, itemId, e) {
+            bungie.equipItems(accountType, charId, [itemId], function(val) {
+              if (val.equipResults[0].equipStatus == 1) {
+                itemDiv.style.backgroundColor = '#212121';
+              } else {
+                console.log(val);
+                alert('Equip failed.');
+              }
+            });
+          }.bind(null, itemDiv, user.account_type, characterId, item.id));
       }
     }
   }

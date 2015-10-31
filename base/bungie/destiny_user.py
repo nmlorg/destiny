@@ -154,12 +154,15 @@ class User(dict):
 
       if ent.get('details'):
         perks = [GetPerk(perk['perkHash']) for perk in ent['details']['item']['perks']]
+        equipable = ent['details']['item']['isEquipment']
       else:
         perks = []
+        equipable = False
       item = {
           'class': GetClassFromCategories(item_info.get('itemCategoryHashes', ())),
           'damage_type': GetDamageType(ent['damageTypeHash']),
           'desc': item_info.get('itemDescription', '').strip(),
+          'equipable': equipable,
           'equipped': bool(ent['transferStatus'] & 1),
           'fully_upgraded': ent['isGridComplete'],
           'hash': ent['itemHash'],

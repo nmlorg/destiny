@@ -16,6 +16,15 @@ bungie.getAccountSummary = function(accountType, accountId, cb) {
 };
 
 
+bungie.equipItems = function(accountType, charId, itemIds, cb) {
+  return nmlorg.fetch('/api/EquipItems', {
+      'accounttype': accountType,
+      'charid': charId,
+      'itemids': itemIds,
+  }, cb);
+};
+
+
 bungie.searchDestinyPlayer = function(name, cb) {
   return nmlorg.fetch('/api/SearchDestinyPlayer', {
       'username': name,
