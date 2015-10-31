@@ -333,7 +333,7 @@ nmlorg.ui.item = function(item) {
           ['Objectives:', item.objectives, '{count} {name}'],
           ['Sources:', item.sources],
       ],
-      'link': item.id ? '/items/' + item.id : '/db/InventoryItem/' + item.hash,
+      'link': (item.id != '0') ? '/items/' + item.id : '/db/InventoryItem/' + item.hash,
   });
 
   if (item.quantity > 1) {
