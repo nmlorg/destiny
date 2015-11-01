@@ -64,6 +64,8 @@ class Firebase(object):
       self.state.log.clear()
 
   def Put(self, path, value):
+    if isinstance(path, (list, tuple)):
+      path = '/'.join(path)
     if not path.startswith('/'):
       path = '%s/%s' % (self._url_path, path)
     return Put('%s%s%s%s' % (self._url_prefix, path, self._url_suffix, self._url_params), value)
