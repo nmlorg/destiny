@@ -120,6 +120,18 @@ def GetActivityName(code):
   return GetActivity(code)['activityName'].strip()
 
 
+def GetClassName(code):
+  return GetDef('Class', code)['className']
+
+
+def GetGenderName(code):
+  return GetDef('Gender', code)['genderName']
+
+
+def GetRaceName(code):
+  return GetDef('Race', code)['raceName']
+
+
 try:
   from google.appengine.ext import ndb
 except ImportError:

@@ -46,27 +46,36 @@ def main():
         if not account_info.get('type') or not account_info.get('id'):
           continue
         raw_data = bungienet.GetAccountSummary(account_info['type'], long(account_info['id']))
+
         characters = {}
-        for raw_char in raw_data['data']['characters']:
+        for i, raw_char in enumerate(raw_data['data']['characters']):
           last_online = manifest.ISO8601(raw_char['characterBase']['dateLastPlayed'])
           if last_online >= time.time() - 60:
             last_online = 0
           activity_code = raw_char['characterBase']['currentActivityHash']
           char = {
+              'active': not i,
               'activity': {
                   'code': activity_code,
+                  'end': last_online,
                   'name': manifest.GetActivityName(activity_code),
               },
+              'attrs': {
+                  'class': manifest.GetClassName(raw_char['characterBase']['classHash']),
+                  'gender': manifest.GetGenderName(raw_char['characterBase']['genderHash']),
+                  'race': manifest.GetRaceName(raw_char['characterBase']['raceHash']),
+              },
               'id': raw_char['characterBase']['characterId'],
-              'last_online': last_online,
               'stats': {
+                  'level': raw_char['characterLevel'],
                   'light': raw_char['characterBase']['powerLevel'],
               },
           }
           characters[char['id']] = char
         if characters != account_info.get('characters'):
           fb.Put(('players', player_name, 'accounts', account_id, 'characters'), characters)
-        time.sleep(5)
+
+        time.sleep(2)
 
 
 if __name__ == '__main__':

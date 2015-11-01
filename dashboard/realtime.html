@@ -17,10 +17,11 @@
         <li data-for-each="accounts">
           <code data-text-content="[[name]]"></code> (account <code data-text-content="[[.]]"></code>, type <span data-text-content="[[type]]"></span>).
           <ul>
-            <li data-for-each="characters" data-sort-key="(( [[last_online]] ? 1 / [[last_online]] : 0 ))">
-              Character <code data-text-content="[[.]]"></code>.
-              <span data-if="[[last_online]]">Last online at <span data-text-content="(( new Date(1000 * [[last_online]]).toLocaleString() ))"></span>,</span>
-              <span data-if="![[last_online]]">Online now,</span>
+            <li data-for-each="characters" data-sort-key="(( [[activity/end]] ? 1 / [[activity/end]] : 0 ))">
+              <span data-text-content="[[stats/level]]/&#x2666; [[stats/light]] [[attrs/race]] [[attrs/gender]] [[attrs/class]]"></span>
+              (character <code data-text-content="[[.]]"></code>).
+              <span data-if="[[activity/end]]">Last online at <span data-text-content="(( new Date(1000 * [[activity/end]]).toLocaleString() ))"></span>,</span>
+              <span data-if="![[activity/end]]">Online now,</span>
               <span data-if="[[activity/code]]">in activity <code data-text-content="[[activity/name]]"></code>.</span>
               <span data-if="![[activity/code]]">in orbit.</span>
             </li>

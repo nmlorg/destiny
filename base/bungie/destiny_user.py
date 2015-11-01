@@ -77,10 +77,10 @@ class User(dict):
       self['characters'].append({
           'activities': GetActivityCompletion(ent['advisors']),
           'bounties': bounties,
-          'class': GetClassName(ent['characterBase']['classHash']),
+          'class': manifest.GetClassName(ent['characterBase']['classHash']),
           'emblem_banner': ent['backgroundPath'],
           'emblem_icon': ent['emblemPath'],
-          'gender': GetGenderName(ent['characterBase']['genderHash']),
+          'gender': manifest.GetGenderName(ent['characterBase']['genderHash']),
           'history': [GetHistoryActivity(activity) for activity in ent['history']],
           'id': ent['characterBase']['characterId'],
           'level': ent['characterLevel'],
@@ -88,7 +88,7 @@ class User(dict):
           'inventory': {},
           'progress': dict(GetProgression(prog) for prog in ent['progressions']),
           'quests': {},
-          'race': GetRaceName(ent['characterBase']['raceHash']),
+          'race': manifest.GetRaceName(ent['characterBase']['raceHash']),
           'stats': {GetStatName(stat['statHash']): stat['value']
                     for stat in ent['characterBase']['stats'].itervalues()},
       })
@@ -320,10 +320,6 @@ def GetClassFromCategories(codes):
       return category['title'].strip()
 
 
-def GetClassName(code):
-  return manifest.GetDef('Class', code)['className']
-
-
 def GetDamageType(code):
   damage = code and manifest.GetDef('DamageType', code) or {}
   return {
@@ -334,10 +330,6 @@ def GetDamageType(code):
 
 def GetDestinationName(code):
   return manifest.GetDef('Destination', code)['destinationName'].strip()
-
-
-def GetGenderName(code):
-  return manifest.GetDef('Gender', code)['genderName']
 
 
 def GetHistoryActivity(activity):
@@ -413,10 +405,6 @@ def GetProgression(progression):
       'total': progression['currentProgress'],
       'weekly': progression['weeklyProgress'],
   }
-
-
-def GetRaceName(code):
-  return manifest.GetDef('Race', code)['raceName']
 
 
 def GetReward(code):
