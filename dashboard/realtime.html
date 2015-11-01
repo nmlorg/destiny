@@ -15,14 +15,14 @@
       Player <code data-text-content="[[.]]"></code>.
       <ul>
         <li data-for-each="accounts">
-          Account <code data-text-content="[[.]]"></code>.
+          Account <code data-text-content="[[.]]"></code> (type <span data-text-content="[[type]]"></span>).
           <ul>
             <li data-for-each="characters">
               Character <code data-text-content="[[.]]"></code>.
               <span data-if="[[last_online]]">Last online at <span data-text-content="(( new Date(1000 * [[last_online]]).toLocaleString() ))">,</span>
               <span data-if="![[last_online]]">Online now,</span>
-              <span data-if="[[activity]]">playing <span data-text-content="[[activity]]"></span>.</span>
-              <span data-if="![[activity]]">in orbit.</span>
+              <span data-if="[[activity/code]]">in activity <code data-text-content="[[activity/name]]"></code>.</span>
+              <span data-if="![[activity/code]]">in orbit.</span>
             </li>
           </ul>
         </li>

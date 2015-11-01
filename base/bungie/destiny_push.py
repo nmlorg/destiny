@@ -7,6 +7,7 @@ import os
 import threading
 import time
 from base.bungie import bungienet
+from base.bungie import manifest
 from base.net import firebase
 from base.util import nested_dict
 
@@ -55,8 +56,14 @@ def main():
           last_online = ISO8601(raw_char['characterBase']['dateLastPlayed'])
           if last_online >= time.time() - 60:
             last_online = 0
+          activity_code = raw_char['characterBase']['currentActivityHash']
           char = {
-              'activity': raw_char['characterBase']['currentActivityHash'],
+              'activity': {
+                  'code': activity_code,
+                  'name': activity_code and manifest.GetDef('Activity',
+                                                            activity_code)['activityName']
+                                        or 'In Orbit',
+              },
               'id': raw_char['characterBase']['characterId'],
               'last_online': last_online,
               'stats': {
