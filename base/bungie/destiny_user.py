@@ -210,7 +210,7 @@ RAID_STEPS = {
     ),
     'RAID_VENUS1': (
         "Destroy the Oracles (Templar's Well)",
-        "Defeat the Templar (Templar's Well)",
+        "Kill the Templar (Templar's Well)",
         'Awaken the Glass Throne (Vault of Glass)',
         'Destroy Atheon (Vault of Glass)',
     ),
