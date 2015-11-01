@@ -89,7 +89,7 @@ class User(dict):
           'progress': dict(GetProgression(prog) for prog in ent['progressions']),
           'quests': {},
           'race': manifest.GetRaceName(ent['characterBase']['raceHash']),
-          'stats': {GetStatName(stat['statHash']): stat['value']
+          'stats': {manifest.GetStatName(stat['statHash']): stat['value']
                     for stat in ent['characterBase']['stats'].itervalues()},
       })
 
@@ -172,7 +172,7 @@ class User(dict):
           'perks': perks,
           'primary_stat_value': ent.get('primaryStat') and ent['primaryStat']['value'],
           'primary_stat_type': (ent.get('primaryStat') and
-                                GetStatName(ent['primaryStat']['statHash'])),
+                                manifest.GetStatName(ent['primaryStat']['statHash'])),
           'quantity': ent['quantity'],
           'sources': [GetSource(code) for code in item_info.get('sourceHashes', ())],
           'state': ent['state'],
@@ -422,8 +422,3 @@ def GetSource(code):
       'icon': source.get('icon', '/img/misc/missing_icon.png'),
       'name': source.get('sourceName') or 'Source #%i' % code,
   }
-
-
-def GetStatName(code):
-  stat = manifest.GetDef('Stat', code)
-  return (stat.get('statName') or 'Stat #%i' % code).strip()

@@ -132,6 +132,11 @@ def GetRaceName(code):
   return GetDef('Race', code)['raceName']
 
 
+def GetStatName(code):
+  stat = GetDef('Stat', code)
+  return (stat.get('statName') or 'Stat #%i' % code).strip()
+
+
 try:
   from google.appengine.ext import ndb
 except ImportError:

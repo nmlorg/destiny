@@ -68,9 +68,10 @@ def main():
               'id': raw_char['characterBase']['characterId'],
               'stats': {
                   'level': raw_char['characterLevel'],
-                  'light': raw_char['characterBase']['powerLevel'],
               },
           }
+          for stat in raw_char['characterBase']['stats'].itervalues():
+            char['stats'][manifest.GetStatName(stat['statHash']).lower()] = stat['value']
           characters[char['id']] = char
         if characters != account_info.get('characters'):
           fb.Put(('players', player_name, 'accounts', account_id, 'characters'), characters)
