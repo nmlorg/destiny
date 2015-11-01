@@ -30,6 +30,8 @@ def main():
       if not isinstance(player_info, dict):
         player_info = nested_dict.NestedDict()
       if player_info.get('last_search', 0) < time.time() - 60 * 60 * 5:
+        print
+        print 'Searching for accounts under the name %r.' % player_name
         current_accounts = set(player_info.get('accounts', ()))
         for res in bungienet.SearchDestinyPlayer(player_name):
           if res['membershipId'] in current_accounts:
@@ -41,6 +43,7 @@ def main():
           del player['accounts', account_id]
         player_info['last_search'] = time.time()
         fb.Put(('players', player_name), player_info)
+        print
 
       for account_id in sorted(player_info.get('accounts', ())):
         account_info = player_info['accounts', account_id]
@@ -62,10 +65,6 @@ def main():
           }
           characters[char['id']] = char
         if characters != account_info.get('characters'):
-          print
-          print account_info['id']
-          print '-', account_info.get('characters')
-          print '+', characters
           fb.Put(('players', player_name, 'accounts', account_id, 'characters'), characters)
         time.sleep(5)
 

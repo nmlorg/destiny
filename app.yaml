@@ -12,11 +12,15 @@ handlers:
 
 - url: /(ezdemo[.]html)
   static_files: dashboard/\1
-  upload: ezdemo.html
+  upload: dashboard/ezdemo.html
 
 - url: /(google38371e7df630b0a7[.]html)
   static_files: dashboard/\1
-  upload: google38371e7df630b0a7.html
+  upload: dashboard/google38371e7df630b0a7.html
+
+- url: /(realtime[.]html)
+  static_files: dashboard/\1
+  upload: dashboard/realtime.html
 
 - url: /(.*[.](css|ico|js|txt))
   static_files: dashboard/\1
