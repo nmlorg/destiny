@@ -8,6 +8,7 @@ import threading
 import time
 from base.bungie import bungienet
 from base.net import firebase
+from base.util import nested_dict
 
 
 def ISO8601(s):
@@ -24,32 +25,49 @@ def main():
   t.start()
 
   while True:
-    for k in sorted(fb.state.get('users', ())):
-      info = fb.state['users', k]
-      if not info.get(('account', 'type')) or not info.get(('account', 'id')):
-        continue
-      data = bungienet.GetAccountSummary(info['account', 'type'], long(info['account', 'id']))
-      characters = {}
-      for character in data['data']['characters']:
-        last_online = ISO8601(character['characterBase']['dateLastPlayed'])
-        if last_online >= time.time() - 60:
-          last_online = 0
-        char = {
-            'activity': character['characterBase']['currentActivityHash'],
-            'id': character['characterBase']['characterId'],
-            'last_online': last_online,
-            'stats': {
-                'light': character['characterBase']['powerLevel'],
-            },
-        }
-        characters[char['id']] = char
-      if characters != info.get('characters'):
-        print
-        print info['account']
-        print '-', info.get('characters')
-        print '+', characters
-        fb.Put(('users', k, 'characters'), characters)
-      time.sleep(5)
+    for player_name in sorted(fb.state.get('players', ())):
+      player_info = fb.state['players', player_name]
+      if not isinstance(player_info, dict):
+        player_info = nested_dict.NestedDict()
+      if player_info.get('last_search', 0) < time.time() - 60 * 60 * 5:
+        current_accounts = set(player_info.get('accounts', ()))
+        for res in bungienet.SearchDestinyPlayer(player_name):
+          if res['membershipId'] in current_accounts:
+            current_accounts.remove(res['membershipId'])
+          player_info['accounts', res['membershipId'], 'id'] = res['membershipId']
+          player_info['accounts', res['membershipId'], 'type'] = res['membershipType']
+          player_info['accounts', res['membershipId'], 'name'] = res['displayName']
+        for account_id in current_accounts:
+          del player['accounts', account_id]
+        player_info['last_search'] = time.time()
+        fb.Put(('players', player_name), player_info)
+
+      for account_id in sorted(player_info.get('accounts', ())):
+        account_info = player_info['accounts', account_id]
+        if not account_info.get('type') or not account_info.get('id'):
+          continue
+        raw_data = bungienet.GetAccountSummary(account_info['type'], long(account_info['id']))
+        characters = {}
+        for raw_char in raw_data['data']['characters']:
+          last_online = ISO8601(raw_char['characterBase']['dateLastPlayed'])
+          if last_online >= time.time() - 60:
+            last_online = 0
+          char = {
+              'activity': raw_char['characterBase']['currentActivityHash'],
+              'id': raw_char['characterBase']['characterId'],
+              'last_online': last_online,
+              'stats': {
+                  'light': raw_char['characterBase']['powerLevel'],
+              },
+          }
+          characters[char['id']] = char
+        if characters != account_info.get('characters'):
+          print
+          print account_info['id']
+          print '-', account_info.get('characters')
+          print '+', characters
+          fb.Put(('players', player_name, 'accounts', account_id, 'characters'), characters)
+        time.sleep(5)
 
 
 if __name__ == '__main__':
