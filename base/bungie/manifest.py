@@ -4,6 +4,7 @@
 
 import cPickle as pickle
 import cStringIO as StringIO
+import datetime
 import gzip
 import json
 import logging
@@ -103,6 +104,20 @@ def GetDef(group=None, key=None):
   if key is None:
     return MANIFEST['definitions'][group].keys()
   return MANIFEST['definitions'][group].get(key)
+
+
+def ISO8601(s):
+  return long(datetime.datetime.strptime(s, '%Y-%m-%dT%H:%M:%SZ').strftime('%s'))
+
+
+def GetActivity(code):
+  if not code:
+    return {'activityName': 'In Orbit'}
+  return GetDef('Activity', code)
+
+
+def GetActivityName(code):
+  return GetActivity(code)['activityName'].strip()
 
 
 try:

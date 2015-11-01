@@ -2,7 +2,6 @@
 #
 # Copyright 2015 Daniel Reed <n@ml.org>
 
-import datetime
 import os
 import threading
 import time
@@ -10,10 +9,6 @@ from base.bungie import bungienet
 from base.bungie import manifest
 from base.net import firebase
 from base.util import nested_dict
-
-
-def ISO8601(s):
-  return long(datetime.datetime.strptime(s, '%Y-%m-%dT%H:%M:%SZ').strftime('%s'))
 
 
 def main():
@@ -53,16 +48,14 @@ def main():
         raw_data = bungienet.GetAccountSummary(account_info['type'], long(account_info['id']))
         characters = {}
         for raw_char in raw_data['data']['characters']:
-          last_online = ISO8601(raw_char['characterBase']['dateLastPlayed'])
+          last_online = manifest.ISO8601(raw_char['characterBase']['dateLastPlayed'])
           if last_online >= time.time() - 60:
             last_online = 0
           activity_code = raw_char['characterBase']['currentActivityHash']
           char = {
               'activity': {
                   'code': activity_code,
-                  'name': activity_code and manifest.GetDef('Activity',
-                                                            activity_code)['activityName']
-                                        or 'In Orbit',
+                  'name': manifest.GetActivityName(activity_code),
               },
               'id': raw_char['characterBase']['characterId'],
               'last_online': last_online,

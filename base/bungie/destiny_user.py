@@ -2,7 +2,6 @@
 #
 # Copyright 2014 Daniel Reed <n@ml.org>
 
-import datetime
 import logging
 from base.bungie import bungienet
 from base.bungie import manifest
@@ -190,10 +189,6 @@ class User(dict):
       where[bucket_name].append(item)
 
 
-def GetActivity(code):
-  return manifest.GetDef('Activity', code)
-
-
 RAID_STEPS = {
     'RAID_MOON1': (
         'Traverse the Abyss',
@@ -222,7 +217,7 @@ def GetActivityCompletion(advisors):
   for ent in advisors.get('weeklyCrucible', ()):
     bundle = manifest.GetDef('ActivityBundle', ent['activityBundleHash'])
     for code in bundle['activityHashes']:
-      activity = GetActivity(code)
+      activity = manifest.GetActivity(code)
       activities.append({
           'complete': ent['isCompleted'],
           'desc': activity['activityDescription'],
@@ -238,7 +233,7 @@ def GetActivityCompletion(advisors):
   for ent in advisors['activityAdvisors'].itervalues():
     if ent.get('dailyChapterActivities'):
       for code in ent['dailyChapterActivities']['tierActivityHashes']:
-        activity = GetActivity(code)
+        activity = manifest.GetActivity(code)
         activities.append({
             'complete': ent['dailyChapterActivities']['isCompleted'],
             'desc': activity['activityDescription'],
@@ -255,7 +250,7 @@ def GetActivityCompletion(advisors):
     elif ent.get('dailyCrucible'):
       bundle = manifest.GetDef('ActivityBundle', ent['activityBundleHash'])
       for code in bundle['activityHashes']:
-        activity = GetActivity(code)
+        activity = manifest.GetActivity(code)
         activities.append({
             'complete': ent['dailyCrucible']['isCompleted'],
             'desc': activity['activityDescription'],
@@ -270,7 +265,7 @@ def GetActivityCompletion(advisors):
         })
     elif ent.get('nightfall'):
       for tier in ent['nightfall']['tiers']:
-        activity = GetActivity(tier['activityHash'])
+        activity = manifest.GetActivity(tier['activityHash'])
         activities.append({
             'complete': tier['isCompleted'],
             'desc': activity['activityDescription'],
@@ -287,7 +282,7 @@ def GetActivityCompletion(advisors):
       bundle = manifest.GetDef('ActivityBundle', ent['activityBundleHash'])
       step_names = RAID_STEPS.get(ent['raidActivities']['raidIdentifier'])
       for tier in ent['raidActivities']['tiers']:
-        activity = GetActivity(tier['activityHash'])
+        activity = manifest.GetActivity(tier['activityHash'])
         activities.append({
             'complete': tier['stepsComplete'] == tier['stepsTotal'],
             'desc': activity['activityDescription'],
@@ -303,10 +298,6 @@ def GetActivityCompletion(advisors):
             'type': 'Raid',
         })
   return activities
-
-
-def GetActivityName(code):
-  return GetActivity(code)['activityName'].strip()
 
 
 def GetActivityRewards(activity):
@@ -360,12 +351,12 @@ def GetHistoryActivity(activity):
     })
   players.sort(key=lambda ent: ent['name'])
 
-  start = ISO8601(activity['period'])
+  start = manifest.ISO8601(activity['period'])
   return {
       'complete': bool(activity['values']['completed']['basic']['value']),
       'duration': activity['values']['activityDurationSeconds']['basic']['displayValue'],
       'end': start + activity['values']['activityDurationSeconds']['basic']['value'],
-      'name': GetActivityName(activity['activityDetails']['referenceId']),
+      'name': manifest.GetActivityName(activity['activityDetails']['referenceId']),
       'players': players,
       'start': start,
   }
@@ -388,7 +379,7 @@ def GetObjective(code):
     location = manifest.GetDef('Location', objective['locationHash'])
     for location_release in location['locationReleases']:
       if location_release.get('activityHash'):
-        ret['name'] = 'Activity: ' + GetActivityName(location_release['activityHash'])
+        ret['name'] = 'Activity: ' + manifest.GetActivityName(location_release['activityHash'])
         break
       elif location_release.get('destinationHash'):
         ret['name'] = 'Destination: ' + GetDestinationName(location_release['destinationHash'])
@@ -448,7 +439,3 @@ def GetSource(code):
 def GetStatName(code):
   stat = manifest.GetDef('Stat', code)
   return (stat.get('statName') or 'Stat #%i' % code).strip()
-
-
-def ISO8601(s):
-  return long(datetime.datetime.strptime(s, '%Y-%m-%dT%H:%M:%SZ').strftime('%s'))
