@@ -214,6 +214,20 @@ RAID_STEPS = {
 
 def GetActivityCompletion(advisors):
   activities = []
+  for ent in advisors.get('arena', ()):
+    activity = manifest.GetActivity(ent['activityHash'])
+    activities.append({
+        'complete': ent['isCompleted'],
+        'desc': activity['activityDescription'],
+        'hash': ent['activityHash'],
+        'icon': ent['iconPath'],
+        'modifiers': [],
+        'name': activity['activityName'],
+        'period': 'Weekly',
+        'rewards': GetActivityRewards(activity),
+        'steps': [{'complete': ent['isCompleted'], 'name': 'Completed'}],
+        'type': 'Prison of Elders',
+    })
   for ent in advisors.get('weeklyCrucible', ()):
     bundle = manifest.GetDef('ActivityBundle', ent['activityBundleHash'])
     for code in bundle['activityHashes']:
