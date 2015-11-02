@@ -45,27 +45,23 @@ def main():
         account_info = player_info['accounts', account_id]
         if not account_info.get('type') or not account_info.get('id'):
           continue
-        raw_data = bungienet.GetAccountSummary(account_info['type'], long(account_info['id']))
+        raw_data = bungienet.GetAccountSummary(account_info['type'],
+                                               long(account_info['id']))['data']
 
         characters = {}
-        for i, raw_char in enumerate(raw_data['data']['characters']):
+        for i, raw_char in enumerate(raw_data['characters']):
           last_online = manifest.ISO8601(raw_char['characterBase']['dateLastPlayed'])
           if last_online >= time.time() - 60:
             last_online = 0
-          activity_code = raw_char['characterBase']['currentActivityHash']
           char = {
               'active': not i,
-              'activity': {
-                  'code': activity_code,
-                  'end': last_online,
-                  'name': manifest.GetActivityName(activity_code),
-              },
               'attrs': {
                   'class': manifest.GetClassName(raw_char['characterBase']['classHash']),
                   'gender': manifest.GetGenderName(raw_char['characterBase']['genderHash']),
                   'race': manifest.GetRaceName(raw_char['characterBase']['raceHash']),
               },
               'id': raw_char['characterBase']['characterId'],
+              'last_online': last_online,
               'stats': {
                   'level': raw_char['characterLevel'],
               },
@@ -75,6 +71,16 @@ def main():
           characters[char['id']] = char
         if characters != account_info.get('characters'):
           fb.Put(('players', player_name, 'accounts', account_id, 'characters'), characters)
+
+        current_char_id = raw_data['characters'][0]['characterBase']['characterId']
+        activity_code = raw_data['characters'][0]['characterBase']['currentActivityHash']
+        activity = {
+            'code': activity_code,
+            'end': characters[current_char_id]['last_online'],
+            'name': manifest.GetActivityName(activity_code),
+        }
+        if activity != account_info.get('activity'):
+          fb.Put(('players', player_name, 'accounts', account_id, 'activity'), activity)
 
         time.sleep(2)
 
