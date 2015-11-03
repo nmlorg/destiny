@@ -22,7 +22,7 @@
             <span data-if="![[activity/code]]">In orbit</span>
           </b>
           <ul>
-            <li data-for-each="characters" data-sort-key="(( [[activity/end]] ? 1 / [[activity/end]] : 0 ))">
+            <li data-for-each="characters" data-sort-key="(( [[last_online]] ? 1 / [[last_online]] : 0 ))">
               <span data-text-content="[[stats/level]]/&#x2666; [[stats/light]] [[attrs/race]] [[attrs/gender]] [[attrs/class]]"></span>
               (character <code data-text-content="[[.]]"></code>).
               <span data-if="[[last_online]]">Last online at <span data-text-content="(( new Date(1000 * [[last_online]]).toLocaleString() ))"></span>.</span>
