@@ -26,7 +26,7 @@
       </div>
     </div>
   {% else %}
-    <a class="btn btn-primary btn-lg" href="/{{user.profile.user.displayName}}">Character sheet</a><br><br>
+    <a class="btn btn-primary btn-lg" href="/{{user.profile.user.psnDisplayName or user.profile.user.xboxDisplayName}}">Character sheet</a><br><br>
   {% endif %}
   <a class="btn btn-default" href="/api/">Bungie.net Platform API</a><br><br>
   <a class="btn btn-default" href="/db/">Destiny DB</a><br><br>
