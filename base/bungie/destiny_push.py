@@ -27,6 +27,10 @@ def main():
   t.daemon = True
   t.start()
 
+  def SetIf(key, val):
+    if fb.state.get(key) != val:
+      fb.Put(key, val)
+
   while True:
     for player_name in sorted(fb.state.get('players', ())):
       player_info = fb.state.get(('players', player_name))
@@ -41,13 +45,10 @@ def main():
           account_type = (ACCOUNT_TYPES.get(res['membershipType']) or
                           'Network #%i' % res['membershipType'])
           accounts[account_type] = res['membershipId']
-          if fb.state.get(('accounts', res['membershipId'], 'name')) != res['displayName']:
-            fb.Put(('accounts', res['membershipId'], 'name'), res['displayName'])
-          if fb.state.get(('accounts', res['membershipId'], 'player')) != player_name:
-            fb.Put(('accounts', res['membershipId'], 'player'), player_name)
-          if fb.state.get(('accounts', res['membershipId'], 'type')) != res['membershipType']:
-            fb.Put(('accounts', res['membershipId'], 'type'), res['membershipType'])
-        fb.Put(('players', player_name), {'accounts': accounts, 'last_search': time.time()})
+          SetIf(('accounts', res['membershipId'], 'name'), res['displayName'])
+          SetIf(('accounts', res['membershipId'], 'player'), player_name)
+          SetIf(('accounts', res['membershipId'], 'type'), res['membershipType'])
+        SetIf(('players', player_name), {'accounts': accounts, 'last_search': time.time()})
         print
         time.sleep(2)
 
@@ -60,7 +61,7 @@ def main():
         print
         print "Account %r's player, %r, is no longer tracked (or no longer owns it); deleting." % (
             account_id, account_info['player'])
-        fb.Put(('accounts', account_id), None)
+        SetIf(('accounts', account_id), None)
         print
         continue
       raw_data = bungienet.GetAccountSummary(account_info['type'], long(account_id))['data']
@@ -92,11 +93,11 @@ def main():
         for stat in raw_base['stats'].itervalues():
           char['stats'][manifest.GetStatName(stat['statHash']).lower()] = stat['value']
         if fb.state.get(('characters', raw_base['characterId'])) != char:
-          fb.Put(('characters', raw_base['characterId']), char)
+          SetIf(('characters', raw_base['characterId']), char)
 
       characters = sorted(characters)
       if characters != account_info.get('characters'):
-        fb.Put(('accounts', account_id, 'characters'), characters)
+        SetIf(('accounts', account_id, 'characters'), characters)
 
       time.sleep(2)
 
@@ -109,7 +110,7 @@ def main():
         print
         print "Character %r's account, %r, is no longer tracked (or no longer owns it); deleting." % (
             char_id, char_info['account'])
-        fb.Put(('characters', char_id), None)
+        SetIf(('characters', char_id), None)
         print
 
 
