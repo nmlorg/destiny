@@ -10,29 +10,61 @@
 <script src="https://nmlorg.github.io/strawberry/js/strawberry.js"></script>
 
 <div id="content" class="container">
-  <ul>
-    <li data-for-each="players">
-      Player <code data-text-content="[[.]]"></code>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      Players
+    </div>
+    <div class="panel-body">
       <ul>
-        <li data-for-each="accounts">
-          <code data-text-content="[[name]]"></code> (account <code data-text-content="[[.]]"></code>, type <span data-text-content="[[type]]"></span>)
+        <li data-for-each="players" data-sort-key="[[.]]">
+          Player <code data-text-content="[[.]]"></code>
+          <ul>
+            <li data-for-each="accounts">
+              Account <code data-text-content="[[.]]"></code>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      Accounts
+    </div>
+    <div class="panel-body">
+      <ul>
+        <li data-for-each="accounts" data-sort-key="[[name]]">
+          Account <code data-text-content="[[name]]"></code> (<code data-text-content="[[.]]"></code>, type <span data-text-content="[[type]]"></span>)
+          <ul>
+            <li data-for-each="characters">
+              Character <code data-text-content="[[.]]"></code>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      Characters
+    </div>
+    <div class="panel-body">
+      <ul>
+        <li data-for-each="characters">
+          Character <code data-text-content="[[.]]"></code>
+          (account <code data-text-content="[[account]]"></code>)
+          <span data-text-content="[[stats/level]]/&#x2666; [[stats/light]] [[attrs/race]] [[attrs/gender]] [[attrs/class]]"></span>
           <b data-if="![[activity/end]]">
             &mdash;
             <span data-if="[[activity/code]]">In activity <code data-text-content="[[activity/name]]"></code></span>
             <span data-if="![[activity/code]]">In orbit</span>
           </b>
-          <ul>
-            <li data-for-each="characters" data-sort-key="(( [[last_online]] ? 1 / [[last_online]] : 0 ))">
-              <span data-text-content="[[stats/level]]/&#x2666; [[stats/light]] [[attrs/race]] [[attrs/gender]] [[attrs/class]]"></span>
-              (character <code data-text-content="[[.]]"></code>).
-              <span data-if="[[last_online]]">Last online at <span data-text-content="(( new Date(1000 * [[last_online]]).toLocaleString() ))"></span>.</span>
-              <span data-if="![[last_online]]">Online now.</span>
-            </li>
-          </ul>
         </li>
       </ul>
-    </li>
-  </ul>
+    </div>
+  </div>
 </div>
 
 <script>

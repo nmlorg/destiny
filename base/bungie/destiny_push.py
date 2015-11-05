@@ -11,6 +11,13 @@ from base.net import firebase
 from base.util import nested_dict
 
 
+ACCOUNT_TYPES = {
+    1: 'XBL',
+    2: 'PSN',
+}
+ACCOUNT_TYPE_NAMES = {v: k for k, v in ACCOUNT_TYPES.iteritems()}
+
+
 def main():
   os.environ['TZ'] = 'UTC'
   time.tzset()
@@ -22,67 +29,88 @@ def main():
 
   while True:
     for player_name in sorted(fb.state.get('players', ())):
-      player_info = fb.state['players', player_name]
-      if not isinstance(player_info, dict):
-        player_info = nested_dict.NestedDict()
-      if player_info.get('last_search', 0) < time.time() - 60 * 60 * 5:
+      player_info = fb.state.get(('players', player_name))
+      if player_info is None:
+        continue
+      if (not isinstance(player_info, dict) or
+          player_info.get('last_search', 0) < time.time() - 60 * 60 * 5):
         print
         print 'Searching for accounts under the name %r.' % player_name
-        current_accounts = set(player_info.get('accounts', ()))
+        accounts = {}
         for res in bungienet.SearchDestinyPlayer(player_name):
-          if res['membershipId'] in current_accounts:
-            current_accounts.remove(res['membershipId'])
-          player_info['accounts', res['membershipId'], 'id'] = res['membershipId']
-          player_info['accounts', res['membershipId'], 'type'] = res['membershipType']
-          player_info['accounts', res['membershipId'], 'name'] = res['displayName']
-        for account_id in current_accounts:
-          del player['accounts', account_id]
-        player_info['last_search'] = time.time()
-        fb.Put(('players', player_name), player_info)
+          account_type = (ACCOUNT_TYPES.get(res['membershipType']) or
+                          'Network #%i' % res['membershipType'])
+          accounts[account_type] = res['membershipId']
+          if fb.state.get(('accounts', res['membershipId'], 'name')) != res['displayName']:
+            fb.Put(('accounts', res['membershipId'], 'name'), res['displayName'])
+          if fb.state.get(('accounts', res['membershipId'], 'player')) != player_name:
+            fb.Put(('accounts', res['membershipId'], 'player'), player_name)
+          if fb.state.get(('accounts', res['membershipId'], 'type')) != res['membershipType']:
+            fb.Put(('accounts', res['membershipId'], 'type'), res['membershipType'])
+        fb.Put(('players', player_name), {'accounts': accounts, 'last_search': time.time()})
         print
-
-      for account_id in sorted(player_info.get('accounts', ())):
-        account_info = player_info['accounts', account_id]
-        if not account_info.get('type') or not account_info.get('id'):
-          continue
-        raw_data = bungienet.GetAccountSummary(account_info['type'],
-                                               long(account_info['id']))['data']
-
-        characters = {}
-        for i, raw_char in enumerate(raw_data['characters']):
-          last_online = manifest.ISO8601(raw_char['characterBase']['dateLastPlayed'])
-          if last_online >= time.time() - 60:
-            last_online = 0
-          char = {
-              'active': not i,
-              'attrs': {
-                  'class': manifest.GetClassName(raw_char['characterBase']['classHash']),
-                  'gender': manifest.GetGenderName(raw_char['characterBase']['genderHash']),
-                  'race': manifest.GetRaceName(raw_char['characterBase']['raceHash']),
-              },
-              'id': raw_char['characterBase']['characterId'],
-              'last_online': last_online,
-              'stats': {
-                  'level': raw_char['characterLevel'],
-              },
-          }
-          for stat in raw_char['characterBase']['stats'].itervalues():
-            char['stats'][manifest.GetStatName(stat['statHash']).lower()] = stat['value']
-          characters[char['id']] = char
-        if characters != account_info.get('characters'):
-          fb.Put(('players', player_name, 'accounts', account_id, 'characters'), characters)
-
-        current_char_id = raw_data['characters'][0]['characterBase']['characterId']
-        activity_code = raw_data['characters'][0]['characterBase']['currentActivityHash']
-        activity = {
-            'code': activity_code,
-            'end': characters[current_char_id]['last_online'],
-            'name': manifest.GetActivityName(activity_code),
-        }
-        if activity != account_info.get('activity'):
-          fb.Put(('players', player_name, 'accounts', account_id, 'activity'), activity)
-
         time.sleep(2)
+
+    for account_id in sorted(fb.state.get('accounts', ())):
+      account_info = fb.state.get(('accounts', account_id))
+      if account_info is None:
+        continue
+      player_info = fb.state.get(('players', account_info['player']))
+      if player_info is None or account_id not in (player_info.get('accounts') or {}).values():
+        print
+        print "Account %r's player, %r, is no longer tracked (or no longer owns it); deleting." % (
+            account_id, account_info['player'])
+        fb.Put(('accounts', account_id), None)
+        print
+        continue
+      raw_data = bungienet.GetAccountSummary(account_info['type'], long(account_id))['data']
+      characters = set()
+      for i, raw_char in enumerate(raw_data['characters']):
+        raw_base = raw_char['characterBase']
+        characters.add(raw_base['characterId'])
+        last_online = manifest.ISO8601(raw_base['dateLastPlayed'])
+        if last_online >= time.time() - 60:
+          last_online = 0
+        activity_code = raw_base['currentActivityHash']
+        char = {
+            'account': account_id,
+            'active': not i,
+            'activity': {
+                'code': activity_code,
+                'end': last_online,
+                'name': manifest.GetActivityName(activity_code),
+            },
+            'attrs': {
+                'class': manifest.GetClassName(raw_base['classHash']),
+                'gender': manifest.GetGenderName(raw_base['genderHash']),
+                'race': manifest.GetRaceName(raw_base['raceHash']),
+            },
+            'stats': {
+                'level': raw_char['characterLevel'],
+            },
+        }
+        for stat in raw_base['stats'].itervalues():
+          char['stats'][manifest.GetStatName(stat['statHash']).lower()] = stat['value']
+        if fb.state.get(('characters', raw_base['characterId'])) != char:
+          fb.Put(('characters', raw_base['characterId']), char)
+
+      characters = sorted(characters)
+      if characters != account_info.get('characters'):
+        fb.Put(('accounts', account_id, 'characters'), characters)
+
+      time.sleep(2)
+
+    for char_id in sorted(fb.state.get('characters', ())):
+      char_info = fb.state.get(('characters', char_id))
+      if char_info is None:
+        continue
+      account_info = fb.state.get(('accounts', char_info['account']))
+      if account_info is None or char_id not in account_info.get('characters', ()):
+        print
+        print "Character %r's account, %r, is no longer tracked (or no longer owns it); deleting." % (
+            char_id, char_info['account'])
+        fb.Put(('characters', char_id), None)
+        print
 
 
 if __name__ == '__main__':
