@@ -34,7 +34,7 @@
     </div>
     <div class="panel-body">
       <ul>
-        <li data-for-each="accounts" data-sort-key="[[name]]">
+        <li data-for-each="accounts" data-sort-key="[[name]] [[.]]">
           Account <code data-text-content="[[name]]"></code> (<code data-text-content="[[.]]"></code>, type <span data-text-content="[[type]]"></span>)
           <ul>
             <li data-for-each="characters">
@@ -52,7 +52,7 @@
     </div>
     <div class="panel-body">
       <ul>
-        <li data-for-each="characters">
+        <li data-for-each="characters" data-sort-key="[[account]] [[.]]">
           Character <code data-text-content="[[.]]"></code>
           (account <code data-text-content="[[account]]"></code>)
           <span data-text-content="[[stats/level]]/&#x2666; [[stats/light]] [[attrs/race]] [[attrs/gender]] [[attrs/class]]"></span>
