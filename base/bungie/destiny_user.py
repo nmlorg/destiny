@@ -192,7 +192,7 @@ class User(dict):
 RAID_STEPS = {
     'RAID_MOON1': (
         'Traverse the Abyss',
-        'Cross the Bridge',
+        'Cross the Bridge (Oversoul Throne)',
         u'Ir Y\xfbt, the Deathsinger',
         'Crota',
     ),
