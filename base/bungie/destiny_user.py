@@ -191,10 +191,10 @@ class User(dict):
 
 RAID_STEPS = {
     'RAID_MOON1': (
-        'Traverse the Abyss',
+        'Traverse the Abyss (The Stills)',
         'Cross the Bridge (Oversoul Throne)',
-        u'Ir Y\xfbt, the Deathsinger',
-        'Crota',
+        'Reach the Summoning Crystal (Oversoul Throne)',
+        'Defeat Crota (Oversoul Throne)',
     ),
     'RAID_TAKEN_KING': (
         'Power the Glyph (Basilica)',
