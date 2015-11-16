@@ -213,7 +213,7 @@ else:
   def SearchDestinyPlayer(username, accounttype=None):
     q = DestinyUser.query(DestinyUser.name_lower == username.lower())
     if accounttype:
-      q = q.query(DestinyUser.accounttype == accounttype)
+      q = q.filter(DestinyUser.accounttype == accounttype)
     ret = [{'displayName': user.name, 'membershipType': user.accounttype,
             'membershipId': str(user.accountid)} for user in q]
     if not ret:
