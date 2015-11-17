@@ -68,7 +68,7 @@ user.get(function() {
     row.push(cell.render());
     for (var j = 0; j < character.bounties.length; j++) {
       var bounty = character.bounties[j];
-      cell.push(nmlorg.ui.bounty(bounty), bounty.name);
+      cell.push(nmlorg.ui.bounty(bounty), [bounty.icon, bounty.name]);
     }
   }
   row.push('');
