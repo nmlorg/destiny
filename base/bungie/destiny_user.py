@@ -278,6 +278,7 @@ def GetActivityCompletion(advisors):
             'type': 'Crucible',
         })
     elif ent.get('nightfall'):
+      bundle_activity = manifest.GetActivity(ent['activityBundleHash'])
       for tier in ent['nightfall']['tiers']:
         activity = manifest.GetActivity(tier['activityHash'])
         activities.append({
@@ -285,7 +286,8 @@ def GetActivityCompletion(advisors):
             'desc': activity['activityDescription'],
             'hash': tier['activityHash'],
             'icon': ent['nightfall']['iconPath'],
-            'modifiers': [GetModifier(activity['skulls'][index]) for index in tier['skullIndexes']],
+            'modifiers': [GetModifier(bundle_activity['skulls'][index])
+                          for index in tier['skullIndexes']],
             'name': '%s (%i)' % (activity['activityName'].strip(), activity['activityLevel']),
             'period': 'Weekly',
             'rewards': GetActivityRewards(activity),
