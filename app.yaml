@@ -35,6 +35,10 @@ handlers:
   secure: always
   script: dashboard.api.app
 
+- url: /(ez/?|ez/.*)
+  secure: always
+  script: dashboard.ez.app
+
 - url: /(db/?|db/.*)
   secure: always
   script: dashboard.db.app

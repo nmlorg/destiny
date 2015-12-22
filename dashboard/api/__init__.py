@@ -6,20 +6,6 @@ from dashboard import base_app
 
 
 ENDPOINTS = {
-    'EZTransferItem': (
-        ('hash', 'number', None, 'itemReferenceHash',
-         'Numeric manifest code for all items with the same name.'),
-        ('id', 'number', 0, 'itemId',
-         'Numeric code for a specific instance of an item. Always 0 for stackable items.'),
-        ('quantity', 'number', 1, 'stackSize',
-         'Number of items to transfer. Always 1 for non-stackable items.'),
-        ('accounttype', 'number', 2, 'membershipType',
-         'Numeric non-Bungie.net membership type (1 = XBL, 2 = PSN).'),
-        ('from', 'text', None, 'characterId',
-         'Numeric code for the character to take the item from. Empty when taking from the vault.'),
-        ('to', 'text', None, 'characterId',
-         'Numeric code for the character to give the item to. Empty when storing in the vault.'),
-    ),
     'EquipItems': (
         ('accounttype', 'number', 2, 'membershipType',
          'Numeric non-Bungie.net membership type (1 = XBL, 2 = PSN).'),
@@ -217,23 +203,7 @@ class Generic(base_app.RequestHandler):
   post = get
 
 
-class EZTransferItem(base_app.RequestHandler):
-  def post(self):
-    item_hash = self.request.get('hash')
-    item_id = self.request.get('id')
-    quantity = long(self.request.get('quantity'))
-    accounttype = int(self.request.get('accounttype'))
-    from_char = self.request.get('from')
-    to_char = self.request.get('to')
-    if from_char:
-      bungienet.TransferItem(accounttype, from_char, item_hash, item_id, quantity, True)
-    if to_char:
-      bungienet.TransferItem(accounttype, to_char, item_hash, item_id, quantity, False)
-    self.response.write('1')
-
-
 app = base_app.WSGIApplication([
     ('/api/?', Index),
-    ('/api/EZTransferItem/?', EZTransferItem),
     ('/api/(.*)/?', Generic),
 ], debug=True)

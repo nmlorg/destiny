@@ -17,7 +17,7 @@ ezbungie.getCharacters = function(accountType, accountId, cb) {
 
 
 ezbungie.transferItem = function(itemHash, itemId, quantity, accountType, from, to, cb) {
-  return nmlorg.fetch('/api/EZTransferItem', {
+  return nmlorg.fetch('/ez/TransferItem', {
       'hash': itemHash,
       'id': itemId,
       'quantity': quantity,
