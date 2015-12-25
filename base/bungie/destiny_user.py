@@ -28,7 +28,7 @@ def GetDestinyUser(username, accounttype=None, accountid=None):
     ent['advisors'] = (
         advisors and advisors['data'] or {'activityAdvisors': {}, 'vendorAdvisors': {}})
     ent['history'] = bungienet.GetActivityHistory(
-        accounttype, accountid, charid, 'None', count=20)['data']['activities']
+        accounttype, accountid, charid, 'None', count=20)['data'].get('activities', ())
     for history in ent['history']:
       for k, v in bungienet.GetPostGameCarnageReport(
           history['activityDetails']['instanceId'])['data'].iteritems():
