@@ -2,8 +2,39 @@
 {% block title %}{{account.name}} ({{account.type}}/{{account.id}}){% endblock %}
 {% block content %}
 
-<div class="container">
-  <a class="btn btn-default" href="/new/{{account.name}}/{{account.type}}/{{account.id}}/"><img src="{{account.icon}}"> {{account.name}} ({{account.type}}/{{account.id}})</a><br><br>
+<div style="font-size: 0">
+  <div style="display: inline-block;
+              font-size: 1.5vw;
+              width: 10vw">
+    <img src="{{account.icon}}"> {{account.name}}
+  </div>
+  {% for character in summary.characters %}
+    <div style="display: inline-block;
+                font-size: 1.5vw;
+                width: 30vw">
+      <div style="background-image: url('https://www.bungie.net{{character.backgroundPath}}');
+                  background-size: contain;
+                  color: white;
+                  position: relative">
+        <img src="https://www.bungie.net{{character.emblemPath}}" width="20%">
+        <span style="font-size: 150%;
+                     left: 20%;
+                     position: absolute;
+                     top: 0">{{character.characterBase.classHash}}</span>
+        <span style="bottom: 0;
+                     left: 20%;
+                     position: absolute">{{character.characterBase.raceHash}} {{character.characterBase.genderHash}}</span>
+        <span style="font-size: 150%;
+                     position: absolute;
+                     right: 0;
+                     top: 0">{{character.characterLevel}}</span>
+        <span style="bottom: 0;
+                     position: absolute;
+                     right: 0">&diams;{{character.characterBase.powerLevel}}</span>
+      </div>
+      {{character.characterBase.characterId}}<br>
+    </div>
+  {% endfor %}
 </div>
 
 {% endblock %}

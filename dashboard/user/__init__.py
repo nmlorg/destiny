@@ -19,8 +19,6 @@ class AccountInfo(base_app.RequestHandler):
     account_type = long(account_type)
     account_id = long(account_id)
     summary = bungienet.GetAccountSummary(account_type, account_id)['data']
-    all_items = bungienet.GetAllItemsSummary(account_type, account_id)['data']
-    summary['inventory']['items'] = all_items['items']
 
     self.response.render('dashboard/user/account_info.html', {
         'account': {
