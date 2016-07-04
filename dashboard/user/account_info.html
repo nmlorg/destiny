@@ -3,13 +3,13 @@
 {% block content %}
 
 <div style="font-size: 0">
-  <div style="display: inline-block;
+  <div style="float: left;
               font-size: 1.5vw;
               width: 10vw">
     <img src="{{account.icon}}"> {{account.name}}
   </div>
   {% for character in summary.characters %}
-    <div style="display: inline-block;
+    <div style="float: left;
                 font-size: 1.5vw;
                 width: 30vw">
       <div style="background-image: url('https://www.bungie.net{{character.backgroundPath}}');
