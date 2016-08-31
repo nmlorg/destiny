@@ -7,6 +7,7 @@ from dashboard import base_app
 class BlankPage(base_app.RequestHandler):
   def get(self):
     manifest.DestinyDefinition.Blank()
+    return self.redirect('/')
 
 
 class PreloadPage(base_app.RequestHandler):
