@@ -18,6 +18,10 @@ handlers:
   static_files: dashboard/\1
   upload: dashboard/google38371e7df630b0a7.html
 
+- url: /(light[.]html)
+  static_files: dashboard/\1
+  upload: dashboard/light.html
+
 - url: /(realtime[.]html)
   static_files: dashboard/\1
   upload: dashboard/realtime.html
