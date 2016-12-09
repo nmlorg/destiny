@@ -17,16 +17,17 @@
 class CharacterSheet extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {value: 0};
+    this.state = JSON.parse(localStorage.getItem('state') || '{}');
   }
 
   render() {
-    const table = (
+    localStorage.setItem('state', JSON.stringify(this.state));
+    return (
       <table className="table table-bordered table-striped">
         <tbody>
           <tr>
             <td width="30%"></td>
-            <td><center><big><big>&#x2666; {Math.round(this.state.value * 100) / 100}</big></big></center></td>
+            <td><center><big><big>&#x2666; <Sum items={this.state}/></big></big></center></td>
             <td width="30%"><Stat name="helmet" mult=".1" sheet={this}/></td>
           </tr>
           <tr>
@@ -57,32 +58,43 @@ class CharacterSheet extends React.Component {
         </tbody>
       </table>
     );
-    return table;
   }
 }
+
 
 class Stat extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {value: 0};
     this.onChange = this.onChange.bind(this);
   }
 
   onChange(e) {
-    const value = e.target.value * this.props.mult;
-    this.props.sheet.setState({value: this.props.sheet.state.value - this.state.value + value});
-    this.setState({value});
+    this.props.sheet.setState({[this.props.name]: e.target.value * this.props.mult});
   }
 
   render() {
     return (
       <label className="form-inline">
-        <input className="form-control" defaultValue="0" onChange={this.onChange} type="number"/>
+        <input className="form-control"
+               defaultValue={(this.props.sheet.state[this.props.name] || 0) / this.props.mult}
+               onChange={this.onChange}
+               type="number"/>
         {' '}{this.props.name}
       </label>
     );
   }
 }
+
+
+class Sum extends React.Component {
+  render() {
+    let sum = 0;
+    for (let [k, v] of Object.entries(this.props.items))
+      sum += v;
+    return <span>{Math.round(sum * 100) / 100}</span>;
+  }
+}
+
 
 ReactDOM.render(<CharacterSheet/>, document.getElementById('root'));
 </script>
