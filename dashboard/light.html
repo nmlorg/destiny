@@ -76,7 +76,7 @@ class Stat extends React.Component {
     return (
       <label className="form-inline">
         <input className="form-control"
-               defaultValue={(this.props.sheet.state[this.props.name] || 0) / this.props.mult}
+               defaultValue={Math.round((this.props.sheet.state[this.props.name] || 0) / this.props.mult)}
                onChange={this.onChange}
                type="number"/>
         {' '}{this.props.name}
